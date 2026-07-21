@@ -14,7 +14,6 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: .97rem; }
 
-    /* ========== LOGIN ========== */
     .login-overlay {
       display: flex; position: fixed; inset: 0; background: linear-gradient(135deg, #0f2744 0%, #1a3d64 50%, #1a56a0 100%);
       z-index: 10000; align-items: center; justify-content: center; padding: 20px;
@@ -39,7 +38,6 @@
     .login-box .login-error { color: var(--danger); font-size: .84rem; text-align: center; margin-top: 10px; min-height: 20px; font-weight: 600; }
     .login-box .login-hint { font-size: .8rem; color: var(--muted); text-align: center; margin-top: 12px; line-height: 1.5; }
 
-    /* ========== HEADER ========== */
     header {
       background: var(--primary); color: #fff; padding: 14px 28px;
       display: flex; align-items: center; gap: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.12);
@@ -76,6 +74,7 @@
     .card-body { padding: 22px 24px; }
 
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 18px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
     .form-group { display: flex; flex-direction: column; gap: 5px; }
     .form-group.full { grid-column: 1 / -1; }
     .form-group label { font-size: .83rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
@@ -148,16 +147,14 @@
     .countbar { display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
     .kpi { background: var(--primary-light); color: var(--primary); padding: 5px 14px; border-radius: 20px; font-size: .84rem; font-weight: 700; }
 
-    /* ========== ADMIN AREA ========== */
+    /* ADMIN */
     .admin-section-title {
       font-size: .88rem; font-weight: 700; color: var(--primary); margin-top: 18px; margin-bottom: 10px;
       padding-bottom: 6px; border-bottom: 2px solid var(--border);
       display: flex; align-items: center; gap: 8px;
     }
     .admin-section-title:first-child { margin-top: 0; }
-
     .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
-
     .admin-box { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
     .admin-box .head { background: var(--primary-light); padding: 10px 14px; font-weight: 700; color: var(--primary); font-size: .95rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
     .admin-box .body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
@@ -170,7 +167,6 @@
     .admin-item .item-role.professor { background: #fef3c7; color: #92400e; }
     .admin-item .btn-icon { padding: 3px 8px; font-size: .78rem; border-radius: 5px; }
 
-    /* Users table on admin */
     .users-table { width: 100%; border-collapse: collapse; }
     .users-table th { text-align: left; padding: 8px 10px; font-size: .78rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; border-bottom: 2px solid var(--border); }
     .users-table td { padding: 8px 10px; font-size: .91rem; border-bottom: 1px solid #f0f2f6; vertical-align: middle; }
@@ -178,6 +174,21 @@
     .users-table tbody tr:hover { background: #f7f9fd; }
     .users-table tbody tr.inactive-row { opacity: .48; }
     .users-table .col-actions { text-align: right; white-space: nowrap; }
+
+    /* Backup status badge */
+    .backup-status {
+      display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;
+      border-radius: 14px; font-size: .82rem; font-weight: 600;
+    }
+    .backup-status.ok     { background: var(--success-light); color: var(--success); }
+    .backup-status.warn   { background: var(--warning-light); color: var(--warning); }
+    .backup-status.err    { background: var(--danger-light); color: var(--danger); }
+    .backup-status.idle   { background: #f1f3f7; color: var(--muted); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot.green  { background: var(--success); }
+    .dot.yellow { background: var(--warning); }
+    .dot.red    { background: var(--danger); }
+    .dot.gray   { background: var(--muted); }
 
     .toast {
       position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
@@ -209,8 +220,14 @@
     .btn-close-modal { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); line-height: 1; padding: 0 4px; }
     .btn-close-modal:hover { color: var(--danger); }
 
+    .spinner {
+      display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3);
+      border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     @media (max-width: 700px) {
-      .grid-3 { grid-template-columns: 1fr; }
+      .grid-3, .grid-2 { grid-template-columns: 1fr; }
       .form-group.full { grid-column: 1; }
       main { padding: 12px 6px 40px; }
       .card-body { padding: 14px 10px; }
@@ -248,7 +265,7 @@
   </div>
 </div>
 
-<!-- ============ APP (escondido até login) ============ -->
+<!-- ============ APP ============ -->
 <div id="appWrapper" class="main-hidden">
 
 <header>
@@ -268,9 +285,9 @@
 
 <main>
   <div class="tabs" role="tablist">
-    <button class="tab-btn active"  id="tab-btn-novo"      type="button" onclick="setTab('novo')">Novo Planejamento</button>
-    <button class="tab-btn"         id="tab-btn-consultas"  type="button" onclick="setTab('consultas')">Consultas</button>
-    <button class="tab-btn"         id="tab-btn-admin" type="button" onclick="setTab('admin')" style="display:none;">⚙️ Administração</button>
+    <button class="tab-btn active"  id="tab-btn-novo"     type="button" onclick="setTab('novo')">Novo Planejamento</button>
+    <button class="tab-btn"         id="tab-btn-consultas" type="button" onclick="setTab('consultas')">Consultas</button>
+    <button class="tab-btn"         id="tab-btn-admin"     type="button" onclick="setTab('admin')" style="display:none;">⚙️ Administração</button>
   </div>
 
   <!-- ═══════════ ABA: NOVO PLANEJAMENTO ═══════════ -->
@@ -361,8 +378,9 @@
     </div>
   </section>
 
-  <!-- ═══════════ ABA: ADMINISTRAÇÃO (apenas admin) ═══════════ -->
+  <!-- ═══════════ ABA: ADMINISTRAÇÃO ═══════════ -->
   <section id="admin-view" style="display:none;">
+
     <!-- ── CARD 1: GESTÃO DE USUÁRIOS ── -->
     <div class="card">
       <div class="card-header">
@@ -375,7 +393,6 @@
         </label>
       </div>
       <div class="card-body">
-        <!-- Form de criação -->
         <div class="row-inline" style="margin-bottom:16px; background:var(--primary-light); padding:14px 16px; border-radius:8px;">
           <input type="text" id="newUsername" placeholder="Nome de usuário" style="flex:1; min-width:140px;" />
           <input type="password" id="newUserPass" placeholder="Senha (mín. 4 caracteres)" style="flex:1; min-width:160px;" />
@@ -385,7 +402,6 @@
           </select>
           <button class="btn btn-primary" type="button" onclick="addUser()">➕ Criar Usuário</button>
         </div>
-        <!-- Tabela de usuários -->
         <div class="table-wrap" style="margin-top:6px;">
           <table class="users-table">
             <thead>
@@ -415,7 +431,6 @@
       </div>
       <div class="card-body">
         <div class="split">
-          <!-- Professores -->
           <div class="admin-box">
             <div class="head">
               <span>👨‍🏫 Professores</span>
@@ -431,7 +446,6 @@
               <div class="admin-list" id="teachersList"></div>
             </div>
           </div>
-          <!-- Turmas -->
           <div class="admin-box">
             <div class="head">
               <span>📚 Turmas</span>
@@ -447,7 +461,6 @@
               <div class="admin-list" id="classesList"></div>
             </div>
           </div>
-          <!-- Disciplinas -->
           <div class="admin-box">
             <div class="head">
               <span>📖 Disciplinas</span>
@@ -466,9 +479,53 @@
         </div>
       </div>
     </div>
+
+    <!-- ── CARD 3: BACKUP NO GITHUB ── -->
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <h2>☁️ Backup no GitHub</h2>
+          <div class="hint">Configure o repositório GitHub para salvar backups automaticamente na pasta <code>Backup/</code> do repositório. O backup automático é disparado após cada salvamento. Use o botão abaixo para backup manual.</div>
+        </div>
+        <div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Não configurado</div>
+      </div>
+      <div class="card-body">
+        <div class="grid-2">
+          <div class="form-group">
+            <label>Token de Acesso (GitHub)</label>
+            <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
+            <div class="muted">
+              ⚠️ Crie em: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic).
+              Escopo necessário: <strong>repo</strong> (repositório privado) ou <strong>public_repo</strong> (público).
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Dono do Repositório (owner)</label>
+            <input type="text" id="ghOwner" placeholder="Ex: meu-usuario" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label>Nome do Repositório</label>
+            <input type="text" id="ghRepo" placeholder="Ex: athena-planejamento" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label>Branch</label>
+            <input type="text" id="ghBranch" placeholder="main" value="main" autocomplete="off" />
+          </div>
+        </div>
+        <div class="row-inline" style="margin-top:14px; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="saveGithubConfig()">💾 Salvar Configurações</button>
+          <button class="btn btn-ghost" id="btnTestGh" onclick="testGithubConnection()">🔍 Testar Conexão</button>
+          <button class="btn btn-success" id="btnManualBackup" onclick="manualBackupToGithub()">📤 Backup Manual Agora</button>
+        </div>
+        <div style="margin-top:12px; font-size:.82rem; color:var(--muted);" id="ghLastBackup"></div>
+        <div class="muted" style="margin-top:8px;">
+          📁 Os backups serão salvos na pasta <code>Backup/</code> do repositório. O backup automático sobrescreve <code>backup-athena-latest.json</code>. O backup manual gera um arquivo com data/hora.
+        </div>
+      </div>
+    </div>
   </section>
 </main>
-</div><!-- /appWrapper -->
+</div>
 
 <div class="toast" id="toast"></div>
 
@@ -491,13 +548,14 @@
 // ═══════════════════════════════════════════════════════
 //  CONSTANTES
 // ═══════════════════════════════════════════════════════
-const DB_NAME = 'athenaDB', DB_VERSION = 5;
+const DB_NAME = 'athenaDB', DB_VERSION = 6;
 const S_PLANS = 'plans', S_ATTS = 'attachments', S_TEACHERS = 'teachers';
 const S_CLASSES = 'classes', S_SUBJECTS = 'subjects', S_USERS = 'users';
+const S_SETTINGS = 'settings';
 const SESSION_KEY = 'athena_session';
 
 let _db = null;
-let _session = null; // { userId, username, role }
+let _session = null;
 
 // ═══════════════════════════════════════════════════════
 //  HASH SHA-256
@@ -537,6 +595,9 @@ function openDB() {
           if (name === S_USERS) s.createIndex('username','username',{unique:false});
         }
       });
+      if (!db.objectStoreNames.contains(S_SETTINGS)) {
+        db.createObjectStore(S_SETTINGS, { keyPath: 'key' });
+      }
     };
     req.onsuccess = () => { _db = req.result; res(_db); };
     req.onerror   = () => rej(req.error);
@@ -564,6 +625,17 @@ function uid() { return Date.now().toString(36)+Math.random().toString(36).slice
 function now() { return new Date().toISOString(); }
 
 // ═══════════════════════════════════════════════════════
+//  SETTINGS (IndexedDB)
+// ═══════════════════════════════════════════════════════
+async function getSetting(key, defaultVal = null) {
+  try { const r = await dbGet(S_SETTINGS, key); return r ? r.value : defaultVal; }
+  catch { return defaultVal; }
+}
+async function setSetting(key, value) {
+  await dbPut(S_SETTINGS, { key, value, updatedAt: now() });
+}
+
+// ═══════════════════════════════════════════════════════
 //  SESSÃO
 // ═══════════════════════════════════════════════════════
 function saveSession(s)   { _session = s; sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
@@ -577,16 +649,10 @@ function updateHeaderUI() {
   document.getElementById('headerUserName').textContent = _session.username;
   document.getElementById('headerUserRole').textContent = isAdmin() ? '(Admin)' : '(Professor)';
   document.getElementById('userBadge').textContent = (_session.username[0]||'A').toUpperCase();
-  // Aba Administração visível apenas para admin — CORRIGIDO: usar inline style com precedência
   const adminTab = document.getElementById('tab-btn-admin');
-  if (adminTab) {
-    adminTab.style.display = isAdmin() ? '' : 'none';
-  }
-  // Botão excluir visível apenas para admin
+  if (adminTab) adminTab.style.display = isAdmin() ? '' : 'none';
   const btnDel = document.getElementById('btnToolbarDelete');
-  if (btnDel) {
-    btnDel.style.display = isAdmin() ? '' : 'none';
-  }
+  if (btnDel) btnDel.style.display = isAdmin() ? '' : 'none';
 }
 
 // ═══════════════════════════════════════════════════════
@@ -626,7 +692,6 @@ async function handleLogin(e) {
     return;
   }
 
-  // Login normal
   const users = await dbGetAll(S_USERS);
   const found = users.find(u => u.username.toLowerCase() === username.toLowerCase());
   if (!found)  { errorEl.textContent = 'Usuário não encontrado.'; return; }
@@ -643,6 +708,7 @@ function enterApp() {
   document.getElementById('appWrapper').classList.remove('main-hidden');
   updateHeaderUI();
   setTab('novo');
+  loadGithubConfigIntoForm();
 }
 
 function doLogout() {
@@ -677,10 +743,9 @@ function confirmDialog(title, msg, onConfirm) {
 }
 
 // ═══════════════════════════════════════════════════════
-//  TABS — Admin bloqueado para não-admin
+//  TABS
 // ═══════════════════════════════════════════════════════
 function setTab(tab) {
-  // Bloqueia acesso à aba admin para não-admins
   if (tab === 'admin' && !isAdmin()) {
     toast('Acesso restrito a administradores.', 'err');
     return;
@@ -692,7 +757,7 @@ function setTab(tab) {
   });
   if (tab === 'novo')      { limparForm(true); carregarSelects(); }
   if (tab === 'consultas') { refreshConsultaFilters().then(renderLista); }
-  if (tab === 'admin')     { renderUsers(); renderTeachers(); renderClasses(); renderSubjects(); }
+  if (tab === 'admin')     { renderUsers(); renderTeachers(); renderClasses(); renderSubjects(); loadGithubConfigIntoForm(); updateBackupStatus(); }
   window.scrollTo({ top:0, behavior:'smooth' });
 }
 
@@ -778,7 +843,7 @@ async function salvarPlanejamento() {
 }
 
 // ═══════════════════════════════════════════════════════
-//  CONSULTAS — FILTROS
+//  CONSULTAS
 // ═══════════════════════════════════════════════════════
 async function refreshConsultaFilters() {
   const [teachers, classes, subjects, allPlans] = await Promise.all([
@@ -805,9 +870,6 @@ function populateFilter(id, items) {
 }
 function limparFiltros() { ['fProfessorSel','fTurmaSel','fDisciplinaSel','fAnoSel'].forEach(id=>document.getElementById(id).value=''); renderLista(); }
 
-// ═══════════════════════════════════════════════════════
-//  CONSULTAS — LISTA (restrita por permissão)
-// ═══════════════════════════════════════════════════════
 let _currentFiltered = [];
 async function renderLista() {
   const allPlans = await dbGetAll(S_PLANS);
@@ -956,7 +1018,7 @@ async function getAttachmentsByPlan(planId) {
 }
 
 // ═══════════════════════════════════════════════════════
-//  ADMINISTRAÇÃO — USUÁRIOS (apenas admin)
+//  ADMIN — USUÁRIOS
 // ═══════════════════════════════════════════════════════
 function roleLabel(role) { return role==='admin'?'Admin':'Professor'; }
 function roleClass(role) { return role==='admin'?'admin':'professor'; }
@@ -1062,7 +1124,7 @@ async function resetUserPassword(userId) {
 }
 
 // ═══════════════════════════════════════════════════════
-//  ADMINISTRAÇÃO — PROFESSORES / TURMAS / DISCIPLINAS
+//  ADMIN — PROFESSORES / TURMAS / DISCIPLINAS
 // ═══════════════════════════════════════════════════════
 async function renderTeachers() {
   const show = document.getElementById('showInactiveTeachers').checked;
@@ -1140,14 +1202,16 @@ async function editAdminItem(store,id) {
 function fmtDate(str) { if(!str) return '—'; const [y,m,d]=str.split('-'); return `${d}/${m}/${y}`; }
 function fmtDateTime(str) { if(!str) return '—'; return new Date(str).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
 function esc(str) { if(!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function backupFilename() { const dt=new Date(),p=n=>String(n).padStart(2,'0'); return `backup-athena-${p(dt.getDate())}-${p(dt.getMonth()+1)}-${dt.getFullYear()}_${p(dt.getHours())}-${p(dt.getMinutes())}-${p(dt.getSeconds())}.json`; }
 
 // ═══════════════════════════════════════════════════════
-//  BACKUP AUTOMÁTICO (File System Access API)
+//  BACKUP — PAYLOAD & FILE SYSTEM ACCESS API
 // ═══════════════════════════════════════════════════════
 const BACKUP_STORES = ['attachments','classes','plans','subjects','teachers','users'];
 const BKP_HANDLE_DB = 'athenaBackupHandles', BKP_HANDLE_VER = 1;
 const BKP_HANDLE_STORE = 'handles', BKP_DIR_KEY = 'backupDirHandle';
 let _backupInProgress = false;
+
 function openBackupHandleDB() {
   return new Promise((res,rej)=>{
     const req=indexedDB.open(BKP_HANDLE_DB,BKP_HANDLE_VER);
@@ -1166,7 +1230,6 @@ async function getOrAskBackupFolderHandle(){
   toast('📁 Selecione a pasta de backup.','warn',7000);
   try{const p=await window.showDirectoryPicker({id:'athena-backup',mode:'readwrite',startIn:'documents'});const ok=await ensurePermission(p);if(!ok)return null;await saveDirHandle(p);return p;}catch{return null;}
 }
-function backupFilename(){const dt=new Date(),p=n=>String(n).padStart(2,'0');return `backup-athena-${p(dt.getDate())}-${p(dt.getMonth()+1)}-${dt.getFullYear()}_${p(dt.getHours())}-${p(dt.getMinutes())}-${p(dt.getSeconds())}.json`;}
 async function backupGetAllSafe(db,sn){return new Promise(resolve=>{try{const r=db.transaction(sn,'readonly').objectStore(sn).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>resolve([]);}catch{resolve([]);}});}
 async function buildBackupPayload(){
   const db=await openDB();
@@ -1184,7 +1247,239 @@ async function executarBackupJSON(){
   }catch(e){console.error('Backup error:',e);}
   finally{_backupInProgress=false;}
 }
-(function hookBackupOnToast(){const _orig=toast;window.toast=function(m,t,d){_orig(m,t,d);const s=String(m||'').toLowerCase();if(s.includes('planejamento salvo')||s.includes('planejamento atualizado'))executarBackupJSON();};})();
+
+// ═══════════════════════════════════════════════════════
+//  BACKUP — GITHUB API
+// ═══════════════════════════════════════════════════════
+function toBase64(str) {
+  const bytes = new TextEncoder().encode(str);
+  const binString = Array.from(bytes, (byte) => String.fromCodePoint(byte)).join('');
+  return btoa(binString);
+}
+
+async function getGithubConfig() {
+  const token  = await getSetting('github_token', '');
+  const owner  = await getSetting('github_owner', '');
+  const repo   = await getSetting('github_repo', '');
+  const branch = await getSetting('github_branch', 'main');
+  return { token, owner, repo, branch, configured: !!(token && owner && repo) };
+}
+
+async function loadGithubConfigIntoForm() {
+  const config = await getGithubConfig();
+  document.getElementById('ghToken').value  = config.token;
+  document.getElementById('ghOwner').value  = config.owner;
+  document.getElementById('ghRepo').value   = config.repo;
+  document.getElementById('ghBranch').value = config.branch;
+  updateBackupStatus();
+}
+
+async function saveGithubConfig() {
+  const token  = document.getElementById('ghToken').value.trim();
+  const owner  = document.getElementById('ghOwner').value.trim();
+  const repo   = document.getElementById('ghRepo').value.trim();
+  const branch = document.getElementById('ghBranch').value.trim() || 'main';
+
+  if (!token || !owner || !repo) { toast('Preencha Token, Owner e Repositório.', 'warn'); return; }
+
+  await setSetting('github_token', token);
+  await setSetting('github_owner', owner);
+  await setSetting('github_repo', repo);
+  await setSetting('github_branch', branch);
+
+  toast('✅ Configurações do GitHub salvas!', 'ok');
+  updateBackupStatus();
+}
+
+async function testGithubConnection() {
+  const config = await getGithubConfig();
+  if (!config.configured) {
+    // Tenta ler dos campos do formulário
+    config.token  = document.getElementById('ghToken').value.trim();
+    config.owner  = document.getElementById('ghOwner').value.trim();
+    config.repo   = document.getElementById('ghRepo').value.trim();
+    config.branch = document.getElementById('ghBranch').value.trim() || 'main';
+    config.configured = !!(config.token && config.owner && config.repo);
+    if (!config.configured) { toast('Configure token, owner e repositório primeiro.', 'warn'); return; }
+    // Salva antes de testar
+    await setSetting('github_token', config.token);
+    await setSetting('github_owner', config.owner);
+    await setSetting('github_repo', config.repo);
+    await setSetting('github_branch', config.branch);
+  }
+
+  const btn = document.getElementById('btnTestGh');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Testando...';
+
+  try {
+    const resp = await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}`, {
+      headers: { 'Authorization': `Bearer ${config.token}`, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      toast(`✅ Conectado! Repositório: ${data.full_name}`, 'ok', 4000);
+      updateBackupStatus('ok');
+    } else if (resp.status === 401) {
+      toast('❌ Token inválido ou expirado.', 'err');
+      updateBackupStatus('err');
+    } else if (resp.status === 404) {
+      toast('❌ Repositório não encontrado. Verifique owner/repo.', 'err');
+      updateBackupStatus('err');
+    } else {
+      toast(`❌ Erro ${resp.status}: ${(await resp.json().catch(()=>({}))).message || 'Verifique os dados.'}`, 'err');
+      updateBackupStatus('err');
+    }
+  } catch (e) {
+    toast(`❌ Erro de conexão: ${e.message}`, 'err');
+    updateBackupStatus('err');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🔍 Testar Conexão';
+  }
+}
+
+async function backupToGithub(silent = true) {
+  const config = await getGithubConfig();
+  if (!config.configured) return false;
+
+  try {
+    const payload = await buildBackupPayload();
+    const content = JSON.stringify(payload, null, 2);
+    const base64 = toBase64(content);
+
+    // Nome do arquivo: automático sobrescreve "latest", manual usa timestamp
+    const filename = silent ? 'backup-athena-latest.json' : backupFilename();
+    const path = `Backup/${filename}`;
+
+    // Verificar se o arquivo já existe para obter o sha (necessário para atualizar)
+    let sha = null;
+    try {
+      const getResp = await fetch(
+        `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}`,
+        { headers: { 'Authorization': `Bearer ${config.token}`, 'Accept': 'application/vnd.github.v3+json' } }
+      );
+      if (getResp.ok) {
+        const data = await getResp.json();
+        sha = data.sha;
+      }
+    } catch {}
+
+    const body = {
+      message: silent
+        ? '🔄 Backup automático — Planejamento Athena'
+        : `📤 Backup manual — ${filename}`,
+      content: base64,
+      branch: config.branch
+    };
+    if (sha) body.sha = sha;
+
+    const putResp = await fetch(
+      `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}`,
+      {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${config.token}`,
+          'Accept': 'application/vnd.github.v3+json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      }
+    );
+
+    if (!putResp.ok) {
+      const errData = await putResp.json().catch(() => ({}));
+      throw new Error(errData.message || `HTTP ${putResp.status}`);
+    }
+
+    await setSetting('github_last_backup', now());
+    await setSetting('github_last_backup_status', 'ok');
+    if (!silent) toast('☁️ Backup enviado com sucesso para o GitHub!', 'ok', 4000);
+    updateBackupStatus('ok');
+    return true;
+  } catch (e) {
+    console.error('GitHub backup error:', e);
+    await setSetting('github_last_backup_status', 'err');
+    await setSetting('github_last_error', e.message);
+    if (!silent) toast(`❌ Erro no backup GitHub: ${e.message}`, 'err', 5000);
+    updateBackupStatus('err');
+    return false;
+  }
+}
+
+async function manualBackupToGithub() {
+  const config = await getGithubConfig();
+  if (!config.configured) {
+    // Tenta ler dos campos
+    const token  = document.getElementById('ghToken').value.trim();
+    const owner  = document.getElementById('ghOwner').value.trim();
+    const repo   = document.getElementById('ghRepo').value.trim();
+    const branch = document.getElementById('ghBranch').value.trim() || 'main';
+    if (!token || !owner || !repo) { toast('Configure token, owner e repositório primeiro.', 'warn'); return; }
+    await setSetting('github_token', token);
+    await setSetting('github_owner', owner);
+    await setSetting('github_repo', repo);
+    await setSetting('github_branch', branch);
+  }
+
+  const btn = document.getElementById('btnManualBackup');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Enviando...';
+
+  try {
+    await backupToGithub(false);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '📤 Backup Manual Agora';
+  }
+}
+
+async function updateBackupStatus(forcedStatus) {
+  const badge = document.getElementById('ghStatusBadge');
+  const lastEl = document.getElementById('ghLastBackup');
+  if (!badge) return;
+
+  const config = await getGithubConfig();
+  if (!config.configured) {
+    badge.className = 'backup-status idle';
+    badge.innerHTML = '<span class="dot gray"></span> Não configurado';
+    lastEl.textContent = '';
+    return;
+  }
+
+  const lastBackup = await getSetting('github_last_backup', null);
+  const status = forcedStatus || await getSetting('github_last_backup_status', null);
+  const lastError = await getSetting('github_last_error', '');
+
+  if (status === 'ok' && lastBackup) {
+    badge.className = 'backup-status ok';
+    badge.innerHTML = '<span class="dot green"></span> Conectado';
+    lastEl.innerHTML = `✅ Último backup: <strong>${fmtDateTime(lastBackup)}</strong>`;
+  } else if (status === 'err') {
+    badge.className = 'backup-status err';
+    badge.innerHTML = '<span class="dot red"></span> Erro no último backup';
+    lastEl.innerHTML = `❌ Falha no último backup${lastError ? ': ' + esc(lastError) : ''}. Verifique as configurações.`;
+  } else {
+    badge.className = 'backup-status warn';
+    badge.innerHTML = '<span class="dot yellow"></span> Configurado (sem backup ainda)';
+    lastEl.textContent = 'Nenhum backup enviado ainda. Use "Testar Conexão" ou "Backup Manual".';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  HOOK: BACKUP AUTOMÁTICO (local + GitHub)
+// ═══════════════════════════════════════════════════════
+(function hookBackupOnToast(){
+  const _orig = toast;
+  window.toast = function(m, t, d) {
+    _orig(m, t, d);
+    const s = String(m||'').toLowerCase();
+    if (s.includes('planejamento salvo') || s.includes('planejamento atualizado')) {
+      executarBackupJSON();           // backup local (File System Access API)
+      backupToGithub(true);           // backup remoto silencioso (GitHub)
+    }
+  };
+})();
 
 // ═══════════════════════════════════════════════════════
 //  INICIALIZAÇÃO
