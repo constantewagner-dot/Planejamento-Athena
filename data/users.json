@@ -1,0 +1,20 @@
+[
+  {
+    "id": "mrtx869nw1q18",
+    "username": "Wagner",
+    "passwordHash": "cb807eea952b3e0d08842d3393346242c4e4f17090b9500255ba067d06839ce0",
+    "role": "admin",
+    "active": true,
+    "createdAt": "2026-07-21T00:34:20.987Z",
+    "updatedAt": "2026-07-21T00:34:20.987Z"
+  },
+  {
+    "id": "mrtzjkzsctcuh",
+    "username": "Denize",
+    "passwordHash": "b5b77d2ea80ef2cb8b4e7b261eb1728c71ab7968002b070397f186c380902436",
+    "role": "admin",
+    "active": true,
+    "createdAt": "2026-07-21T01:39:12.520Z",
+    "updatedAt": "2026-07-24T02:05:06.947Z"
+  }
+]
