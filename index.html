@@ -14,127 +14,94 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: .97rem; }
 
+    /* ── LOGIN ── */
     .login-overlay {
       display: flex; position: fixed; inset: 0; background: linear-gradient(135deg, #0f2744 0%, #1a3d64 50%, #1a56a0 100%);
       z-index: 10000; align-items: center; justify-content: center; padding: 20px;
     }
     .login-overlay.hidden { display: none; }
-    .login-box {
-      background: #fff; border-radius: 14px; box-shadow: 0 12px 48px rgba(0,0,0,.28);
-      width: 100%; max-width: 420px; padding: 36px 32px 30px;
-    }
+    .login-box { background: #fff; border-radius: 14px; box-shadow: 0 12px 48px rgba(0,0,0,.28); width: 100%; max-width: 420px; padding: 36px 32px 30px; }
     .login-box .logo-area { text-align: center; margin-bottom: 22px; }
-    .login-box .logo-area .login-icon { font-size: 2.6rem; margin-bottom: 2px; }
+    .login-box .logo-area .login-icon { font-size: 2.6rem; }
     .login-box .logo-area h2 { font-size: 1.15rem; color: var(--primary); font-weight: 700; }
     .login-box .logo-area p  { font-size: .82rem; color: var(--muted); margin-top: 2px; }
     .login-box .form-group { margin-bottom: 14px; }
     .login-box .form-group label { font-size: .82rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
-    .login-box .form-group input {
-      width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 7px;
-      font-size: .96rem; background: #fafbfc; transition: border .16s; font-family: inherit;
-    }
+    .login-box .form-group input { width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 7px; font-size: .96rem; background: #fafbfc; transition: border .16s; font-family: inherit; }
     .login-box .form-group input:focus { outline: none; border-color: var(--primary); background: #fff; }
     .login-box .btn { width: 100%; padding: 11px; font-size: 1rem; margin-top: 6px; }
     .login-box .login-error { color: var(--danger); font-size: .84rem; text-align: center; margin-top: 10px; min-height: 20px; font-weight: 600; }
     .login-box .login-hint { font-size: .8rem; color: var(--muted); text-align: center; margin-top: 12px; line-height: 1.5; }
+    .login-spinner { display: none; text-align: center; padding: 10px; color: var(--primary); font-weight: 600; font-size: .88rem; }
+    .login-spinner.visible { display: block; }
 
-    header {
-      background: var(--primary); color: #fff; padding: 14px 28px;
-      display: flex; align-items: center; gap: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.12);
-    }
+    /* ── HEADER ── */
+    header { background: var(--primary); color: #fff; padding: 14px 28px; display: flex; align-items: center; gap: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
     header .header-icon { font-size: 1.8rem; }
     .header-divider { width: 2px; height: 36px; background: rgba(255,255,255,.3); border-radius: 2px; }
     .header-info { flex: 1; }
-    .header-info h1 { font-size: 1.15rem; font-weight: 700; letter-spacing: .01em; }
+    .header-info h1 { font-size: 1.15rem; font-weight: 700; }
     .header-info p  { font-size: .8rem; opacity: .78; margin-top: 1px; }
-    .header-user {
-      display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.12);
-      padding: 7px 14px; border-radius: 22px; font-size: .87rem; font-weight: 600;
-    }
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .header-user { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.12); padding: 7px 14px; border-radius: 22px; font-size: .87rem; font-weight: 600; }
     .header-user .user-badge { background: #fff; color: var(--primary); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 800; }
     .header-user .btn-logout { background: none; border: none; color: #fff; cursor: pointer; font-size: .82rem; opacity: .75; padding: 4px 8px; border-radius: 5px; transition: .15s; font-family: inherit; }
     .header-user .btn-logout:hover { opacity: 1; background: rgba(255,255,255,.15); }
+    .sync-indicator { font-size: .76rem; display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
+    .sync-indicator.synced  { background: rgba(255,255,255,.15); }
+    .sync-indicator.pending { background: rgba(255,193,7,.25); color: #ffe082; animation: pulse 1.5s infinite; }
+    .sync-indicator.syncing { background: rgba(255,255,255,.2); }
+    .sync-indicator.error   { background: rgba(255,82,82,.3); color: #ffcdd2; }
+    .sync-indicator.offline { background: rgba(255,255,255,.08); opacity: .6; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.55} }
 
+    /* ── MAIN ── */
     main { max-width: 1280px; margin: 0 auto; padding: 28px 18px 60px; }
     .main-hidden { display: none !important; }
-
     .tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 0; }
-    .tab-btn {
-      padding: 9px 22px; border: none; background: transparent; cursor: pointer;
-      font-size: .97rem; font-weight: 600; color: var(--muted); border-radius: var(--radius) var(--radius) 0 0;
-      border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .18s;
-    }
+    .tab-btn { padding: 9px 22px; border: none; background: transparent; cursor: pointer; font-size: .97rem; font-weight: 600; color: var(--muted); border-radius: var(--radius) var(--radius) 0 0; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .18s; }
     .tab-btn:hover { color: var(--primary); background: var(--primary-light); }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: var(--card); }
-
     .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 22px; overflow: hidden; }
     .card-header { padding: 18px 24px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
     .card-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
     .hint { font-size: .82rem; color: var(--muted); margin-top: 3px; }
     .card-body { padding: 22px 24px; }
-
     .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 18px; }
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
     .form-group { display: flex; flex-direction: column; gap: 5px; }
     .form-group.full { grid-column: 1 / -1; }
     .form-group label { font-size: .83rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-    .form-group input[type=text], .form-group input[type=date], .form-group input[type=password],
-    .form-group select, .form-group textarea {
-      padding: 8px 11px; border: 1px solid var(--border); border-radius: 7px;
-      font-size: .96rem; background: #fafbfc; transition: border .16s; font-family: inherit; color: var(--text);
+    .form-group input[type=text], .form-group input[type=date], .form-group input[type=password], .form-group select, .form-group textarea {
+      padding: 8px 11px; border: 1px solid var(--border); border-radius: 7px; font-size: .96rem; background: #fafbfc; transition: border .16s; font-family: inherit; color: var(--text);
     }
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); background: #fff; }
     .form-group textarea { min-height: 90px; resize: vertical; }
     .muted { font-size: .78rem; color: var(--muted); margin-top: 3px; }
     .row-inline { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-
-    .btn {
-      padding: 8px 18px; border: none; border-radius: 7px; cursor: pointer;
-      font-size: .93rem; font-weight: 600; transition: all .17s; font-family: inherit;
-      display: inline-flex; align-items: center; gap: 6px;
-    }
-    .btn-primary { background: var(--primary); color: #fff; }
-    .btn-primary:hover { background: var(--primary-dark); }
-    .btn-ghost { background: #f1f3f7; color: var(--text); border: 1px solid var(--border); }
-    .btn-ghost:hover { background: var(--border); }
-    .btn-danger { background: var(--danger); color: #fff; }
-    .btn-danger:hover { background: #922b21; }
-    .btn-warning { background: #e67e22; color: #fff; }
-    .btn-warning:hover { background: #ca6f1e; }
-    .btn-success { background: var(--success); color: #fff; }
-    .btn-success:hover { background: #145a34; }
+    .btn { padding: 8px 18px; border: none; border-radius: 7px; cursor: pointer; font-size: .93rem; font-weight: 600; transition: all .17s; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
+    .btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-dark); }
+    .btn-ghost { background: #f1f3f7; color: var(--text); border: 1px solid var(--border); } .btn-ghost:hover { background: var(--border); }
+    .btn-danger { background: var(--danger); color: #fff; } .btn-danger:hover { background: #922b21; }
+    .btn-warning { background: #e67e22; color: #fff; } .btn-warning:hover { background: #ca6f1e; }
+    .btn-success { background: var(--success); color: #fff; } .btn-success:hover { background: #145a34; }
     .btn-small { padding: 5px 12px; font-size: .84rem; }
     .btn-group { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
     .btn:disabled { opacity: .45; cursor: not-allowed; }
-
     .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px 16px; margin-bottom: 16px; }
-
-    .selection-toolbar {
-      display: none; align-items: center; gap: 10px; background: var(--primary);
-      color: #fff; padding: 10px 18px; border-radius: 8px; margin-bottom: 14px; flex-wrap: wrap;
-      box-shadow: 0 3px 12px rgba(26,86,160,.18);
-    }
+    .selection-toolbar { display: none; align-items: center; gap: 10px; background: var(--primary); color: #fff; padding: 10px 18px; border-radius: 8px; margin-bottom: 14px; flex-wrap: wrap; box-shadow: 0 3px 12px rgba(26,86,160,.18); }
     .selection-toolbar.visible { display: flex; }
     .selection-toolbar .sel-count { font-weight: 700; font-size: .97rem; margin-right: 6px; white-space: nowrap; }
     .selection-toolbar .btn { font-size: .87rem; padding: 6px 14px; }
-    .selection-toolbar .btn-toolbar-edit { background: #fff; color: var(--primary); }
-    .selection-toolbar .btn-toolbar-edit:hover { background: var(--primary-light); }
-    .selection-toolbar .btn-toolbar-copy { background: rgba(255,255,255,.18); color: #fff; border: 1px solid rgba(255,255,255,.4); }
-    .selection-toolbar .btn-toolbar-copy:hover { background: rgba(255,255,255,.3); }
-    .selection-toolbar .btn-toolbar-attach { background: rgba(255,255,255,.18); color: #fff; border: 1px solid rgba(255,255,255,.4); }
-    .selection-toolbar .btn-toolbar-attach:hover { background: rgba(255,255,255,.3); }
-    .selection-toolbar .btn-toolbar-delete { background: var(--danger); color: #fff; }
-    .selection-toolbar .btn-toolbar-delete:hover { background: #922b21; }
+    .selection-toolbar .btn-toolbar-edit { background: #fff; color: var(--primary); } .selection-toolbar .btn-toolbar-edit:hover { background: var(--primary-light); }
+    .selection-toolbar .btn-toolbar-copy { background: rgba(255,255,255,.18); color: #fff; border: 1px solid rgba(255,255,255,.4); } .selection-toolbar .btn-toolbar-copy:hover { background: rgba(255,255,255,.3); }
+    .selection-toolbar .btn-toolbar-attach { background: rgba(255,255,255,.18); color: #fff; border: 1px solid rgba(255,255,255,.4); } .selection-toolbar .btn-toolbar-attach:hover { background: rgba(255,255,255,.3); }
+    .selection-toolbar .btn-toolbar-delete { background: var(--danger); color: #fff; } .selection-toolbar .btn-toolbar-delete:hover { background: #922b21; }
     .sel-note { font-size: .8rem; opacity: .75; }
-
     .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
     table.list { width: 100%; border-collapse: collapse; min-width: 780px; }
     table.list thead tr { background: var(--primary-light); }
-    table.list th {
-      padding: 10px 12px; font-size: .82rem; font-weight: 800; color: var(--primary);
-      text-transform: uppercase; letter-spacing: .04em; border-bottom: 2px solid var(--border);
-      white-space: nowrap; text-align: left;
-    }
+    table.list th { padding: 10px 12px; font-size: .82rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: .04em; border-bottom: 2px solid var(--border); white-space: nowrap; text-align: left; }
     table.list th.col-check { width: 40px; text-align: center; }
     table.list td { padding: 9px 12px; font-size: .92rem; border-bottom: 1px solid #f0f2f6; vertical-align: middle; }
     table.list tbody tr:last-child td { border-bottom: none; }
@@ -143,17 +110,9 @@
     table.list td.empty { text-align: center; color: var(--muted); padding: 32px; font-size: .95rem; }
     table.list td.col-check { text-align: center; }
     input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
-
     .countbar { display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
     .kpi { background: var(--primary-light); color: var(--primary); padding: 5px 14px; border-radius: 20px; font-size: .84rem; font-weight: 700; }
 
-    /* ADMIN */
-    .admin-section-title {
-      font-size: .88rem; font-weight: 700; color: var(--primary); margin-top: 18px; margin-bottom: 10px;
-      padding-bottom: 6px; border-bottom: 2px solid var(--border);
-      display: flex; align-items: center; gap: 8px;
-    }
-    .admin-section-title:first-child { margin-top: 0; }
     .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
     .admin-box { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
     .admin-box .head { background: var(--primary-light); padding: 10px 14px; font-weight: 700; color: var(--primary); font-size: .95rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
@@ -166,7 +125,6 @@
     .admin-item .item-role.admin     { background: #dbeafe; color: #1e40af; }
     .admin-item .item-role.professor { background: #fef3c7; color: #92400e; }
     .admin-item .btn-icon { padding: 3px 8px; font-size: .78rem; border-radius: 5px; }
-
     .users-table { width: 100%; border-collapse: collapse; }
     .users-table th { text-align: left; padding: 8px 10px; font-size: .78rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; border-bottom: 2px solid var(--border); }
     .users-table td { padding: 8px 10px; font-size: .91rem; border-bottom: 1px solid #f0f2f6; vertical-align: middle; }
@@ -175,7 +133,6 @@
     .users-table tbody tr.inactive-row { opacity: .48; }
     .users-table .col-actions { text-align: right; white-space: nowrap; }
 
-    /* Backup status badge */
     .backup-status {
       display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;
       border-radius: 14px; font-size: .82rem; font-weight: 600;
@@ -185,33 +142,16 @@
     .backup-status.err    { background: var(--danger-light); color: var(--danger); }
     .backup-status.idle   { background: #f1f3f7; color: var(--muted); }
     .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-    .dot.green  { background: var(--success); }
-    .dot.yellow { background: var(--warning); }
-    .dot.red    { background: var(--danger); }
-    .dot.gray   { background: var(--muted); }
+    .dot.green  { background: var(--success); } .dot.yellow { background: var(--warning); }
+    .dot.red    { background: var(--danger); }  .dot.gray   { background: var(--muted); }
 
-    .toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
-      background: #1a2236; color: #fff; padding: 11px 26px; border-radius: 22px;
-      font-size: .94rem; font-weight: 600; opacity: 0; pointer-events: none;
-      transition: all .28s; z-index: 9999; white-space: nowrap;
-      box-shadow: 0 4px 18px rgba(0,0,0,.22);
-    }
+    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a2236; color: #fff; padding: 11px 26px; border-radius: 22px; font-size: .94rem; font-weight: 600; opacity: 0; pointer-events: none; transition: all .28s; z-index: 9999; white-space: nowrap; box-shadow: 0 4px 18px rgba(0,0,0,.22); }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast.ok   { background: var(--success); }
-    .toast.err  { background: var(--danger); }
-    .toast.warn { background: var(--warning); color: #fff; }
+    .toast.ok   { background: var(--success); } .toast.err { background: var(--danger); } .toast.warn { background: var(--warning); color: #fff; }
 
-    .modal-overlay {
-      display: none; position: fixed; inset: 0; background: rgba(0,0,0,.38);
-      z-index: 2000; align-items: center; justify-content: center; padding: 20px;
-    }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.38); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
     .modal-overlay.open { display: flex; }
-    .modal {
-      background: #fff; border-radius: var(--radius); box-shadow: 0 8px 40px rgba(0,0,0,.18);
-      width: 100%; max-width: 520px; max-height: 90vh; display: flex; flex-direction: column;
-      animation: modalIn .22s ease;
-    }
+    .modal { background: #fff; border-radius: var(--radius); box-shadow: 0 8px 40px rgba(0,0,0,.18); width: 100%; max-width: 520px; max-height: 90vh; display: flex; flex-direction: column; animation: modalIn .22s ease; }
     @keyframes modalIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
     .modal-header { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
     .modal-header h3 { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
@@ -219,11 +159,7 @@
     .modal-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
     .btn-close-modal { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); line-height: 1; padding: 0 4px; }
     .btn-close-modal:hover { color: var(--danger); }
-
-    .spinner {
-      display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3);
-      border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite;
-    }
+    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
     @media (max-width: 700px) {
@@ -232,54 +168,42 @@
       main { padding: 12px 6px 40px; }
       .card-body { padding: 14px 10px; }
       table.list { min-width: 600px; }
+      .header-right { flex-direction: column; gap: 6px; align-items: flex-end; }
     }
   </style>
 </head>
 <body>
 
-<!-- ============ LOGIN OVERLAY ============ -->
+<!-- ═══════════ LOGIN ═══════════ -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
-    <div class="logo-area">
-      <div class="login-icon">🏫</div>
-      <h2 id="loginTitle">Planejamento Athena</h2>
-      <p id="loginSubtitle">Colégio Athena — Supervisão Pedagógica</p>
-    </div>
+    <div class="logo-area"><div class="login-icon">🏫</div><h2 id="loginTitle">Planejamento Athena</h2><p id="loginSubtitle">Colégio Athena — Supervisão Pedagógica</p></div>
     <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
-      <div class="form-group">
-        <label>Usuário</label>
-        <input type="text" id="loginUsername" placeholder="Seu nome de usuário" autocomplete="username" required />
-      </div>
-      <div class="form-group">
-        <label>Senha</label>
-        <input type="password" id="loginPassword" placeholder="Sua senha" autocomplete="current-password" required />
-      </div>
-      <div class="form-group" id="confirmGroup" style="display:none;">
-        <label>Confirmar senha</label>
-        <input type="password" id="loginConfirm" placeholder="Repita a senha" autocomplete="off" />
-      </div>
+      <div class="form-group"><label>Usuário</label><input type="text" id="loginUsername" placeholder="Seu nome de usuário" autocomplete="username" required /></div>
+      <div class="form-group"><label>Senha</label><input type="password" id="loginPassword" placeholder="Sua senha" autocomplete="current-password" required /></div>
+      <div class="form-group" id="confirmGroup" style="display:none;"><label>Confirmar senha</label><input type="password" id="loginConfirm" placeholder="Repita a senha" autocomplete="off" /></div>
       <button type="submit" class="btn btn-primary" id="loginBtn">Entrar</button>
     </form>
+    <div class="login-spinner" id="loginSpinner">🔄 Sincronizando dados do servidor...</div>
     <div class="login-error" id="loginError"></div>
     <div class="login-hint" id="loginHint"></div>
   </div>
 </div>
 
-<!-- ============ APP ============ -->
+<!-- ═══════════ APP ═══════════ -->
 <div id="appWrapper" class="main-hidden">
 
 <header>
-  <div class="header-icon">🏫</div>
-  <div class="header-divider"></div>
-  <div class="header-info">
-    <h1>Supervisão Pedagógica</h1>
-    <p>Planejamento de Aulas — Colégio Athena</p>
-  </div>
-  <div class="header-user">
-    <div class="user-badge" id="userBadge">A</div>
-    <span id="headerUserName">Admin</span>
-    <span style="font-size:.73rem;opacity:.7;" id="headerUserRole"></span>
-    <button class="btn-logout" onclick="doLogout()" title="Sair">⏻</button>
+  <div class="header-icon">🏫</div><div class="header-divider"></div>
+  <div class="header-info"><h1>Supervisão Pedagógica</h1><p>Planejamento de Aulas — Colégio Athena</p></div>
+  <div class="header-right">
+    <div class="sync-indicator offline" id="syncIndicator" title="Status de sincronização">☁️ Offline</div>
+    <div class="header-user">
+      <div class="user-badge" id="userBadge">A</div>
+      <span id="headerUserName">Admin</span>
+      <span style="font-size:.73rem;opacity:.7;" id="headerUserRole"></span>
+      <button class="btn-logout" onclick="doLogout()" title="Sair">⏻</button>
+    </div>
   </div>
 </header>
 
@@ -290,15 +214,10 @@
     <button class="tab-btn"         id="tab-btn-admin"     type="button" onclick="setTab('admin')" style="display:none;">⚙️ Administração</button>
   </div>
 
-  <!-- ═══════════ ABA: NOVO PLANEJAMENTO ═══════════ -->
+  <!-- ═════ ABA: NOVO ═════ -->
   <section id="novo-view">
     <div class="card">
-      <div class="card-header">
-        <div>
-          <h2 id="formTitle">Novo Planejamento</h2>
-          <div class="hint" id="formHint">Preencha os campos e clique em "Salvar".</div>
-        </div>
-      </div>
+      <div class="card-header"><div><h2 id="formTitle">Novo Planejamento</h2><div class="hint" id="formHint">Preencha os campos e clique em "Salvar".</div></div></div>
       <div class="card-body">
         <form id="planForm" novalidate>
           <input type="hidden" id="editingId" value="" />
@@ -309,16 +228,12 @@
             <div class="form-group"><label>Disciplina *</label><select id="disciplinaSel"></select></div>
             <div class="form-group"><label>Período (início)</label><input type="date" id="periodoInicio" /></div>
             <div class="form-group"><label>Período (fim)</label><input type="date" id="periodoFim" /></div>
-            <div class="form-group"><label>Conteúdo</label><input type="text" id="conteudoTxt" placeholder="Digite o conteúdo" autocomplete="off" /></div>
+            <div class="form-group"><label>Conteúdo</label><input type="text" id="conteudoTxt" placeholder="Digite o conteúdo" /></div>
             <div class="form-group full"><label>Objetivos de aprendizagem</label><textarea id="objetivos" placeholder="Descreva os objetivos..."></textarea></div>
             <div class="form-group full"><label>Descrição do planejamento / Metodologia</label><textarea id="descricao" placeholder="Descreva a metodologia..."></textarea></div>
             <div class="form-group"><label>Recursos didáticos</label><input type="text" id="recursos" placeholder="Ex: quadro, projetor..." /></div>
             <div class="form-group"><label>Forma de avaliação</label><input type="text" id="avaliacao" placeholder="Ex: prova, trabalho..." /></div>
-            <div class="form-group full">
-              <label>Anexos</label><input type="file" id="anexos" multiple />
-              <div class="muted">Arquivos salvos localmente no navegador (IndexedDB).</div>
-              <div class="row-inline" id="anexosResumo" style="margin-top:6px;"></div>
-            </div>
+            <div class="form-group full"><label>Anexos</label><input type="file" id="anexos" multiple /><div class="muted">Arquivos armazenados e sincronizados via GitHub.</div><div class="row-inline" id="anexosResumo" style="margin-top:6px;"></div></div>
             <div class="form-group full"><label>Observações / Anotações da supervisão</label><textarea id="observacoes" style="min-height:72px" placeholder="Observações internas..."></textarea></div>
           </div>
           <div class="btn-group">
@@ -330,16 +245,10 @@
     </div>
   </section>
 
-  <!-- ═══════════ ABA: CONSULTAS ═══════════ -->
+  <!-- ═════ ABA: CONSULTAS ═════ -->
   <section id="consultas-view" style="display:none;">
     <div class="card">
-      <div class="card-header">
-        <div>
-          <h2>Consultas</h2>
-          <div class="hint">Selecione um ou mais planejamentos usando os checkboxes para realizar ações.</div>
-        </div>
-        <button class="btn btn-small btn-ghost" onclick="limparFiltros()">Limpar filtros</button>
-      </div>
+      <div class="card-header"><div><h2>Consultas</h2><div class="hint">Selecione um ou mais planejamentos usando os checkboxes.</div></div><button class="btn btn-small btn-ghost" onclick="limparFiltros()">Limpar filtros</button></div>
       <div class="card-body">
         <div class="filters">
           <div class="form-group"><label>Professor(a)</label><select id="fProfessorSel" onchange="renderLista()"><option value="">Todos(as)</option></select></div>
@@ -349,178 +258,64 @@
         </div>
         <div class="selection-toolbar" id="selectionToolbar">
           <span class="sel-count" id="selCount">0 selecionado(s)</span>
-          <button class="btn btn-toolbar-edit"   onclick="acaoEditar()"  title="Editar (somente 1 selecionado)">✏️ Editar</button>
-          <button class="btn btn-toolbar-copy"   onclick="acaoCopiar()"  title="Criar cópia de cada selecionado">📋 Criar cópia</button>
-          <button class="btn btn-toolbar-attach" onclick="acaoAnexos()"  title="Baixar anexos">📎 Baixar anexos</button>
-          <button class="btn btn-toolbar-delete" id="btnToolbarDelete" onclick="acaoExcluir()" title="Excluir selecionados" style="display:none;">🗑️ Excluir</button>
+          <button class="btn btn-toolbar-edit" onclick="acaoEditar()">✏️ Editar</button>
+          <button class="btn btn-toolbar-copy" onclick="acaoCopiar()">📋 Criar cópia</button>
+          <button class="btn btn-toolbar-attach" onclick="acaoAnexos()">📎 Baixar anexos</button>
+          <button class="btn btn-toolbar-delete" id="btnToolbarDelete" onclick="acaoExcluir()" style="display:none;">🗑️ Excluir</button>
           <span class="sel-note" id="selNote"></span>
         </div>
         <div class="table-wrap">
-          <table class="list" aria-label="Lista de planejamentos">
-            <thead>
-              <tr>
-                <th class="col-check"><input type="checkbox" id="checkAll" title="Selecionar todos" onchange="toggleSelectAll(this.checked)" /></th>
-                <th>Lançamento</th><th>Professor(a)</th><th>Turma</th><th>Disciplina</th>
-                <th>Conteúdo</th><th>Período</th><th>Alterado em</th>
-              </tr>
-            </thead>
-            <tbody id="listaBody">
-              <tr><td colspan="8" class="empty">Nenhum planejamento salvo ainda.</td></tr>
-            </tbody>
-          </table>
+          <table class="list"><thead><tr><th class="col-check"><input type="checkbox" id="checkAll" onchange="toggleSelectAll(this.checked)" /></th><th>Lançamento</th><th>Professor(a)</th><th>Turma</th><th>Disciplina</th><th>Conteúdo</th><th>Período</th><th>Alterado em</th></tr></thead>
+            <tbody id="listaBody"><tr><td colspan="8" class="empty">Nenhum planejamento salvo ainda.</td></tr></tbody></table>
         </div>
-        <div class="countbar">
-          <div class="kpi" id="kpiTotal">0 planejamento(s)</div>
-          <div class="kpi" id="kpiFiltrados">0 exibido(s)</div>
-          <div class="kpi" id="kpiSelecionados" style="display:none; background:var(--primary); color:#fff;">0 selecionado(s)</div>
-        </div>
+        <div class="countbar"><div class="kpi" id="kpiTotal">0 planejamento(s)</div><div class="kpi" id="kpiFiltrados">0 exibido(s)</div><div class="kpi" id="kpiSelecionados" style="display:none; background:var(--primary); color:#fff;">0 selecionado(s)</div></div>
       </div>
     </div>
   </section>
 
-  <!-- ═══════════ ABA: ADMINISTRAÇÃO ═══════════ -->
+  <!-- ═════ ABA: ADMIN ═════ -->
   <section id="admin-view" style="display:none;">
-
-    <!-- ── CARD 1: GESTÃO DE USUÁRIOS ── -->
     <div class="card">
-      <div class="card-header">
-        <div>
-          <h2>👥 Gestão de Usuários</h2>
-          <div class="hint">Crie, gerencie perfis e controle o acesso ao sistema. Usuários inativos não conseguem fazer login.</div>
-        </div>
-        <label style="font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;">
-          <input type="checkbox" id="showInactiveUsers" onchange="renderUsers()" /> Mostrar inativos
-        </label>
-      </div>
+      <div class="card-header"><div><h2>👥 Gestão de Usuários</h2><div class="hint">Crie e gerencie perfis de acesso.</div></div><label style="font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="showInactiveUsers" onchange="renderUsers()" /> Mostrar inativos</label></div>
       <div class="card-body">
         <div class="row-inline" style="margin-bottom:16px; background:var(--primary-light); padding:14px 16px; border-radius:8px;">
-          <input type="text" id="newUsername" placeholder="Nome de usuário" style="flex:1; min-width:140px;" />
-          <input type="password" id="newUserPass" placeholder="Senha (mín. 4 caracteres)" style="flex:1; min-width:160px;" />
-          <select id="newUserRole" style="width:130px;">
-            <option value="professor">👨‍🏫 Professor</option>
-            <option value="admin">🛡️ Admin</option>
-          </select>
+          <input type="text" id="newUsername" placeholder="Nome de usuário" style="flex:1;min-width:140px;" />
+          <input type="password" id="newUserPass" placeholder="Senha (mín. 4 caracteres)" style="flex:1;min-width:160px;" />
+          <select id="newUserRole" style="width:130px;"><option value="professor">👨‍🏫 Professor</option><option value="admin">🛡️ Admin</option></select>
           <button class="btn btn-primary" type="button" onclick="addUser()">➕ Criar Usuário</button>
         </div>
-        <div class="table-wrap" style="margin-top:6px;">
-          <table class="users-table">
-            <thead>
-              <tr>
-                <th>Usuário</th>
-                <th>Perfil</th>
-                <th>Status</th>
-                <th>Criado em</th>
-                <th class="col-actions">Ações</th>
-              </tr>
-            </thead>
-            <tbody id="usersTableBody">
-              <tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">Nenhum usuário cadastrado.</td></tr>
-            </tbody>
-          </table>
-        </div>
+        <div class="table-wrap"><table class="users-table"><thead><tr><th>Usuário</th><th>Perfil</th><th>Status</th><th>Criado em</th><th class="col-actions">Ações</th></tr></thead>
+          <tbody id="usersTableBody"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">Nenhum usuário cadastrado.</td></tr></tbody></table></div>
       </div>
     </div>
-
-    <!-- ── CARD 2: CADASTROS AUXILIARES ── -->
     <div class="card">
-      <div class="card-header">
-        <div>
-          <h2>📋 Cadastros Auxiliares</h2>
-          <div class="hint">Gerencie professores, turmas e disciplinas usados nos planejamentos.</div>
-        </div>
-      </div>
+      <div class="card-header"><div><h2>📋 Cadastros Auxiliares</h2><div class="hint">Gerencie professores, turmas e disciplinas.</div></div></div>
       <div class="card-body">
         <div class="split">
-          <div class="admin-box">
-            <div class="head">
-              <span>👨‍🏫 Professores</span>
-              <label style="font-size:.78rem;font-weight:600;cursor:pointer;">
-                <input type="checkbox" id="showInactiveTeachers" onchange="renderTeachers()" /> Inativos
-              </label>
-            </div>
-            <div class="body">
-              <div class="row-inline">
-                <input type="text" id="teacherName" placeholder="Nome do(a) professor(a)" style="flex:1;" />
-                <button class="btn btn-small btn-primary" type="button" onclick="addTeacher()">+ Adicionar</button>
-              </div>
-              <div class="admin-list" id="teachersList"></div>
-            </div>
-          </div>
-          <div class="admin-box">
-            <div class="head">
-              <span>📚 Turmas</span>
-              <label style="font-size:.78rem;font-weight:600;cursor:pointer;">
-                <input type="checkbox" id="showInactiveClasses" onchange="renderClasses()" /> Inativos
-              </label>
-            </div>
-            <div class="body">
-              <div class="row-inline">
-                <input type="text" id="className" placeholder="Ex: 3º Ano B — EM" style="flex:1;" />
-                <button class="btn btn-small btn-primary" type="button" onclick="addClass()">+ Adicionar</button>
-              </div>
-              <div class="admin-list" id="classesList"></div>
-            </div>
-          </div>
-          <div class="admin-box">
-            <div class="head">
-              <span>📖 Disciplinas</span>
-              <label style="font-size:.78rem;font-weight:600;cursor:pointer;">
-                <input type="checkbox" id="showInactiveSubjects" onchange="renderSubjects()" /> Inativos
-              </label>
-            </div>
-            <div class="body">
-              <div class="row-inline">
-                <input type="text" id="subjectName" placeholder="Ex: Matemática" style="flex:1;" />
-                <button class="btn btn-small btn-primary" type="button" onclick="addSubject()">+ Adicionar</button>
-              </div>
-              <div class="admin-list" id="subjectsList"></div>
-            </div>
-          </div>
+          <div class="admin-box"><div class="head"><span>👨‍🏫 Professores</span><label style="font-size:.78rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="showInactiveTeachers" onchange="renderTeachers()" /> Inativos</label></div><div class="body"><div class="row-inline"><input type="text" id="teacherName" placeholder="Nome do(a) professor(a)" style="flex:1;" /><button class="btn btn-small btn-primary" type="button" onclick="addTeacher()">+</button></div><div class="admin-list" id="teachersList"></div></div></div>
+          <div class="admin-box"><div class="head"><span>📚 Turmas</span><label style="font-size:.78rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="showInactiveClasses" onchange="renderClasses()" /> Inativos</label></div><div class="body"><div class="row-inline"><input type="text" id="className" placeholder="Ex: 3º Ano B — EM" style="flex:1;" /><button class="btn btn-small btn-primary" type="button" onclick="addClass()">+</button></div><div class="admin-list" id="classesList"></div></div></div>
+          <div class="admin-box"><div class="head"><span>📖 Disciplinas</span><label style="font-size:.78rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="showInactiveSubjects" onchange="renderSubjects()" /> Inativos</label></div><div class="body"><div class="row-inline"><input type="text" id="subjectName" placeholder="Ex: Matemática" style="flex:1;" /><button class="btn btn-small btn-primary" type="button" onclick="addSubject()">+</button></div><div class="admin-list" id="subjectsList"></div></div></div>
         </div>
       </div>
     </div>
-
-    <!-- ── CARD 3: BACKUP NO GITHUB ── -->
+    <!-- ── CARD: GITHUB / SINCRONIZAÇÃO ── -->
     <div class="card">
-      <div class="card-header">
-        <div>
-          <h2>☁️ Backup no GitHub</h2>
-          <div class="hint">Configure o repositório GitHub para salvar backups automaticamente na pasta <code>Backup/</code> do repositório. O backup automático é disparado após cada salvamento. Use o botão abaixo para backup manual.</div>
-        </div>
-        <div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Não configurado</div>
-      </div>
+      <div class="card-header"><div><h2>☁️ Sincronização via GitHub</h2><div class="hint">Configure o repositório para compartilhar dados entre todos os usuários em tempo real. Os dados são salvos na pasta <code>data/</code> do repositório.</div></div><div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Não configurado</div></div>
       <div class="card-body">
         <div class="grid-2">
-          <div class="form-group">
-            <label>Token de Acesso (GitHub)</label>
-            <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" />
-            <div class="muted">
-              ⚠️ Crie em: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic).
-              Escopo necessário: <strong>repo</strong> (repositório privado) ou <strong>public_repo</strong> (público).
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Dono do Repositório (owner)</label>
-            <input type="text" id="ghOwner" placeholder="Ex: meu-usuario" autocomplete="off" />
-          </div>
-          <div class="form-group">
-            <label>Nome do Repositório</label>
-            <input type="text" id="ghRepo" placeholder="Ex: athena-planejamento" autocomplete="off" />
-          </div>
-          <div class="form-group">
-            <label>Branch</label>
-            <input type="text" id="ghBranch" placeholder="main" value="main" autocomplete="off" />
-          </div>
+          <div class="form-group"><label>Token de Acesso (GitHub)</label><input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off" /><div class="muted">Escopo necessário: <strong>repo</strong> ou <strong>public_repo</strong>.</div></div>
+          <div class="form-group"><label>Dono do Repositório (owner)</label><input type="text" id="ghOwner" placeholder="Ex: meu-usuario" autocomplete="off" /></div>
+          <div class="form-group"><label>Nome do Repositório</label><input type="text" id="ghRepo" placeholder="Ex: athena-planejamento" autocomplete="off" /></div>
+          <div class="form-group"><label>Branch</label><input type="text" id="ghBranch" placeholder="main" value="main" autocomplete="off" /></div>
         </div>
         <div class="row-inline" style="margin-top:14px; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-primary" onclick="saveGithubConfig()">💾 Salvar Configurações</button>
           <button class="btn btn-ghost" id="btnTestGh" onclick="testGithubConnection()">🔍 Testar Conexão</button>
-          <button class="btn btn-success" id="btnManualBackup" onclick="manualBackupToGithub()">📤 Backup Manual Agora</button>
+          <button class="btn btn-success" id="btnSyncNow" onclick="syncNow()">🔄 Sincronizar Agora</button>
+          <button class="btn btn-warning" id="btnForcePush" onclick="forcePushAll()">📤 Forçar Push Completo</button>
         </div>
         <div style="margin-top:12px; font-size:.82rem; color:var(--muted);" id="ghLastBackup"></div>
-        <div class="muted" style="margin-top:8px;">
-          📁 Os backups serão salvos na pasta <code>Backup/</code> do repositório. O backup automático sobrescreve <code>backup-athena-latest.json</code>. O backup manual gera um arquivo com data/hora.
-        </div>
+        <div class="muted" style="margin-top:8px;">📁 Dados compartilhados via <code>data/plans.json</code>, <code>data/users.json</code>, <code>data/teachers.json</code>, <code>data/classes.json</code>, <code>data/subjects.json</code> e <code>data/attachments.json</code>.</div>
       </div>
     </div>
   </section>
@@ -528,970 +323,539 @@
 </div>
 
 <div class="toast" id="toast"></div>
-
-<!-- MODAL CONFIRMAÇÃO -->
 <div class="modal-overlay" id="modalConfirm">
   <div class="modal" style="max-width:420px;">
-    <div class="modal-header">
-      <h3 id="modalConfirmTitle">Confirmar</h3>
-      <button class="btn-close-modal" onclick="closeModal('modalConfirm')">×</button>
-    </div>
+    <div class="modal-header"><h3 id="modalConfirmTitle">Confirmar</h3><button class="btn-close-modal" onclick="closeModal('modalConfirm')">×</button></div>
     <div class="modal-body"><p id="modalConfirmMsg" style="line-height:1.6;"></p></div>
-    <div class="modal-footer">
-      <button class="btn btn-ghost" onclick="closeModal('modalConfirm')">Cancelar</button>
-      <button class="btn btn-danger" id="modalConfirmBtn">Confirmar</button>
-    </div>
+    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalConfirm')">Cancelar</button><button class="btn btn-danger" id="modalConfirmBtn">Confirmar</button></div>
   </div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  CONSTANTES
-// ═══════════════════════════════════════════════════════
-const DB_NAME = 'athenaDB', DB_VERSION = 6;
-const S_PLANS = 'plans', S_ATTS = 'attachments', S_TEACHERS = 'teachers';
-const S_CLASSES = 'classes', S_SUBJECTS = 'subjects', S_USERS = 'users';
-const S_SETTINGS = 'settings';
-const SESSION_KEY = 'athena_session';
+// ══════════════════════════════════════════════
+const DB_NAME='athenaDB', DB_VERSION=8;
+const S_PLANS='plans', S_ATTS='attachments', S_TEACHERS='teachers', S_CLASSES='classes', S_SUBJECTS='subjects', S_USERS='users', S_SETTINGS='settings';
+const S_SYNC='_syncMeta';
+const SESSION_KEY='athena_session';
+const GH_STORES = [S_USERS, S_PLANS, S_TEACHERS, S_CLASSES, S_SUBJECTS, S_ATTS];
+const SYNC_DEBOUNCE_MS = 2500;
+const SYNC_POLL_INTERVAL = 120000;
 
-let _db = null;
-let _session = null;
+let _db=null, _session=null, _pushTimers={}, _dirtyStores=new Set(), _syncLoopId=null;
 
-// ═══════════════════════════════════════════════════════
-//  HASH SHA-256
-// ═══════════════════════════════════════════════════════
-async function sha256(text) {
-  const enc = new TextEncoder();
-  const buf = await crypto.subtle.digest('SHA-256', enc.encode(text));
-  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
+// ══════════════════════════════════════════════
+//  CRYPTO
+// ══════════════════════════════════════════════
+async function sha256(t){const e=new TextEncoder(),b=await crypto.subtle.digest('SHA-256',e.encode(t));return Array.from(new Uint8Array(b)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
+function now(){return new Date().toISOString();}
 
-// ═══════════════════════════════════════════════════════
-//  INDEXEDDB
-// ═══════════════════════════════════════════════════════
-function openDB() {
-  if (_db) return Promise.resolve(_db);
-  return new Promise((res, rej) => {
-    const req = indexedDB.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(S_PLANS)) {
-        const os = db.createObjectStore(S_PLANS, { keyPath: 'id' });
-        os.createIndex('teacherId','teacherId',{unique:false});
-        os.createIndex('classId','classId',{unique:false});
-        os.createIndex('subjectId','subjectId',{unique:false});
-        os.createIndex('dataLancamento','dataLancamento',{unique:false});
-        os.createIndex('userId','userId',{unique:false});
-      }
-      if (!db.objectStoreNames.contains(S_ATTS)) {
-        const oa = db.createObjectStore(S_ATTS, { keyPath: 'key' });
-        oa.createIndex('byPlan','planId',{unique:false});
-      }
-      [S_TEACHERS,S_CLASSES,S_SUBJECTS,S_USERS].forEach(name => {
-        if (!db.objectStoreNames.contains(name)) {
-          const s = db.createObjectStore(name, { keyPath: 'id' });
-          s.createIndex('name',   'name',   {unique:false});
-          s.createIndex('active', 'active', {unique:false});
-          if (name === S_USERS) s.createIndex('username','username',{unique:false});
-        }
-      });
-      if (!db.objectStoreNames.contains(S_SETTINGS)) {
-        db.createObjectStore(S_SETTINGS, { keyPath: 'key' });
-      }
-    };
-    req.onsuccess = () => { _db = req.result; res(_db); };
-    req.onerror   = () => rej(req.error);
-  });
-}
-function dbTx(store,mode,fn) {
-  return openDB().then(db => new Promise((res,rej) => {
-    const tx = db.transaction(store,mode);
-    const r  = fn(tx.objectStore(store));
-    r.onsuccess = () => res(r.result);
-    r.onerror   = () => rej(r.error);
-  }));
-}
-function dbGetAll(store) {
-  return openDB().then(db => new Promise((res,rej) => {
-    const r = db.transaction(store,'readonly').objectStore(store).getAll();
-    r.onsuccess = () => res(r.result);
-    r.onerror   = () => rej(r.error);
-  }));
-}
-function dbPut(store,obj)    { return dbTx(store,'readwrite',s => s.put(obj)); }
-function dbDelete(store,key) { return dbTx(store,'readwrite',s => s.delete(key)); }
-function dbGet(store,key)    { return dbTx(store,'readonly',  s => s.get(key)); }
-function uid() { return Date.now().toString(36)+Math.random().toString(36).slice(2,7); }
-function now() { return new Date().toISOString(); }
+// ══════════════════════════════════════════════
+//  INDEXEDDB (camada local)
+// ══════════════════════════════════════════════
+function openDB(){if(_db)return Promise.resolve(_db);return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onupgradeneeded=()=>{const d=r.result;[S_PLANS,S_ATTS,S_TEACHERS,S_CLASSES,S_SUBJECTS,S_USERS,S_SETTINGS,S_SYNC].forEach(n=>{if(!d.objectStoreNames.contains(n)){const s=d.createObjectStore(n,{keyPath:n===S_SETTINGS||n===S_SYNC?'key':'id'});if(n===S_PLANS){s.createIndex('teacherId','teacherId');s.createIndex('classId','classId');s.createIndex('subjectId','subjectId');s.createIndex('userId','userId');}if(n===S_USERS)s.createIndex('username','username');if(n===S_ATTS)s.createIndex('byPlan','planId');}});};r.onsuccess=()=>{_db=r.result;res(_db);};r.onerror=()=>rej(r.error);});}
+function dbTx(store,mode,fn){return openDB().then(db=>new Promise((res,rej)=>{const tx=db.transaction(store,mode);const r=fn(tx.objectStore(store));r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}));}
+function dbGetAll(store){return openDB().then(db=>new Promise((res,rej)=>{const r=db.transaction(store,'readonly').objectStore(store).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}));}
+function dbPut(store,obj){return dbTx(store,'readwrite',s=>s.put(obj));}
+function dbDelete(store,key){return dbTx(store,'readwrite',s=>s.delete(key));}
+function dbGet(store,key){return dbTx(store,'readonly',s=>s.get(key));}
+function dbClear(store){return openDB().then(db=>new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).clear();r.onsuccess=()=>res();r.onerror=()=>rej(r.error);}));}
+async function getSetting(key,dflt=null){try{const r=await dbGet(S_SETTINGS,key);return r?r.value:dflt;}catch{return dflt;}}
+async function setSetting(key,value){await dbPut(S_SETTINGS,{key,value,updatedAt:now()});}
 
-// ═══════════════════════════════════════════════════════
-//  SETTINGS (IndexedDB)
-// ═══════════════════════════════════════════════════════
-async function getSetting(key, defaultVal = null) {
-  try { const r = await dbGet(S_SETTINGS, key); return r ? r.value : defaultVal; }
-  catch { return defaultVal; }
-}
-async function setSetting(key, value) {
-  await dbPut(S_SETTINGS, { key, value, updatedAt: now() });
-}
-
-// ═══════════════════════════════════════════════════════
+// ══════════════════════════════════════════════
 //  SESSÃO
-// ═══════════════════════════════════════════════════════
-function saveSession(s)   { _session = s; sessionStorage.setItem(SESSION_KEY, JSON.stringify(s)); }
-function loadSession()    { try { const r = sessionStorage.getItem(SESSION_KEY); if(r){ _session=JSON.parse(r); return _session; } } catch{} _session=null; return null; }
-function clearSession()   { _session=null; sessionStorage.removeItem(SESSION_KEY); }
-function isAdmin()        { return _session && _session.role === 'admin'; }
-function currentUserId()  { return _session ? _session.userId : null; }
+// ══════════════════════════════════════════════
+function saveSession(s){_session=s;sessionStorage.setItem(SESSION_KEY,JSON.stringify(s));}
+function loadSession(){try{const r=sessionStorage.getItem(SESSION_KEY);if(r){_session=JSON.parse(r);return _session;}}catch{}_session=null;return null;}
+function clearSession(){_session=null;sessionStorage.removeItem(SESSION_KEY);}
+function isAdmin(){return _session&&_session.role==='admin';}
+function currentUserId(){return _session?_session.userId:null;}
 
-function updateHeaderUI() {
-  if (!_session) return;
-  document.getElementById('headerUserName').textContent = _session.username;
-  document.getElementById('headerUserRole').textContent = isAdmin() ? '(Admin)' : '(Professor)';
-  document.getElementById('userBadge').textContent = (_session.username[0]||'A').toUpperCase();
-  const adminTab = document.getElementById('tab-btn-admin');
-  if (adminTab) adminTab.style.display = isAdmin() ? '' : 'none';
-  const btnDel = document.getElementById('btnToolbarDelete');
-  if (btnDel) btnDel.style.display = isAdmin() ? '' : 'none';
+// ══════════════════════════════════════════════
+//  GITHUB SYNC ENGINE
+// ══════════════════════════════════════════════
+async function ghGetConfig(){
+  const token=await getSetting('github_token',''),owner=await getSetting('github_owner','');
+  const repo=await getSetting('github_repo',''),branch=await getSetting('github_branch','main');
+  return {token,owner,repo,branch,ok:!!(token&&owner&&repo)};
+}
+function ghAuthHeaders(token){return {Authorization:`Bearer ${token}`,Accept:'application/vnd.github.v3+json'};}
+function ghPath(store){return `data/${store}.json`;}
+function toB64(str){const b=new TextEncoder().encode(str);return btoa(Array.from(b,c=>String.fromCodePoint(c)).join(''));}
+function fromB64(b64){const bin=atob(b64);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));return new TextDecoder().decode(bytes);}
+
+async function ghApiGet(config,path){
+  const url=`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}?ref=${config.branch}`;
+  const resp=await fetch(url,{headers:ghAuthHeaders(config.token)});
+  if(resp.status===404)return null;
+  if(!resp.ok)throw new Error(`GH GET ${path}: ${resp.status} ${(await resp.json().catch(()=>({}))).message||''}`);
+  return resp.json();
 }
 
-// ═══════════════════════════════════════════════════════
-//  LOGIN / PRIMEIRO ACESSO
-// ═══════════════════════════════════════════════════════
-async function checkFirstAccess() { return (await dbGetAll(S_USERS)).length === 0; }
-
-async function setupLoginUI() {
-  const isFirst = await checkFirstAccess();
-  document.getElementById('loginTitle').textContent     = isFirst ? '🔐 Primeiro Acesso' : 'Planejamento Athena';
-  document.getElementById('loginSubtitle').textContent  = isFirst ? 'Nenhum usuário cadastrado. Crie o administrador do sistema.' : 'Colégio Athena — Supervisão Pedagógica';
-  document.getElementById('loginBtn').textContent       = isFirst ? 'Criar Administrador' : 'Entrar';
-  document.getElementById('loginHint').textContent      = isFirst ? 'Esta conta terá acesso total. Guarde as credenciais em local seguro.' : '';
-  document.getElementById('confirmGroup').style.display = isFirst ? '' : 'none';
-  document.getElementById('loginError').textContent     = '';
+async function ghApiPut(config,path,content,sha,message){
+  const url=`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}`;
+  const body={message:message||`Atualização: ${path}`,content:toB64(content),branch:config.branch};
+  if(sha)body.sha=sha;
+  const resp=await fetch(url,{method:'PUT',headers:{...ghAuthHeaders(config.token),'Content-Type':'application/json'},body:JSON.stringify(body)});
+  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(`GH PUT ${path}: ${resp.status} ${e.message||''}`);}
+  return resp.json();
 }
 
-async function handleLogin(e) {
-  e.preventDefault();
-  const username = document.getElementById('loginUsername').value.trim();
-  const password = document.getElementById('loginPassword').value;
-  const errorEl  = document.getElementById('loginError');
-  errorEl.textContent = '';
-  if (!username || !password) { errorEl.textContent = 'Preencha usuário e senha.'; return; }
-
-  const isFirst = await checkFirstAccess();
-  if (isFirst) {
-    const confirm = document.getElementById('loginConfirm').value;
-    if (password !== confirm) { errorEl.textContent = 'As senhas não coincidem.'; return; }
-    if (password.length < 4)  { errorEl.textContent = 'A senha deve ter pelo menos 4 caracteres.'; return; }
-    const hash = await sha256(password);
-    const user = { id: uid(), username, passwordHash: hash, role: 'admin', active: true, createdAt: now(), updatedAt: now() };
-    await dbPut(S_USERS, user);
-    saveSession({ userId: user.id, username: user.username, role: user.role });
-    enterApp();
-    toast('✅ Administrador criado com sucesso! Bem-vindo(a).', 'ok', 4000);
-    return;
-  }
-
-  const users = await dbGetAll(S_USERS);
-  const found = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-  if (!found)  { errorEl.textContent = 'Usuário não encontrado.'; return; }
-  if (!found.active) { errorEl.textContent = 'Este usuário está inativo. Contate o administrador.'; return; }
-  const hash = await sha256(password);
-  if (hash !== found.passwordHash) { errorEl.textContent = 'Senha incorreta.'; return; }
-  saveSession({ userId: found.id, username: found.username, role: found.role });
-  enterApp();
-  toast(`👋 Bem-vindo(a), ${found.username}!`, 'ok', 3000);
+// Pull: GitHub → IndexedDB
+async function ghPullStore(storeName){
+  const config=await ghGetConfig();
+  if(!config.ok)return false;
+  const file=await ghApiGet(config,ghPath(storeName));
+  if(!file||!file.content)return false;
+  const json=fromB64(file.content);
+  const data=JSON.parse(json);
+  const items=Array.isArray(data)?data:(storeName===S_SETTINGS?[data]:[]);
+  await dbClear(storeName);
+  for(const item of items)await dbPut(storeName,item);
+  await dbPut(S_SYNC,{key:`sha_${storeName}`,sha:file.sha,updatedAt:now()});
+  return true;
 }
 
-function enterApp() {
-  document.getElementById('loginOverlay').classList.add('hidden');
-  document.getElementById('appWrapper').classList.remove('main-hidden');
-  updateHeaderUI();
-  setTab('novo');
-  loadGithubConfigIntoForm();
-}
+// Push: IndexedDB → GitHub
+async function ghPushStore(storeName,retries=3){
+  const config=await ghGetConfig();
+  if(!config.ok)return false;
+  let items=await dbGetAll(storeName);
+  const payload=JSON.stringify(items,null,2);
+  const meta=await dbGet(S_SYNC,`sha_${storeName}`);
+  let sha=meta?meta.sha:null;
 
-function doLogout() {
-  clearSession();
-  document.getElementById('loginOverlay').classList.remove('hidden');
-  document.getElementById('appWrapper').classList.add('main-hidden');
-  ['loginUsername','loginPassword','loginConfirm'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('loginError').textContent = '';
-  setupLoginUI();
-}
-
-// ═══════════════════════════════════════════════════════
-//  TOAST
-// ═══════════════════════════════════════════════════════
-let _toastTimer = null;
-function toast(msg, type='ok', dur=3000) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.className = `toast show ${type}`;
-  clearTimeout(_toastTimer); _toastTimer = setTimeout(() => el.className='toast', dur);
-}
-
-// ═══════════════════════════════════════════════════════
-//  MODAL
-// ═══════════════════════════════════════════════════════
-function openModal(id)   { document.getElementById(id).classList.add('open'); }
-function closeModal(id)  { document.getElementById(id).classList.remove('open'); }
-function confirmDialog(title, msg, onConfirm) {
-  document.getElementById('modalConfirmTitle').textContent = title;
-  document.getElementById('modalConfirmMsg').textContent   = msg;
-  document.getElementById('modalConfirmBtn').onclick       = () => { closeModal('modalConfirm'); onConfirm(); };
-  openModal('modalConfirm');
-}
-
-// ═══════════════════════════════════════════════════════
-//  TABS
-// ═══════════════════════════════════════════════════════
-function setTab(tab) {
-  if (tab === 'admin' && !isAdmin()) {
-    toast('Acesso restrito a administradores.', 'err');
-    return;
-  }
-  ['novo','consultas','admin'].forEach(t => {
-    document.getElementById(`${t}-view`).style.display = t===tab ? 'block':'none';
-    const btn = document.getElementById(`tab-btn-${t}`);
-    if (btn) btn.classList.toggle('active', t===tab);
-  });
-  if (tab === 'novo')      { limparForm(true); carregarSelects(); }
-  if (tab === 'consultas') { refreshConsultaFilters().then(renderLista); }
-  if (tab === 'admin')     { renderUsers(); renderTeachers(); renderClasses(); renderSubjects(); loadGithubConfigIntoForm(); updateBackupStatus(); }
-  window.scrollTo({ top:0, behavior:'smooth' });
-}
-
-// ═══════════════════════════════════════════════════════
-//  SELECTS DO FORMULÁRIO
-// ═══════════════════════════════════════════════════════
-async function carregarSelects() {
-  const [teachers, classes, subjects] = await Promise.all([
-    dbGetAll(S_TEACHERS), dbGetAll(S_CLASSES), dbGetAll(S_SUBJECTS)
-  ]);
-  fillSelect('professorSel', teachers.filter(t=>t.active).sort((a,b)=>a.name.localeCompare(b.name)));
-  fillSelect('turmaSel',     classes.filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name)));
-  fillSelect('disciplinaSel',subjects.filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name)));
-}
-function fillSelect(id, items) {
-  const sel = document.getElementById(id), cur = sel.value;
-  sel.innerHTML = '<option value="">— Selecione —</option>';
-  items.forEach(i => { const o=document.createElement('option'); o.value=i.id; o.textContent=i.name; sel.appendChild(o); });
-  if (cur) sel.value = cur;
-}
-
-// ═══════════════════════════════════════════════════════
-//  FORMULÁRIO
-// ═══════════════════════════════════════════════════════
-function limparForm(resetId=false) {
-  if (resetId) document.getElementById('editingId').value = '';
-  ['professorSel','turmaSel','disciplinaSel'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  ['dataLancamento','periodoInicio','periodoFim','conteudoTxt','objetivos','descricao','recursos','avaliacao','observacoes'].forEach(id => {
-    const el=document.getElementById(id); if(el) el.value='';
-  });
-  document.getElementById('anexos').value = '';
-  document.getElementById('anexosResumo').innerHTML = '';
-  document.getElementById('formTitle').textContent = 'Novo Planejamento';
-  document.getElementById('formHint').textContent  = 'Preencha os campos e clique em "Salvar".';
-  document.getElementById('btnSalvar').textContent = '💾 Salvar planejamento';
-}
-
-async function salvarPlanejamento() {
-  const teacherId = document.getElementById('professorSel').value;
-  const classId   = document.getElementById('turmaSel').value;
-  const subjectId = document.getElementById('disciplinaSel').value;
-  const dataLanc  = document.getElementById('dataLancamento').value;
-  if (!teacherId || !classId || !subjectId || !dataLanc) {
-    toast('Preencha os campos obrigatórios: Professor, Turma, Disciplina e Data.', 'err'); return;
-  }
-  const [teachers, classes, subjects] = await Promise.all([
-    dbGetAll(S_TEACHERS), dbGetAll(S_CLASSES), dbGetAll(S_SUBJECTS)
-  ]);
-  const tName = (teachers.find(t=>t.id===teacherId)||{}).name||'';
-  const cName = (classes.find(c=>c.id===classId)||{}).name||'';
-  const sName = (subjects.find(s=>s.id===subjectId)||{}).name||'';
-  const editingId = document.getElementById('editingId').value;
-  const id = editingId || uid();
-  const existing = editingId ? await dbGet(S_PLANS, editingId) : null;
-  if (existing && existing.userId !== currentUserId() && !isAdmin()) {
-    toast('Você não tem permissão para editar este planejamento.', 'err'); return;
-  }
-  const plan = {
-    id, userId: existing ? existing.userId : currentUserId(),
-    teacherId, teacherName: tName, classId, className: cName, subjectId, subjectName: sName,
-    dataLancamento: dataLanc,
-    periodoInicio: document.getElementById('periodoInicio').value,
-    periodoFim:    document.getElementById('periodoFim').value,
-    contentName:   document.getElementById('conteudoTxt').value.trim(),
-    objetivos:     document.getElementById('objetivos').value.trim(),
-    descricao:     document.getElementById('descricao').value.trim(),
-    recursos:      document.getElementById('recursos').value.trim(),
-    avaliacao:     document.getElementById('avaliacao').value.trim(),
-    observacoes:   document.getElementById('observacoes').value.trim(),
-    createdAt: existing ? existing.createdAt : now(),
-    updatedAt: now(),
-  };
-  await dbPut(S_PLANS, plan);
-  const filesInput = document.getElementById('anexos');
-  if (filesInput.files.length > 0) {
-    for (const file of filesInput.files) {
-      const key = `${id}__${uid()}__${file.name}`;
-      await dbPut(S_ATTS, { key, planId: id, name: file.name, type: file.type, data: await file.arrayBuffer() });
+  for(let attempt=1;attempt<=retries;attempt++){
+    try{
+      const result=await ghApiPut(config,ghPath(storeName),payload,sha,`🔄 Sync ${storeName} — ${new Date().toLocaleString('pt-BR')}`);
+      await dbPut(S_SYNC,{key:`sha_${storeName}`,sha:result.content.sha,updatedAt:now()});
+      return true;
+    }catch(e){
+      if(attempt===retries)throw e;
+      if(e.message.includes('409')||e.message.includes('conflict')){
+        const file=await ghApiGet(config,ghPath(storeName));
+        if(file&&file.content){const remote=JSON.parse(fromB64(file.content));sha=file.sha;items=mergeArrays(items,remote);}
+        await new Promise(r=>setTimeout(r,500*attempt));
+      }else{throw e;}
     }
   }
-  toast(editingId ? '✅ Planejamento atualizado!' : '✅ Planejamento salvo!', 'ok');
-  limparForm(true);
+  return false;
 }
 
-// ═══════════════════════════════════════════════════════
-//  CONSULTAS
-// ═══════════════════════════════════════════════════════
-async function refreshConsultaFilters() {
-  const [teachers, classes, subjects, allPlans] = await Promise.all([
-    dbGetAll(S_TEACHERS), dbGetAll(S_CLASSES), dbGetAll(S_SUBJECTS), dbGetAll(S_PLANS)
-  ]);
-  const sorted = (arr) => arr.sort((a,b)=>a.name.localeCompare(b.name));
-  populateFilter('fProfessorSel', sorted(teachers));
-  populateFilter('fTurmaSel',     sorted(classes));
-  populateFilter('fDisciplinaSel',sorted(subjects));
-  const yearsSet = new Set();
-  allPlans.forEach(p => { const y=(p.dataLancamento||'').slice(0,4); if(/^\d{4}$/.test(y)) yearsSet.add(y); });
-  const fAno=document.getElementById('fAnoSel'), curAno=fAno.value;
-  fAno.innerHTML='<option value="">Todos</option>';
-  Array.from(yearsSet).sort((a,b)=>b.localeCompare(a)).forEach(y=>{
-    const o=document.createElement('option'); o.value=y; o.textContent=y; fAno.appendChild(o);
-  });
-  if (curAno) fAno.value=curAno;
+function mergeArrays(local,remote){
+  const map=new Map();
+  for(const item of remote)map.set(item.id||item.key,item);
+  for(const item of local){const k=item.id||item.key;if(!map.has(k)||(item.updatedAt&&(!map.get(k).updatedAt||item.updatedAt>=map.get(k).updatedAt)))map.set(k,item);}
+  return Array.from(map.values());
 }
-function populateFilter(id, items) {
-  const sel=document.getElementById(id), cur=sel.value;
-  sel.innerHTML='<option value="">Todos(as)</option>';
-  items.forEach(i=>{ const o=document.createElement('option'); o.value=i.id; o.textContent=i.name+(i.active===false?' (inativo)':''); sel.appendChild(o); });
-  if (cur) sel.value=cur;
-}
-function limparFiltros() { ['fProfessorSel','fTurmaSel','fDisciplinaSel','fAnoSel'].forEach(id=>document.getElementById(id).value=''); renderLista(); }
 
-let _currentFiltered = [];
-async function renderLista() {
-  const allPlans = await dbGetAll(S_PLANS);
-  let plans = isAdmin() ? allPlans : allPlans.filter(p => p.userId === currentUserId());
-  const f = {
-    teacherId: document.getElementById('fProfessorSel').value,
-    classId:   document.getElementById('fTurmaSel').value,
-    subjectId: document.getElementById('fDisciplinaSel').value,
-    year:      document.getElementById('fAnoSel').value,
-  };
-  _currentFiltered = plans.filter(p => {
-    if (f.teacherId && p.teacherId !== f.teacherId) return false;
-    if (f.classId   && p.classId   !== f.classId)   return false;
-    if (f.subjectId && p.subjectId !== f.subjectId) return false;
-    if (f.year      && (p.dataLancamento||'').slice(0,4) !== f.year) return false;
+async function ghPullAll(showToast=true){
+  const config=await ghGetConfig();
+  if(!config.ok)return false;
+  setSyncUI('syncing','Sincronizando...');
+  try{
+    for(const store of GH_STORES)await ghPullStore(store);
+    await setSetting('github_last_sync',now());
+    setSyncUI('synced','Sincronizado');
+    if(showToast)toast('☁️ Dados sincronizados do GitHub!','ok',3000);
     return true;
-  }).sort((a,b) => (b.dataLancamento||'').localeCompare(a.dataLancamento||''));
-  document.getElementById('kpiTotal').textContent     = `${plans.length} planejamento(s)`;
-  document.getElementById('kpiFiltrados').textContent = `${_currentFiltered.length} exibido(s)`;
-  const tbody = document.getElementById('listaBody'); tbody.innerHTML = '';
-  if (_currentFiltered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty">Nenhum resultado para os filtros selecionados.</td></tr>';
-    document.getElementById('checkAll').checked = false; updateToolbar(); return;
-  }
-  _currentFiltered.forEach(p => {
-    const periodo = (p.periodoInicio && p.periodoFim) ? `${fmtDate(p.periodoInicio)} a ${fmtDate(p.periodoFim)}`
-      : (p.periodoInicio ? `A partir de ${fmtDate(p.periodoInicio)}` : '—');
-    const tr = document.createElement('tr'); tr.dataset.id = p.id;
-    tr.innerHTML = `
-      <td class="col-check"><input type="checkbox" class="row-check" data-id="${p.id}" onchange="onRowCheck()" /></td>
-      <td>${fmtDate(p.dataLancamento)}</td><td>${esc(p.teacherName)}</td><td>${esc(p.className)}</td>
-      <td>${esc(p.subjectName)}</td><td>${esc(p.contentName||'—')}</td>
-      <td style="white-space:nowrap;">${periodo}</td>
-      <td style="white-space:nowrap;font-size:.83rem;color:var(--muted);">${fmtDateTime(p.updatedAt)}</td>
-    `;
-    tr.addEventListener('click', e => { if(e.target.type==='checkbox') return; const cb=tr.querySelector('.row-check'); cb.checked=!cb.checked; onRowCheck(); });
-    tbody.appendChild(tr);
-  });
-  document.getElementById('checkAll').checked = false;
-  updateToolbar();
-}
-
-// ═══════════════════════════════════════════════════════
-//  SELEÇÃO
-// ═══════════════════════════════════════════════════════
-function getSelectedIds() { return Array.from(document.querySelectorAll('.row-check:checked')).map(cb=>cb.dataset.id); }
-function toggleSelectAll(checked) {
-  document.querySelectorAll('.row-check').forEach(cb=>cb.checked=checked);
-  document.querySelectorAll('#listaBody tr[data-id]').forEach(tr=>tr.classList.toggle('row-selected',checked));
-  updateToolbar();
-}
-function onRowCheck() {
-  const all=document.querySelectorAll('.row-check'), chk=document.querySelectorAll('.row-check:checked');
-  document.getElementById('checkAll').checked = all.length>0 && chk.length===all.length;
-  document.getElementById('checkAll').indeterminate = chk.length>0 && chk.length<all.length;
-  all.forEach(cb=>{ const tr=cb.closest('tr'); if(tr) tr.classList.toggle('row-selected',cb.checked); });
-  updateToolbar();
-}
-function updateToolbar() {
-  const ids=getSelectedIds(), n=ids.length;
-  document.getElementById('selectionToolbar').classList.toggle('visible',n>0);
-  document.getElementById('selCount').textContent=`${n} selecionado(s)`;
-  document.getElementById('selNote').textContent = n>1 ? '✏️ Editar disponível apenas para 1 selecionado':'';
-  const kpiSel=document.getElementById('kpiSelecionados');
-  if (n>0) { kpiSel.style.display=''; kpiSel.textContent=`${n} selecionado(s)`; }
-  else     { kpiSel.style.display='none'; }
-}
-
-// ═══════════════════════════════════════════════════════
-//  AÇÕES DA TOOLBAR
-// ═══════════════════════════════════════════════════════
-async function acaoEditar() {
-  const ids=getSelectedIds();
-  if (ids.length!==1) { toast('Selecione exatamente 1 planejamento para editar.','warn'); return; }
-  const plan=await dbGet(S_PLANS,ids[0]);
-  if (!plan) { toast('Planejamento não encontrado.','err'); return; }
-  if (plan.userId !== currentUserId() && !isAdmin()) { toast('Você não tem permissão para editar este planejamento.','err'); return; }
-  setTab('novo'); await carregarSelects();
-  setTimeout(() => {
-    document.getElementById('editingId').value=plan.id;
-    document.getElementById('professorSel').value=plan.teacherId||'';
-    document.getElementById('turmaSel').value=plan.classId||'';
-    document.getElementById('disciplinaSel').value=plan.subjectId||'';
-    document.getElementById('dataLancamento').value=plan.dataLancamento||'';
-    document.getElementById('periodoInicio').value=plan.periodoInicio||'';
-    document.getElementById('periodoFim').value=plan.periodoFim||'';
-    document.getElementById('conteudoTxt').value=plan.contentName||'';
-    document.getElementById('objetivos').value=plan.objetivos||'';
-    document.getElementById('descricao').value=plan.descricao||'';
-    document.getElementById('recursos').value=plan.recursos||'';
-    document.getElementById('avaliacao').value=plan.avaliacao||'';
-    document.getElementById('observacoes').value=plan.observacoes||'';
-    document.getElementById('formTitle').textContent='✏️ Editando Planejamento';
-    document.getElementById('formHint').textContent=`Editando: ${plan.teacherName} — ${plan.className} — ${plan.subjectName}`;
-    document.getElementById('btnSalvar').textContent='💾 Atualizar planejamento';
-  },80);
-}
-async function acaoCopiar() {
-  const ids=getSelectedIds();
-  if (ids.length===0) { toast('Selecione ao menos um planejamento.','warn'); return; }
-  confirmDialog('Criar cópia',`Deseja criar uma cópia de ${ids.length} planejamento(s)? As cópias terão a data de hoje.`, async () => {
-    let copiados=0;
-    for (const id of ids) {
-      const plan=await dbGet(S_PLANS,id);
-      if (!plan) continue;
-      if (plan.userId !== currentUserId() && !isAdmin()) continue;
-      await dbPut(S_PLANS, { ...plan, id: uid(), contentName: plan.contentName?`${plan.contentName} (cópia)`:'(cópia)', dataLancamento: new Date().toISOString().slice(0,10), createdAt: now(), updatedAt: now(), userId: currentUserId() });
-      copiados++;
-    }
-    toast(`📋 ${copiados} cópia(s) criada(s)!`,'ok');
-    await refreshConsultaFilters(); await renderLista();
-  });
-}
-async function acaoAnexos() {
-  const ids=getSelectedIds();
-  if (ids.length===0) { toast('Selecione ao menos um planejamento.','warn'); return; }
-  let total=0;
-  for (const planId of ids) {
-    const atts=await getAttachmentsByPlan(planId);
-    for (const att of atts) {
-      const blob=new Blob([att.data],{type:att.type||'application/octet-stream'});
-      const url=URL.createObjectURL(blob); const a=Object.assign(document.createElement('a'),{href:url,download:att.name});
-      document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),2000); total++;
-    }
-  }
-  toast(total===0?'Nenhum anexo encontrado.':'📎 '+total+' anexo(s) baixado(s).', total===0?'warn':'ok');
-}
-async function acaoExcluir() {
-  if (!isAdmin()) { toast('Apenas administradores podem excluir planejamentos.','err'); return; }
-  const ids=getSelectedIds();
-  if (ids.length===0) { toast('Selecione ao menos um planejamento.','warn'); return; }
-  confirmDialog('Excluir planejamentos',`Tem certeza que deseja excluir ${ids.length} planejamento(s)? Esta ação não pode ser desfeita.`, async () => {
-    for (const id of ids) {
-      await dbDelete(S_PLANS,id);
-      for (const att of await getAttachmentsByPlan(id)) await dbDelete(S_ATTS,att.key);
-    }
-    toast('🗑️ '+ids.length+' planejamento(s) excluído(s).','ok');
-    await refreshConsultaFilters(); await renderLista();
-  });
-}
-async function getAttachmentsByPlan(planId) {
-  return openDB().then(db=>new Promise((res,rej)=>{
-    const r=db.transaction(S_ATTS,'readonly').objectStore(S_ATTS).index('byPlan').getAll(planId);
-    r.onsuccess=()=>res(r.result); r.onerror=()=>rej(r.error);
-  }));
-}
-
-// ═══════════════════════════════════════════════════════
-//  ADMIN — USUÁRIOS
-// ═══════════════════════════════════════════════════════
-function roleLabel(role) { return role==='admin'?'Admin':'Professor'; }
-function roleClass(role) { return role==='admin'?'admin':'professor'; }
-
-async function renderUsers() {
-  if (!isAdmin()) return;
-  const showInactive = document.getElementById('showInactiveUsers').checked;
-  const users = (await dbGetAll(S_USERS)).sort((a,b)=>a.username.localeCompare(b.username));
-  const filtered = users.filter(u => showInactive || u.active !== false);
-  const tbody = document.getElementById('usersTableBody');
-  tbody.innerHTML = '';
-  if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">Nenhum usuário cadastrado.</td></tr>';
-    return;
-  }
-  filtered.forEach(u => {
-    const isSelf = u.id === currentUserId();
-    const tr = document.createElement('tr');
-    if (u.active === false) tr.classList.add('inactive-row');
-    tr.innerHTML = `
-      <td><strong>${esc(u.username)}</strong>${isSelf?' <span style="font-size:.73rem;color:var(--muted);">(você)</span>':''}</td>
-      <td><span class="item-role ${roleClass(u.role)}">${roleLabel(u.role)}</span></td>
-      <td>${u.active===false?'<span style="color:var(--danger);font-weight:600;">Inativo</span>':'<span style="color:var(--success);font-weight:600;">Ativo</span>'}</td>
-      <td style="font-size:.82rem;color:var(--muted);">${fmtDateTime(u.createdAt)}</td>
-      <td class="col-actions">
-        <button class="btn btn-small btn-ghost btn-icon" onclick="resetUserPassword('${u.id}')" title="Redefinir senha">🔑</button>
-        ${u.role==='professor'
-          ? `<button class="btn btn-small btn-warning btn-icon" onclick="promoteToAdmin('${u.id}')" title="Promover a Admin">⬆</button>`
-          : (isSelf ? `<button class="btn btn-small btn-ghost btn-icon" disabled title="Você é admin">👑</button>`
-                    : `<button class="btn btn-small btn-ghost btn-icon" onclick="demoteToProfessor('${u.id}')" title="Rebaixar a Professor">⬇</button>`)}
-        <button class="btn btn-small ${u.active===false?'btn-success':'btn-warning'} btn-icon"
-          ${isSelf?'disabled':''}
-          onclick="toggleUserActive('${u.id}')" title="${isSelf?'Não pode inativar a si mesmo':(u.active===false?'Reativar usuário':'Inativar usuário')}">
-          ${u.active===false?'✔':'⏸'}
-        </button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
-
-async function addUser() {
-  if (!isAdmin()) { toast('Acesso restrito.','err'); return; }
-  const username = document.getElementById('newUsername').value.trim();
-  const password = document.getElementById('newUserPass').value;
-  const role     = document.getElementById('newUserRole').value;
-  if (!username || !password) { toast('Preencha usuário e senha.','warn'); return; }
-  if (password.length < 4)    { toast('Senha deve ter pelo menos 4 caracteres.','warn'); return; }
-  const users = await dbGetAll(S_USERS);
-  if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) { toast('Já existe um usuário com este nome.','warn'); return; }
-  await dbPut(S_USERS, { id: uid(), username, passwordHash: await sha256(password), role, active: true, createdAt: now(), updatedAt: now() });
-  document.getElementById('newUsername').value = '';
-  document.getElementById('newUserPass').value = '';
-  toast('✅ Usuário criado com sucesso!','ok');
-  renderUsers();
-}
-
-async function toggleUserActive(userId) {
-  if (!isAdmin()) return;
-  if (userId === currentUserId()) { toast('Você não pode inativar a si mesmo.','warn'); return; }
-  const user = await dbGet(S_USERS, userId);
-  if (!user) return;
-  user.active = user.active === false ? true : false;
-  user.updatedAt = now();
-  await dbPut(S_USERS, user);
-  toast(user.active ? '✅ Usuário reativado.' : '⏸ Usuário inativado.','ok');
-  renderUsers();
-}
-
-async function promoteToAdmin(userId) {
-  if (!isAdmin()) return;
-  const user = await dbGet(S_USERS, userId);
-  if (!user) return;
-  user.role = 'admin';
-  user.updatedAt = now();
-  await dbPut(S_USERS, user);
-  toast('👑 Usuário promovido a Administrador!','ok');
-  renderUsers();
-}
-
-async function demoteToProfessor(userId) {
-  if (!isAdmin()) return;
-  if (userId === currentUserId()) { toast('Você não pode rebaixar a si mesmo.','warn'); return; }
-  const user = await dbGet(S_USERS, userId);
-  if (!user) return;
-  user.role = 'professor';
-  user.updatedAt = now();
-  await dbPut(S_USERS, user);
-  toast('👨‍🏫 Usuário rebaixado a Professor.','ok');
-  renderUsers();
-}
-
-async function resetUserPassword(userId) {
-  if (!isAdmin()) return;
-  const newPass = prompt('Digite a nova senha (mínimo 4 caracteres):');
-  if (!newPass || newPass.length < 4) { toast('Senha inválida.','warn'); return; }
-  const user = await dbGet(S_USERS, userId);
-  if (!user) return;
-  user.passwordHash = await sha256(newPass);
-  user.updatedAt = now();
-  await dbPut(S_USERS, user);
-  toast('🔑 Senha redefinida com sucesso!','ok');
-}
-
-// ═══════════════════════════════════════════════════════
-//  ADMIN — PROFESSORES / TURMAS / DISCIPLINAS
-// ═══════════════════════════════════════════════════════
-async function renderTeachers() {
-  const show = document.getElementById('showInactiveTeachers').checked;
-  const items = (await dbGetAll(S_TEACHERS)).sort((a,b)=>a.name.localeCompare(b.name));
-  renderAdminList('teachersList', items.filter(i=>show||i.active!==false), S_TEACHERS);
-}
-async function addTeacher() {
-  const name=document.getElementById('teacherName').value.trim();
-  if(!name){ toast('Digite um nome.','warn'); return; }
-  if((await dbGetAll(S_TEACHERS)).some(i=>i.name.toLowerCase()===name.toLowerCase())){ toast('Já existe.','warn'); return; }
-  await dbPut(S_TEACHERS,{id:uid(),name,active:true,createdAt:now(),updatedAt:now()});
-  document.getElementById('teacherName').value=''; toast('✅ Adicionado.','ok'); renderTeachers();
-}
-async function renderClasses() {
-  const show = document.getElementById('showInactiveClasses').checked;
-  const items = (await dbGetAll(S_CLASSES)).sort((a,b)=>a.name.localeCompare(b.name));
-  renderAdminList('classesList', items.filter(i=>show||i.active!==false), S_CLASSES);
-}
-async function addClass() {
-  const name=document.getElementById('className').value.trim();
-  if(!name){ toast('Digite um nome.','warn'); return; }
-  if((await dbGetAll(S_CLASSES)).some(i=>i.name.toLowerCase()===name.toLowerCase())){ toast('Já existe.','warn'); return; }
-  await dbPut(S_CLASSES,{id:uid(),name,active:true,createdAt:now(),updatedAt:now()});
-  document.getElementById('className').value=''; toast('✅ Adicionado.','ok'); renderClasses();
-}
-async function renderSubjects() {
-  const show = document.getElementById('showInactiveSubjects').checked;
-  const items = (await dbGetAll(S_SUBJECTS)).sort((a,b)=>a.name.localeCompare(b.name));
-  renderAdminList('subjectsList', items.filter(i=>show||i.active!==false), S_SUBJECTS);
-}
-async function addSubject() {
-  const name=document.getElementById('subjectName').value.trim();
-  if(!name){ toast('Digite um nome.','warn'); return; }
-  if((await dbGetAll(S_SUBJECTS)).some(i=>i.name.toLowerCase()===name.toLowerCase())){ toast('Já existe.','warn'); return; }
-  await dbPut(S_SUBJECTS,{id:uid(),name,active:true,createdAt:now(),updatedAt:now()});
-  document.getElementById('subjectName').value=''; toast('✅ Adicionado.','ok'); renderSubjects();
-}
-
-function renderAdminList(containerId, items, store) {
-  const el = document.getElementById(containerId); el.innerHTML = '';
-  if (items.length===0) { el.innerHTML='<div class="muted" style="padding:8px 0;">Nenhum item cadastrado.</div>'; return; }
-  items.forEach(item => {
-    const div=document.createElement('div'); div.className=`admin-item${item.active===false?' inactive':''}`;
-    div.innerHTML = `
-      <span class="item-name">${esc(item.name)}</span>
-      <button class="btn btn-small btn-icon btn-ghost" onclick="editAdminItem('${store}','${item.id}')" title="Renomear">✏️</button>
-      <button class="btn btn-small btn-icon ${item.active===false?'btn-success':'btn-warning'}"
-        onclick="toggleAdminItem('${store}','${item.id}')" title="${item.active===false?'Reativar':'Inativar'}">
-        ${item.active===false?'✔':'⏸'}
-      </button>
-    `;
-    el.appendChild(div);
-  });
-}
-async function toggleAdminItem(store,id) {
-  const item=await dbGet(store,id); if(!item) return;
-  item.active=item.active===false?true:false; item.updatedAt=now();
-  await dbPut(store,item);
-  toast(item.active?'✅ Reativado.':'⏸ Inativado.','ok');
-  setTab('admin');
-}
-async function editAdminItem(store,id) {
-  const item=await dbGet(store,id); if(!item) return;
-  const newName=prompt('Novo nome:',item.name);
-  if(!newName||!newName.trim()||newName.trim()===item.name) return;
-  item.name=newName.trim(); item.updatedAt=now();
-  await dbPut(store,item);
-  toast('✅ Nome atualizado.','ok');
-  setTab('admin');
-}
-
-// ═══════════════════════════════════════════════════════
-//  UTILITÁRIOS
-// ═══════════════════════════════════════════════════════
-function fmtDate(str) { if(!str) return '—'; const [y,m,d]=str.split('-'); return `${d}/${m}/${y}`; }
-function fmtDateTime(str) { if(!str) return '—'; return new Date(str).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'}); }
-function esc(str) { if(!str) return ''; return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function backupFilename() { const dt=new Date(),p=n=>String(n).padStart(2,'0'); return `backup-athena-${p(dt.getDate())}-${p(dt.getMonth()+1)}-${dt.getFullYear()}_${p(dt.getHours())}-${p(dt.getMinutes())}-${p(dt.getSeconds())}.json`; }
-
-// ═══════════════════════════════════════════════════════
-//  BACKUP — PAYLOAD & FILE SYSTEM ACCESS API
-// ═══════════════════════════════════════════════════════
-const BACKUP_STORES = ['attachments','classes','plans','subjects','teachers','users'];
-const BKP_HANDLE_DB = 'athenaBackupHandles', BKP_HANDLE_VER = 1;
-const BKP_HANDLE_STORE = 'handles', BKP_DIR_KEY = 'backupDirHandle';
-let _backupInProgress = false;
-
-function openBackupHandleDB() {
-  return new Promise((res,rej)=>{
-    const req=indexedDB.open(BKP_HANDLE_DB,BKP_HANDLE_VER);
-    req.onupgradeneeded=()=>{if(!req.result.objectStoreNames.contains(BKP_HANDLE_STORE))req.result.createObjectStore(BKP_HANDLE_STORE);};
-    req.onsuccess=()=>res(req.result); req.onerror=()=>rej(req.error);
-  });
-}
-async function saveDirHandle(h){const db=await openBackupHandleDB();return new Promise((res,rej)=>{const tx=db.transaction(BKP_HANDLE_STORE,'readwrite');tx.objectStore(BKP_HANDLE_STORE).put(h,BKP_DIR_KEY);tx.oncomplete=()=>res(true);tx.onerror=()=>rej(tx.error);});}
-async function loadDirHandle(){const db=await openBackupHandleDB();return new Promise((res,rej)=>{const r=db.transaction(BKP_HANDLE_STORE,'readonly').objectStore(BKP_HANDLE_STORE).get(BKP_DIR_KEY);r.onsuccess=()=>res(r.result||null);r.onerror=()=>rej(r.error);});}
-function isFSASupported(){return typeof window.showDirectoryPicker==='function';}
-async function ensurePermission(dh){try{const q=await dh.queryPermission({mode:'readwrite'});if(q==='granted')return true;const r=await dh.requestPermission({mode:'readwrite'});return r==='granted';}catch{return false;}}
-async function getOrAskBackupFolderHandle(){
-  if(!isFSASupported())return null;
-  let h=null;try{h=await loadDirHandle();}catch{h=null;}
-  if(h){const ok=await ensurePermission(h);if(ok)return h;}
-  toast('📁 Selecione a pasta de backup.','warn',7000);
-  try{const p=await window.showDirectoryPicker({id:'athena-backup',mode:'readwrite',startIn:'documents'});const ok=await ensurePermission(p);if(!ok)return null;await saveDirHandle(p);return p;}catch{return null;}
-}
-async function backupGetAllSafe(db,sn){return new Promise(resolve=>{try{const r=db.transaction(sn,'readonly').objectStore(sn).getAll();r.onsuccess=()=>resolve(r.result||[]);r.onerror=()=>resolve([]);}catch{resolve([]);}});}
-async function buildBackupPayload(){
-  const db=await openDB();
-  const payload={_meta:{sistema:'Planejamento Athena',gerado_em:new Date().toISOString(),banco:DB_NAME,versao_banco:DB_VERSION,stores:BACKUP_STORES}};
-  for(const s of BACKUP_STORES) payload[s]=await backupGetAllSafe(db,s);
-  if(Array.isArray(payload.attachments)){payload.attachments=await Promise.all(payload.attachments.map(async att=>{if(!att?.data)return att;try{const buf=att.data instanceof ArrayBuffer?att.data:att.data.buffer;const bytes=new Uint8Array(buf);let bin='';for(let i=0;i<bytes.length;i+=0x8000)bin+=String.fromCharCode(...bytes.subarray(i,i+0x8000));const{data,...rest}=att;return{...rest,dataBase64:btoa(bin)};}catch{const{data,...rest}=att;return rest;}}));}
-  return payload;
-}
-function downloadJSONFile(fn,ct){const blob=new Blob([ct],{type:'application/json;charset=utf-8'});const url=URL.createObjectURL(blob);const a=Object.assign(document.createElement('a'),{href:url,download:fn});document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);}
-async function executarBackupJSON(){
-  if(_backupInProgress)return;_backupInProgress=true;
-  try{const payload=await buildBackupPayload();const content=JSON.stringify(payload,null,2);const fn=backupFilename();
-    if(isFSASupported()){const dir=await getOrAskBackupFolderHandle();if(dir){const fh=await dir.getFileHandle(fn,{create:true});const w=await fh.createWritable();await w.write(content);await w.close();}else downloadJSONFile(fn,content);}
-    else downloadJSONFile(fn,content);
-  }catch(e){console.error('Backup error:',e);}
-  finally{_backupInProgress=false;}
-}
-
-// ═══════════════════════════════════════════════════════
-//  BACKUP — GITHUB API
-// ═══════════════════════════════════════════════════════
-function toBase64(str) {
-  const bytes = new TextEncoder().encode(str);
-  const binString = Array.from(bytes, (byte) => String.fromCodePoint(byte)).join('');
-  return btoa(binString);
-}
-
-async function getGithubConfig() {
-  const token  = await getSetting('github_token', '');
-  const owner  = await getSetting('github_owner', '');
-  const repo   = await getSetting('github_repo', '');
-  const branch = await getSetting('github_branch', 'main');
-  return { token, owner, repo, branch, configured: !!(token && owner && repo) };
-}
-
-async function loadGithubConfigIntoForm() {
-  const config = await getGithubConfig();
-  document.getElementById('ghToken').value  = config.token;
-  document.getElementById('ghOwner').value  = config.owner;
-  document.getElementById('ghRepo').value   = config.repo;
-  document.getElementById('ghBranch').value = config.branch;
-  updateBackupStatus();
-}
-
-async function saveGithubConfig() {
-  const token  = document.getElementById('ghToken').value.trim();
-  const owner  = document.getElementById('ghOwner').value.trim();
-  const repo   = document.getElementById('ghRepo').value.trim();
-  const branch = document.getElementById('ghBranch').value.trim() || 'main';
-
-  if (!token || !owner || !repo) { toast('Preencha Token, Owner e Repositório.', 'warn'); return; }
-
-  await setSetting('github_token', token);
-  await setSetting('github_owner', owner);
-  await setSetting('github_repo', repo);
-  await setSetting('github_branch', branch);
-
-  toast('✅ Configurações do GitHub salvas!', 'ok');
-  updateBackupStatus();
-}
-
-async function testGithubConnection() {
-  const config = await getGithubConfig();
-  if (!config.configured) {
-    // Tenta ler dos campos do formulário
-    config.token  = document.getElementById('ghToken').value.trim();
-    config.owner  = document.getElementById('ghOwner').value.trim();
-    config.repo   = document.getElementById('ghRepo').value.trim();
-    config.branch = document.getElementById('ghBranch').value.trim() || 'main';
-    config.configured = !!(config.token && config.owner && config.repo);
-    if (!config.configured) { toast('Configure token, owner e repositório primeiro.', 'warn'); return; }
-    // Salva antes de testar
-    await setSetting('github_token', config.token);
-    await setSetting('github_owner', config.owner);
-    await setSetting('github_repo', config.repo);
-    await setSetting('github_branch', config.branch);
-  }
-
-  const btn = document.getElementById('btnTestGh');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Testando...';
-
-  try {
-    const resp = await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}`, {
-      headers: { 'Authorization': `Bearer ${config.token}`, 'Accept': 'application/vnd.github.v3+json' }
-    });
-    if (resp.ok) {
-      const data = await resp.json();
-      toast(`✅ Conectado! Repositório: ${data.full_name}`, 'ok', 4000);
-      updateBackupStatus('ok');
-    } else if (resp.status === 401) {
-      toast('❌ Token inválido ou expirado.', 'err');
-      updateBackupStatus('err');
-    } else if (resp.status === 404) {
-      toast('❌ Repositório não encontrado. Verifique owner/repo.', 'err');
-      updateBackupStatus('err');
-    } else {
-      toast(`❌ Erro ${resp.status}: ${(await resp.json().catch(()=>({}))).message || 'Verifique os dados.'}`, 'err');
-      updateBackupStatus('err');
-    }
-  } catch (e) {
-    toast(`❌ Erro de conexão: ${e.message}`, 'err');
-    updateBackupStatus('err');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '🔍 Testar Conexão';
-  }
-}
-
-async function backupToGithub(silent = true) {
-  const config = await getGithubConfig();
-  if (!config.configured) return false;
-
-  try {
-    const payload = await buildBackupPayload();
-    const content = JSON.stringify(payload, null, 2);
-    const base64 = toBase64(content);
-
-    // Nome do arquivo: automático sobrescreve "latest", manual usa timestamp
-    const filename = silent ? 'backup-athena-latest.json' : backupFilename();
-    const path = `Backup/${filename}`;
-
-    // Verificar se o arquivo já existe para obter o sha (necessário para atualizar)
-    let sha = null;
-    try {
-      const getResp = await fetch(
-        `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}`,
-        { headers: { 'Authorization': `Bearer ${config.token}`, 'Accept': 'application/vnd.github.v3+json' } }
-      );
-      if (getResp.ok) {
-        const data = await getResp.json();
-        sha = data.sha;
-      }
-    } catch {}
-
-    const body = {
-      message: silent
-        ? '🔄 Backup automático — Planejamento Athena'
-        : `📤 Backup manual — ${filename}`,
-      content: base64,
-      branch: config.branch
-    };
-    if (sha) body.sha = sha;
-
-    const putResp = await fetch(
-      `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Authorization': `Bearer ${config.token}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(body)
-      }
-    );
-
-    if (!putResp.ok) {
-      const errData = await putResp.json().catch(() => ({}));
-      throw new Error(errData.message || `HTTP ${putResp.status}`);
-    }
-
-    await setSetting('github_last_backup', now());
-    await setSetting('github_last_backup_status', 'ok');
-    if (!silent) toast('☁️ Backup enviado com sucesso para o GitHub!', 'ok', 4000);
-    updateBackupStatus('ok');
-    return true;
-  } catch (e) {
-    console.error('GitHub backup error:', e);
-    await setSetting('github_last_backup_status', 'err');
-    await setSetting('github_last_error', e.message);
-    if (!silent) toast(`❌ Erro no backup GitHub: ${e.message}`, 'err', 5000);
-    updateBackupStatus('err');
+  }catch(e){
+    setSyncUI('error','Erro sync');
+    if(showToast)toast('❌ Erro ao sincronizar: '+e.message,'err',5000);
     return false;
   }
 }
 
-async function manualBackupToGithub() {
-  const config = await getGithubConfig();
-  if (!config.configured) {
-    // Tenta ler dos campos
-    const token  = document.getElementById('ghToken').value.trim();
-    const owner  = document.getElementById('ghOwner').value.trim();
-    const repo   = document.getElementById('ghRepo').value.trim();
-    const branch = document.getElementById('ghBranch').value.trim() || 'main';
-    if (!token || !owner || !repo) { toast('Configure token, owner e repositório primeiro.', 'warn'); return; }
-    await setSetting('github_token', token);
-    await setSetting('github_owner', owner);
-    await setSetting('github_repo', repo);
-    await setSetting('github_branch', branch);
-  }
-
-  const btn = document.getElementById('btnManualBackup');
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Enviando...';
-
-  try {
-    await backupToGithub(false);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '📤 Backup Manual Agora';
-  }
+// Pull + refresh UI
+async function syncNow(){
+  const ok=await ghPullAll(true);
+  if(ok){await refreshAllUI();}
 }
 
-async function updateBackupStatus(forcedStatus) {
-  const badge = document.getElementById('ghStatusBadge');
-  const lastEl = document.getElementById('ghLastBackup');
-  if (!badge) return;
-
-  const config = await getGithubConfig();
-  if (!config.configured) {
-    badge.className = 'backup-status idle';
-    badge.innerHTML = '<span class="dot gray"></span> Não configurado';
-    lastEl.textContent = '';
-    return;
+async function forcePushAll(){
+  const config=await ghGetConfig();
+  if(!config.ok){toast('Configure o GitHub primeiro.','warn');return;}
+  setSyncUI('syncing','Enviando...');
+  let ok=true;
+  try{
+    for(const store of GH_STORES){await ghPushStore(store);}
+    await setSetting('github_last_push',now());
+    setSyncUI('synced','Sincronizado');
+    toast('📤 Dados enviados com sucesso!','ok',3000);
+  }catch(e){
+    setSyncUI('error','Erro');
+    toast('❌ Erro: '+e.message,'err',5000);
+    ok=false;
   }
-
-  const lastBackup = await getSetting('github_last_backup', null);
-  const status = forcedStatus || await getSetting('github_last_backup_status', null);
-  const lastError = await getSetting('github_last_error', '');
-
-  if (status === 'ok' && lastBackup) {
-    badge.className = 'backup-status ok';
-    badge.innerHTML = '<span class="dot green"></span> Conectado';
-    lastEl.innerHTML = `✅ Último backup: <strong>${fmtDateTime(lastBackup)}</strong>`;
-  } else if (status === 'err') {
-    badge.className = 'backup-status err';
-    badge.innerHTML = '<span class="dot red"></span> Erro no último backup';
-    lastEl.innerHTML = `❌ Falha no último backup${lastError ? ': ' + esc(lastError) : ''}. Verifique as configurações.`;
-  } else {
-    badge.className = 'backup-status warn';
-    badge.innerHTML = '<span class="dot yellow"></span> Configurado (sem backup ainda)';
-    lastEl.textContent = 'Nenhum backup enviado ainda. Use "Testar Conexão" ou "Backup Manual".';
-  }
+  return ok;
 }
 
-// ═══════════════════════════════════════════════════════
-//  HOOK: BACKUP AUTOMÁTICO (local + GitHub)
-// ═══════════════════════════════════════════════════════
-(function hookBackupOnToast(){
-  const _orig = toast;
-  window.toast = function(m, t, d) {
-    _orig(m, t, d);
-    const s = String(m||'').toLowerCase();
-    if (s.includes('planejamento salvo') || s.includes('planejamento atualizado')) {
-      executarBackupJSON();           // backup local (File System Access API)
-      backupToGithub(true);           // backup remoto silencioso (GitHub)
-    }
-  };
-})();
+// Push com debounce
+function schedulePush(storeName){
+  _dirtyStores.add(storeName);
+  if(_pushTimers[storeName])clearTimeout(_pushTimers[storeName]);
+  _pushTimers[storeName]=setTimeout(async()=>{
+    const config=await ghGetConfig();
+    if(!config.ok){_dirtyStores.delete(storeName);return;}
+    setSyncUI('pending','Pendente...');
+    try{await ghPushStore(storeName);_dirtyStores.delete(storeName);setSyncUI('synced','Sincronizado');}
+    catch(e){setSyncUI('error','Erro');_dirtyStores.delete(storeName);}
+  },SYNC_DEBOUNCE_MS);
+}
 
-// ═══════════════════════════════════════════════════════
-//  INICIALIZAÇÃO
-// ═══════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', async () => {
+// Polling loop
+function startSyncLoop(){
+  if(_syncLoopId)clearInterval(_syncLoopId);
+  _syncLoopId=setInterval(async()=>{
+    const config=await ghGetConfig();
+    if(!config.ok)return;
+    try{
+      const dirResp=await ghApiGet(config,'data');
+      if(!dirResp||!Array.isArray(dirResp))return;
+      const remoteShas={};for(const f of dirResp)remoteShas[f.name.replace('.json','')]=f.sha;
+      let changed=false;
+      for(const store of GH_STORES){
+        const meta=await dbGet(S_SYNC,`sha_${store}`);
+        if(!meta||meta.sha!==remoteShas[store]){changed=true;break;}
+      }
+      if(changed){await ghPullAll(false);await refreshAllUI();}
+    }catch{}
+  },SYNC_POLL_INTERVAL);
+}
+
+// UI Indicator
+function setSyncUI(state,text){
+  const el=document.getElementById('syncIndicator');
+  if(!el)return;
+  el.className='sync-indicator '+state;
+  const icons={synced:'☁️',pending:'⏳',syncing:'🔄',error:'⚠️',offline:'☁️'};
+  el.innerHTML=`${icons[state]||'☁️'} ${text}`;
+}
+
+async function updateSyncUI(){
+  const config=await ghGetConfig();
+  if(!config.ok){setSyncUI('offline','Offline');return;}
+  const lastSync=await getSetting('github_last_sync',null);
+  if(lastSync){setSyncUI('synced','Sincronizado');}
+  else{setSyncUI('pending','Conectado');}
+}
+
+// ══════════════════════════════════════════════
+//  GITHUB CONFIG UI
+// ══════════════════════════════════════════════
+async function loadGithubConfigIntoForm(){
+  document.getElementById('ghToken').value=await getSetting('github_token','');
+  document.getElementById('ghOwner').value=await getSetting('github_owner','');
+  document.getElementById('ghRepo').value=await getSetting('github_repo','');
+  document.getElementById('ghBranch').value=await getSetting('github_branch','main');
+  updateBackupStatus();
+}
+
+async function saveGithubConfig(){
+  const token=document.getElementById('ghToken').value.trim(),owner=document.getElementById('ghOwner').value.trim();
+  const repo=document.getElementById('ghRepo').value.trim(),branch=document.getElementById('ghBranch').value.trim()||'main';
+  if(!token||!owner||!repo){toast('Preencha Token, Owner e Repositório.','warn');return;}
+  await setSetting('github_token',token);await setSetting('github_owner',owner);
+  await setSetting('github_repo',repo);await setSetting('github_branch',branch);
+  toast('✅ Configurações salvas!','ok');updateBackupStatus();updateSyncUI();startSyncLoop();
+}
+
+async function testGithubConnection(){
+  let config=await ghGetConfig();
+  if(!config.ok){
+    config.token=document.getElementById('ghToken').value.trim();config.owner=document.getElementById('ghOwner').value.trim();
+    config.repo=document.getElementById('ghRepo').value.trim();config.branch=document.getElementById('ghBranch').value.trim()||'main';
+    config.ok=!!(config.token&&config.owner&&config.repo);
+    if(!config.ok){toast('Configure token, owner e repositório.','warn');return;}
+    await setSetting('github_token',config.token);await setSetting('github_owner',config.owner);
+    await setSetting('github_repo',config.repo);await setSetting('github_branch',config.branch);
+  }
+  const btn=document.getElementById('btnTestGh');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Testando...';
+  try{
+    const resp=await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}`,{headers:ghAuthHeaders(config.token)});
+    if(resp.ok){const d=await resp.json();toast(`✅ Conectado! ${d.full_name}`,'ok',4000);updateBackupStatus('ok');}
+    else if(resp.status===401){toast('❌ Token inválido ou expirado.','err');updateBackupStatus('err');}
+    else if(resp.status===404){toast('❌ Repositório não encontrado.','err');updateBackupStatus('err');}
+    else{toast(`❌ Erro ${resp.status}`,'err');updateBackupStatus('err');}
+  }catch(e){toast('❌ Erro: '+e.message,'err');updateBackupStatus('err');}
+  finally{btn.disabled=false;btn.innerHTML='🔍 Testar Conexão';}
+}
+
+async function updateBackupStatus(fs){
+  const badge=document.getElementById('ghStatusBadge'),lastEl=document.getElementById('ghLastBackup');
+  if(!badge)return;
+  const config=await ghGetConfig();
+  if(!config.ok){badge.className='backup-status idle';badge.innerHTML='<span class="dot gray"></span> Não configurado';lastEl.textContent='';return;}
+  const lastSync=await getSetting('github_last_sync',null),lastPush=await getSetting('github_last_push',null);
+  const s=fs||(lastSync||lastPush?'ok':null);
+  if(s==='ok'){badge.className='backup-status ok';badge.innerHTML='<span class="dot green"></span> Conectado';lastEl.innerHTML=`✅ Última sincronização: <strong>${fmtDateTime(lastSync||lastPush)}</strong>`;}
+  else if(s==='err'){badge.className='backup-status err';badge.innerHTML='<span class="dot red"></span> Erro';lastEl.textContent='❌ Verifique as configurações.';}
+  else{badge.className='backup-status warn';badge.innerHTML='<span class="dot yellow"></span> Conectado (sem sync)';lastEl.textContent='Use "Sincronizar Agora" para baixar os dados.';}
+}
+
+// ══════════════════════════════════════════════
+//  LOGIN
+// ══════════════════════════════════════════════
+async function checkFirstAccess(){return (await dbGetAll(S_USERS)).length===0;}
+
+async function setupLoginUI(){
+  const isFirst=await checkFirstAccess();
+  document.getElementById('loginTitle').textContent=isFirst?'🔐 Primeiro Acesso':'Planejamento Athena';
+  document.getElementById('loginSubtitle').textContent=isFirst?'Nenhum usuário cadastrado. Crie o administrador.':'Colégio Athena — Supervisão Pedagógica';
+  document.getElementById('loginBtn').textContent=isFirst?'Criar Administrador':'Entrar';
+  document.getElementById('loginHint').textContent=isFirst?'Esta conta terá acesso total.':'';
+  document.getElementById('confirmGroup').style.display=isFirst?'':'none';
+  document.getElementById('loginError').textContent='';
+  document.getElementById('loginSpinner').classList.remove('visible');
+}
+
+async function handleLogin(e){
+  e.preventDefault();
+  const username=document.getElementById('loginUsername').value.trim();
+  const password=document.getElementById('loginPassword').value;
+  const errorEl=document.getElementById('loginError');
+  errorEl.textContent='';
+  if(!username||!password){errorEl.textContent='Preencha usuário e senha.';return;}
+
+  // Tenta sincronizar do GitHub antes de validar login
+  const config=await ghGetConfig();
+  if(config.ok){
+    document.getElementById('loginSpinner').classList.add('visible');
+    document.getElementById('loginBtn').disabled=true;
+    try{await ghPullAll(false);}
+    catch{/* continua com dados locais */}
+    document.getElementById('loginSpinner').classList.remove('visible');
+    document.getElementById('loginBtn').disabled=false;
+  }
+
+  const isFirst=await checkFirstAccess();
+  if(isFirst){
+    const confirm=document.getElementById('loginConfirm').value;
+    if(password!==confirm){errorEl.textContent='As senhas não coincidem.';return;}
+    if(password.length<4){errorEl.textContent='Senha: mínimo 4 caracteres.';return;}
+    const user={id:uid(),username,passwordHash:await sha256(password),role:'admin',active:true,createdAt:now(),updatedAt:now()};
+    await dbPut(S_USERS,user);
+    if(config.ok){await ghPushStore(S_USERS);}
+    saveSession({userId:user.id,username:user.username,role:user.role});
+    enterApp();toast('✅ Administrador criado!','ok',4000);return;
+  }
+
+  const users=await dbGetAll(S_USERS);
+  const found=users.find(u=>u.username.toLowerCase()===username.toLowerCase());
+  if(!found){errorEl.textContent='Usuário não encontrado.';return;}
+  if(!found.active){errorEl.textContent='Usuário inativo.';return;}
+  if(await sha256(password)!==found.passwordHash){errorEl.textContent='Senha incorreta.';return;}
+  saveSession({userId:found.id,username:found.username,role:found.role});
+  enterApp();toast(`👋 Bem-vindo(a), ${found.username}!`,'ok',3000);
+}
+
+async function enterApp(){
+  document.getElementById('loginOverlay').classList.add('hidden');
+  document.getElementById('appWrapper').classList.remove('main-hidden');
+  updateHeaderUI();setTab('novo');loadGithubConfigIntoForm();updateSyncUI();
+  const config=await ghGetConfig();
+  if(config.ok){startSyncLoop();}
+}
+
+function doLogout(){
+  clearSession();
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  document.getElementById('appWrapper').classList.add('main-hidden');
+  ['loginUsername','loginPassword','loginConfirm'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('loginError').textContent='';
+  if(_syncLoopId){clearInterval(_syncLoopId);_syncLoopId=null;}
+  Object.values(_pushTimers).forEach(t=>clearTimeout(t));_pushTimers={};_dirtyStores.clear();
+  setupLoginUI();
+}
+
+// ══════════════════════════════════════════════
+//  UI HELPERS
+// ══════════════════════════════════════════════
+function updateHeaderUI(){
+  if(!_session)return;
+  document.getElementById('headerUserName').textContent=_session.username;
+  document.getElementById('headerUserRole').textContent=isAdmin()?'(Admin)':'';
+  document.getElementById('userBadge').textContent=(_session.username[0]||'A').toUpperCase();
+  const at=document.getElementById('tab-btn-admin');if(at)at.style.display=isAdmin()?'':'none';
+  const bd=document.getElementById('btnToolbarDelete');if(bd)bd.style.display=isAdmin()?'':'none';
+}
+let _toastTimer=null;
+function toast(m,t='ok',d=3000){const el=document.getElementById('toast');el.textContent=m;el.className=`toast show ${t}`;clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>el.className='toast',d);}
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+function confirmDialog(title,msg,onConfirm){document.getElementById('modalConfirmTitle').textContent=title;document.getElementById('modalConfirmMsg').textContent=msg;document.getElementById('modalConfirmBtn').onclick=()=>{closeModal('modalConfirm');onConfirm();};openModal('modalConfirm');}
+function setTab(tab){
+  if(tab==='admin'&&!isAdmin()){toast('Acesso restrito.','err');return;}
+  ['novo','consultas','admin'].forEach(t=>{document.getElementById(`${t}-view`).style.display=t===tab?'block':'none';const b=document.getElementById(`tab-btn-${t}`);if(b)b.classList.toggle('active',t===tab);});
+  if(tab==='novo'){limparForm(true);carregarSelects();}
+  if(tab==='consultas'){refreshConsultaFilters().then(renderLista);}
+  if(tab==='admin'){renderUsers();renderTeachers();renderClasses();renderSubjects();loadGithubConfigIntoForm();updateBackupStatus();}
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+async function refreshAllUI(){
+  const curTab=document.querySelector('.tab-btn.active');
+  if(curTab&&curTab.id==='tab-btn-consultas'){await refreshConsultaFilters();await renderLista();}
+}
+function fmtDate(s){if(!s)return'—';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`;}
+function fmtDateTime(s){if(!s)return'—';return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
+function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+// ══════════════════════════════════════════════
+//  FORMULÁRIO
+// ══════════════════════════════════════════════
+async function carregarSelects(){
+  const[teachers,classes,subjects]=await Promise.all([dbGetAll(S_TEACHERS),dbGetAll(S_CLASSES),dbGetAll(S_SUBJECTS)]);
+  fillSelect('professorSel',teachers.filter(t=>t.active).sort((a,b)=>a.name.localeCompare(b.name)));
+  fillSelect('turmaSel',classes.filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name)));
+  fillSelect('disciplinaSel',subjects.filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name)));
+}
+function fillSelect(id,items){const sel=document.getElementById(id),cur=sel.value;sel.innerHTML='<option value="">— Selecione —</option>';items.forEach(i=>{const o=document.createElement('option');o.value=i.id;o.textContent=i.name;sel.appendChild(o);});if(cur)sel.value=cur;}
+function limparForm(resetId=false){
+  if(resetId)document.getElementById('editingId').value='';
+  ['professorSel','turmaSel','disciplinaSel'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  ['dataLancamento','periodoInicio','periodoFim','conteudoTxt','objetivos','descricao','recursos','avaliacao','observacoes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  document.getElementById('anexos').value='';document.getElementById('anexosResumo').innerHTML='';
+  document.getElementById('formTitle').textContent='Novo Planejamento';document.getElementById('formHint').textContent='Preencha os campos e clique em "Salvar".';
+  document.getElementById('btnSalvar').textContent='💾 Salvar planejamento';
+}
+
+async function salvarPlanejamento(){
+  const teacherId=document.getElementById('professorSel').value,classId=document.getElementById('turmaSel').value;
+  const subjectId=document.getElementById('disciplinaSel').value,dataLanc=document.getElementById('dataLancamento').value;
+  if(!teacherId||!classId||!subjectId||!dataLanc){toast('Preencha os campos obrigatórios.','err');return;}
+  const[teachers,classes,subjects]=await Promise.all([dbGetAll(S_TEACHERS),dbGetAll(S_CLASSES),dbGetAll(S_SUBJECTS)]);
+  const tName=(teachers.find(t=>t.id===teacherId)||{}).name||'',cName=(classes.find(c=>c.id===classId)||{}).name||'',sName=(subjects.find(s=>s.id===subjectId)||{}).name||'';
+  const editingId=document.getElementById('editingId').value,id=editingId||uid();
+  const existing=editingId?await dbGet(S_PLANS,editingId):null;
+  if(existing&&existing.userId!==currentUserId()&&!isAdmin()){toast('Sem permissão para editar.','err');return;}
+  const plan={id,userId:existing?existing.userId:currentUserId(),teacherId,teacherName:tName,classId,className:cName,subjectId,subjectName:sName,dataLancamento:dataLanc,periodoInicio:document.getElementById('periodoInicio').value,periodoFim:document.getElementById('periodoFim').value,contentName:document.getElementById('conteudoTxt').value.trim(),objetivos:document.getElementById('objetivos').value.trim(),descricao:document.getElementById('descricao').value.trim(),recursos:document.getElementById('recursos').value.trim(),avaliacao:document.getElementById('avaliacao').value.trim(),observacoes:document.getElementById('observacoes').value.trim(),createdAt:existing?existing.createdAt:now(),updatedAt:now()};
+  await dbPut(S_PLANS,plan);
+  const filesInput=document.getElementById('anexos');
+  if(filesInput.files.length>0){for(const file of filesInput.files){await dbPut(S_ATTS,{key:`${id}__${uid()}__${file.name}`,planId:id,name:file.name,type:file.type,dataBase64:await fileToBase64(file)});}}
+  schedulePush(S_PLANS);if(filesInput.files.length>0)schedulePush(S_ATTS);
+  toast(editingId?'✅ Planejamento atualizado!':'✅ Planejamento salvo!','ok');limparForm(true);
+}
+
+function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const b64=r.result.split(',')[1];res(b64);};r.onerror=rej;r.readAsDataURL(file);});}
+
+// ══════════════════════════════════════════════
+//  CONSULTAS
+// ══════════════════════════════════════════════
+async function refreshConsultaFilters(){
+  const[teachers,classes,subjects,allPlans]=await Promise.all([dbGetAll(S_TEACHERS),dbGetAll(S_CLASSES),dbGetAll(S_SUBJECTS),dbGetAll(S_PLANS)]);
+  populateFilter('fProfessorSel',teachers.sort((a,b)=>a.name.localeCompare(b.name)));
+  populateFilter('fTurmaSel',classes.sort((a,b)=>a.name.localeCompare(b.name)));
+  populateFilter('fDisciplinaSel',subjects.sort((a,b)=>a.name.localeCompare(b.name)));
+  const years=new Set();allPlans.forEach(p=>{const y=(p.dataLancamento||'').slice(0,4);if(/^\d{4}$/.test(y))years.add(y);});
+  const fAno=document.getElementById('fAnoSel'),cur=fAno.value;fAno.innerHTML='<option value="">Todos</option>';
+  Array.from(years).sort((a,b)=>b.localeCompare(a)).forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;fAno.appendChild(o);});
+  if(cur)fAno.value=cur;
+}
+function populateFilter(id,items){const sel=document.getElementById(id),cur=sel.value;sel.innerHTML='<option value="">Todos(as)</option>';items.forEach(i=>{const o=document.createElement('option');o.value=i.id;o.textContent=i.name+(i.active===false?' (inativo)':'');sel.appendChild(o);});if(cur)sel.value=cur;}
+function limparFiltros(){['fProfessorSel','fTurmaSel','fDisciplinaSel','fAnoSel'].forEach(id=>document.getElementById(id).value='');renderLista();}
+
+let _currentFiltered=[];
+async function renderLista(){
+  const allPlans=await dbGetAll(S_PLANS);let plans=isAdmin()?allPlans:allPlans.filter(p=>p.userId===currentUserId());
+  const f={teacherId:document.getElementById('fProfessorSel').value,classId:document.getElementById('fTurmaSel').value,subjectId:document.getElementById('fDisciplinaSel').value,year:document.getElementById('fAnoSel').value};
+  _currentFiltered=plans.filter(p=>(!f.teacherId||p.teacherId===f.teacherId)&&(!f.classId||p.classId===f.classId)&&(!f.subjectId||p.subjectId===f.subjectId)&&(!f.year||(p.dataLancamento||'').slice(0,4)===f.year)).sort((a,b)=>(b.dataLancamento||'').localeCompare(a.dataLancamento||''));
+  document.getElementById('kpiTotal').textContent=`${plans.length} planejamento(s)`;
+  document.getElementById('kpiFiltrados').textContent=`${_currentFiltered.length} exibido(s)`;
+  const tbody=document.getElementById('listaBody');tbody.innerHTML='';
+  if(!_currentFiltered.length){tbody.innerHTML='<tr><td colspan="8" class="empty">Nenhum resultado.</td></tr>';document.getElementById('checkAll').checked=false;updateToolbar();return;}
+  _currentFiltered.forEach(p=>{const periodo=(p.periodoInicio&&p.periodoFim)?`${fmtDate(p.periodoInicio)} a ${fmtDate(p.periodoFim)}`:(p.periodoInicio?`A partir de ${fmtDate(p.periodoInicio)}`:'—');const tr=document.createElement('tr');tr.dataset.id=p.id;tr.innerHTML=`<td class="col-check"><input type="checkbox" class="row-check" data-id="${p.id}" onchange="onRowCheck()" /></td><td>${fmtDate(p.dataLancamento)}</td><td>${esc(p.teacherName)}</td><td>${esc(p.className)}</td><td>${esc(p.subjectName)}</td><td>${esc(p.contentName||'—')}</td><td style="white-space:nowrap;">${periodo}</td><td style="white-space:nowrap;font-size:.83rem;color:var(--muted);">${fmtDateTime(p.updatedAt)}</td>`;tr.addEventListener('click',e=>{if(e.target.type==='checkbox')return;const cb=tr.querySelector('.row-check');cb.checked=!cb.checked;onRowCheck();});tbody.appendChild(tr);});
+  document.getElementById('checkAll').checked=false;updateToolbar();
+}
+
+function getSelectedIds(){return Array.from(document.querySelectorAll('.row-check:checked')).map(cb=>cb.dataset.id);}
+function toggleSelectAll(c){document.querySelectorAll('.row-check').forEach(cb=>cb.checked=c);document.querySelectorAll('#listaBody tr[data-id]').forEach(tr=>tr.classList.toggle('row-selected',c));updateToolbar();}
+function onRowCheck(){const all=document.querySelectorAll('.row-check'),chk=document.querySelectorAll('.row-check:checked');document.getElementById('checkAll').checked=all.length>0&&chk.length===all.length;document.getElementById('checkAll').indeterminate=chk.length>0&&chk.length<all.length;all.forEach(cb=>{const tr=cb.closest('tr');if(tr)tr.classList.toggle('row-selected',cb.checked);});updateToolbar();}
+function updateToolbar(){const ids=getSelectedIds(),n=ids.length;document.getElementById('selectionToolbar').classList.toggle('visible',n>0);document.getElementById('selCount').textContent=`${n} selecionado(s)`;document.getElementById('selNote').textContent=n>1?'✏️ Editar: selecione apenas 1':'';const kpiSel=document.getElementById('kpiSelecionados');if(n>0){kpiSel.style.display='';kpiSel.textContent=`${n} selecionado(s)`;}else{kpiSel.style.display='none';}}
+
+async function acaoEditar(){
+  const ids=getSelectedIds();if(ids.length!==1){toast('Selecione exatamente 1.','warn');return;}
+  const plan=await dbGet(S_PLANS,ids[0]);if(!plan){toast('Não encontrado.','err');return;}
+  if(plan.userId!==currentUserId()&&!isAdmin()){toast('Sem permissão.','err');return;}
+  setTab('novo');await carregarSelects();
+  setTimeout(()=>{document.getElementById('editingId').value=plan.id;document.getElementById('professorSel').value=plan.teacherId||'';document.getElementById('turmaSel').value=plan.classId||'';document.getElementById('disciplinaSel').value=plan.subjectId||'';document.getElementById('dataLancamento').value=plan.dataLancamento||'';document.getElementById('periodoInicio').value=plan.periodoInicio||'';document.getElementById('periodoFim').value=plan.periodoFim||'';document.getElementById('conteudoTxt').value=plan.contentName||'';document.getElementById('objetivos').value=plan.objetivos||'';document.getElementById('descricao').value=plan.descricao||'';document.getElementById('recursos').value=plan.recursos||'';document.getElementById('avaliacao').value=plan.avaliacao||'';document.getElementById('observacoes').value=plan.observacoes||'';document.getElementById('formTitle').textContent='✏️ Editando Planejamento';document.getElementById('formHint').textContent=`Editando: ${plan.teacherName} — ${plan.className} — ${plan.subjectName}`;document.getElementById('btnSalvar').textContent='💾 Atualizar planejamento';},80);
+}
+async function acaoCopiar(){
+  const ids=getSelectedIds();if(!ids.length){toast('Selecione ao menos 1.','warn');return;}
+  confirmDialog('Criar cópia',`Copiar ${ids.length} planejamento(s)?`,async()=>{let c=0;for(const id of ids){const plan=await dbGet(S_PLANS,id);if(!plan||(plan.userId!==currentUserId()&&!isAdmin()))continue;await dbPut(S_PLANS,{...plan,id:uid(),contentName:plan.contentName?`${plan.contentName} (cópia)`:'(cópia)',dataLancamento:new Date().toISOString().slice(0,10),createdAt:now(),updatedAt:now(),userId:currentUserId()});c++;}toast(`📋 ${c} cópia(s) criada(s)!`,'ok');schedulePush(S_PLANS);await refreshConsultaFilters();await renderLista();});
+}
+async function acaoAnexos(){
+  const ids=getSelectedIds();if(!ids.length){toast('Selecione ao menos 1.','warn');return;}
+  const allAtts=await dbGetAll(S_ATTS);let t=0;
+  for(const planId of ids){for(const att of (allAtts||[]).filter(a=>a.planId===planId)){if(!att.dataBase64)continue;const bin=atob(att.dataBase64);const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);const blob=new Blob([bytes],{type:att.type||'application/octet-stream'});const url=URL.createObjectURL(blob);const a=Object.assign(document.createElement('a'),{href:url,download:att.name});document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);t++;}}
+  toast(t===0?'Nenhum anexo.':'📎 '+t+' anexo(s) baixado(s).',t===0?'warn':'ok');
+}
+async function acaoExcluir(){
+  if(!isAdmin()){toast('Apenas administradores.','err');return;}
+  const ids=getSelectedIds();if(!ids.length){toast('Selecione ao menos 1.','warn');return;}
+  confirmDialog('Excluir',`Excluir ${ids.length} planejamento(s)?`,async()=>{for(const id of ids){await dbDelete(S_PLANS,id);const atts=await dbGetAll(S_ATTS);for(const a of(atts||[]).filter(x=>x.planId===id))await dbDelete(S_ATTS,a.key);}toast('🗑️ Excluído(s)!','ok');schedulePush(S_PLANS);schedulePush(S_ATTS);await refreshConsultaFilters();await renderLista();});
+}
+
+// ══════════════════════════════════════════════
+//  ADMIN — USERS
+// ══════════════════════════════════════════════
+function roleLabel(r){return r==='admin'?'Admin':'Professor';}
+function roleClass(r){return r==='admin'?'admin':'professor';}
+async function renderUsers(){
+  if(!isAdmin())return;const show=document.getElementById('showInactiveUsers').checked;
+  const users=(await dbGetAll(S_USERS)).sort((a,b)=>a.username.localeCompare(b.username));
+  const filtered=users.filter(u=>show||u.active!==false);const tbody=document.getElementById('usersTableBody');tbody.innerHTML='';
+  if(!filtered.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">Nenhum.</td></tr>';return;}
+  filtered.forEach(u=>{const isSelf=u.id===currentUserId();const tr=document.createElement('tr');if(u.active===false)tr.classList.add('inactive-row');tr.innerHTML=`<td><strong>${esc(u.username)}</strong>${isSelf?' <span style="font-size:.73rem;color:var(--muted);">(você)</span>':''}</td><td><span class="item-role ${roleClass(u.role)}">${roleLabel(u.role)}</span></td><td>${u.active===false?'<span style="color:var(--danger);font-weight:600;">Inativo</span>':'<span style="color:var(--success);font-weight:600;">Ativo</span>'}</td><td style="font-size:.82rem;color:var(--muted);">${fmtDateTime(u.createdAt)}</td><td class="col-actions"><button class="btn btn-small btn-ghost btn-icon" onclick="resetUserPassword('${u.id}')" title="Redefinir senha">🔑</button>${u.role==='professor'?`<button class="btn btn-small btn-warning btn-icon" onclick="promoteToAdmin('${u.id}')">⬆</button>`:(isSelf?`<button class="btn btn-small btn-ghost btn-icon" disabled>👑</button>`:`<button class="btn btn-small btn-ghost btn-icon" onclick="demoteToProfessor('${u.id}')">⬇</button>`)}<button class="btn btn-small ${u.active===false?'btn-success':'btn-warning'} btn-icon" ${isSelf?'disabled':''} onclick="toggleUserActive('${u.id}')">${u.active===false?'✔':'⏸'}</button></td>`;tbody.appendChild(tr);});
+}
+async function addUser(){
+  if(!isAdmin())return;const username=document.getElementById('newUsername').value.trim(),password=document.getElementById('newUserPass').value,role=document.getElementById('newUserRole').value;
+  if(!username||!password){toast('Preencha usuário e senha.','warn');return;}if(password.length<4){toast('Senha: mínimo 4 caracteres.','warn');return;}
+  const users=await dbGetAll(S_USERS);if(users.some(u=>u.username.toLowerCase()===username.toLowerCase())){toast('Usuário já existe.','warn');return;}
+  await dbPut(S_USERS,{id:uid(),username,passwordHash:await sha256(password),role,active:true,createdAt:now(),updatedAt:now()});
+  document.getElementById('newUsername').value='';document.getElementById('newUserPass').value='';
+  toast('✅ Usuário criado!','ok');schedulePush(S_USERS);renderUsers();
+}
+async function toggleUserActive(uid){
+  if(!isAdmin()||uid===currentUserId()){toast('Não pode inativar a si mesmo.','warn');return;}
+  const u=await dbGet(S_USERS,uid);if(!u)return;u.active=u.active===false?true:false;u.updatedAt=now();
+  await dbPut(S_USERS,u);toast(u.active?'✅ Reativado.':'⏸ Inativado.','ok');schedulePush(S_USERS);renderUsers();
+}
+async function promoteToAdmin(uid){
+  const u=await dbGet(S_USERS,uid);if(!u)return;u.role='admin';u.updatedAt=now();await dbPut(S_USERS,u);toast('👑 Promovido!','ok');schedulePush(S_USERS);renderUsers();
+}
+async function demoteToProfessor(uid){
+  if(uid===currentUserId()){toast('Não pode rebaixar a si mesmo.','warn');return;}
+  const u=await dbGet(S_USERS,uid);if(!u)return;u.role='professor';u.updatedAt=now();await dbPut(S_USERS,u);toast('👨‍🏫 Rebaixado.','ok');schedulePush(S_USERS);renderUsers();
+}
+async function resetUserPassword(uid){
+  const np=prompt('Nova senha (mín. 4 caracteres):');if(!np||np.length<4){toast('Inválida.','warn');return;}
+  const u=await dbGet(S_USERS,uid);if(!u)return;u.passwordHash=await sha256(np);u.updatedAt=now();await dbPut(S_USERS,u);toast('🔑 Senha redefinida!','ok');schedulePush(S_USERS);
+}
+
+// ══════════════════════════════════════════════
+//  ADMIN — CADASTROS
+// ══════════════════════════════════════════════
+async function renderTeachers(){const show=document.getElementById('showInactiveTeachers').checked;const items=(await dbGetAll(S_TEACHERS)).sort((a,b)=>a.name.localeCompare(b.name));renderAdminList('teachersList',items.filter(i=>show||i.active!==false),S_TEACHERS);}
+async function addTeacher(){const name=document.getElementById('teacherName').value.trim();if(!name){toast('Digite um nome.','warn');return;}if((await dbGetAll(S_TEACHERS)).some(i=>i.name.toLowerCase()===name.toLowerCase())){toast('Já existe.','warn');return;}await dbPut(S_TEACHERS,{id:uid(),name,active:true,createdAt:now(),updatedAt:now()});document.getElementById('teacherName').value='';toast('✅ Adicionado.','ok');schedulePush(S_TEACHERS);renderTeachers();}
+async function renderClasses(){const show=document.getElementById('showInactiveClasses').checked;const items=(await dbGetAll(S_CLASSES)).sort((a,b)=>a.name.localeCompare(b.name));renderAdminList('classesList',items.filter(i=>show||i.active!==false),S_CLASSES);}
+async function addClass(){const name=document.getElementById('className').value.trim();if(!name){toast('Digite um nome.','warn');return;}if((await dbGetAll(S_CLASSES)).some(i=>i.name.toLowerCase()===name.toLowerCase())){toast('Já existe.','warn');return;}await dbPut(S_CLASSES,{id:uid(),name,active:true,createdAt:now(),updatedAt:now()});document.getElementById('className').value='';toast('✅ Adicionado.','ok');schedulePush(S_CLASSES);renderClasses();}
+async function renderSubjects(){const show=document.getElementById('showInactiveSubjects').checked;const items=(await dbGetAll(S_SUBJECTS)).sort((a,b)=>a.name.localeCompare(b.name));renderAdminList('subjectsList',items.filter(i=>show||i.active!==false),S_SUBJECTS);}
+async function addSubject(){const name=document.getElementById('subjectName').value.trim();if(!name){toast('Digite um nome.','warn');return;}if((await dbGetAll(S_SUBJECTS)).some(i=>i.name.toLowerCase()===name.toLowerCase())){toast('Já existe.','warn');return;}await dbPut(S_SUBJECTS,{id:uid(),name,active:true,createdAt:now(),updatedAt:now()});document.getElementById('subjectName').value='';toast('✅ Adicionado.','ok');schedulePush(S_SUBJECTS);renderSubjects();}
+
+function renderAdminList(containerId,items,store){const el=document.getElementById(containerId);el.innerHTML='';if(!items.length){el.innerHTML='<div class="muted" style="padding:8px 0;">Nenhum item.</div>';return;}items.forEach(item=>{const div=document.createElement('div');div.className=`admin-item${item.active===false?' inactive':''}`;div.innerHTML=`<span class="item-name">${esc(item.name)}</span><button class="btn btn-small btn-icon btn-ghost" onclick="editAdminItem('${store}','${item.id}')">✏️</button><button class="btn btn-small btn-icon ${item.active===false?'btn-success':'btn-warning'}" onclick="toggleAdminItem('${store}','${item.id}')">${item.active===false?'✔':'⏸'}</button>`;el.appendChild(div);});}
+async function toggleAdminItem(store,id){const item=await dbGet(store,id);if(!item)return;item.active=item.active===false?true:false;item.updatedAt=now();await dbPut(store,item);toast(item.active?'✅ Reativado.':'⏸ Inativado.','ok');schedulePush(store);setTab('admin');}
+async function editAdminItem(store,id){const item=await dbGet(store,id);if(!item)return;const nn=prompt('Novo nome:',item.name);if(!nn||!nn.trim()||nn.trim()===item.name)return;item.name=nn.trim();item.updatedAt=now();await dbPut(store,item);toast('✅ Atualizado.','ok');schedulePush(store);setTab('admin');}
+
+// ══════════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded',async()=>{
   await openDB();
-  const sess = loadSession();
-  if (sess && sess.userId) {
-    const user = await dbGet(S_USERS, sess.userId);
-    if (user && user.active) { _session = sess; enterApp(); return; }
-    clearSession();
-  }
+  const sess=loadSession();
+  if(sess&&sess.userId){const user=await dbGet(S_USERS,sess.userId);if(user&&user.active){_session=sess;await enterApp();return;}clearSession();}
   await setupLoginUI();
   document.getElementById('loginOverlay').classList.remove('hidden');
   document.getElementById('appWrapper').classList.add('main-hidden');
