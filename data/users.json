@@ -13,8 +13,8 @@
     "username": "Denize",
     "passwordHash": "b5b77d2ea80ef2cb8b4e7b261eb1728c71ab7968002b070397f186c380902436",
     "role": "admin",
-    "active": false,
+    "active": true,
     "createdAt": "2026-07-21T01:39:12.520Z",
-    "updatedAt": "2026-07-24T02:09:12.972Z"
+    "updatedAt": "2026-07-24T02:09:22.013Z"
   }
 ]
