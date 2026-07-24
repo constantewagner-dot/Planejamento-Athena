@@ -40,5 +40,26 @@
     "observacoes": "",
     "createdAt": "2026-07-24T02:11:33.392Z",
     "updatedAt": "2026-07-24T02:11:33.392Z"
+  },
+  {
+    "id": "mrydg29llftca",
+    "userId": "mrtx869nw1q18",
+    "teacherId": "mryaz0h3k9f5b",
+    "teacherName": "Bruna",
+    "classId": "mryaz7dssuhx5",
+    "className": "1º ano",
+    "subjectId": "mryazd45p0zed",
+    "subjectName": "Português",
+    "dataLancamento": "2026-07-24",
+    "periodoInicio": "2026-07-27",
+    "periodoFim": "2026-07-31",
+    "contentName": "teste",
+    "objetivos": "teste",
+    "descricao": "teste",
+    "recursos": "projetor",
+    "avaliacao": "prova escrita",
+    "observacoes": "",
+    "createdAt": "2026-07-24T03:19:27.609Z",
+    "updatedAt": "2026-07-24T03:19:27.609Z"
   }
 ]
