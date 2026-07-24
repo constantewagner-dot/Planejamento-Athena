@@ -54,12 +54,12 @@
     "periodoInicio": "2026-07-27",
     "periodoFim": "2026-07-31",
     "contentName": "teste",
-    "objetivos": "teste",
+    "objetivos": "testeteste",
     "descricao": "teste",
     "recursos": "projetor",
     "avaliacao": "prova escrita",
-    "observacoes": "",
+    "observacoes": "errado o planejamento da semana, vamos revisar",
     "createdAt": "2026-07-24T03:19:27.609Z",
-    "updatedAt": "2026-07-24T03:19:27.609Z"
+    "updatedAt": "2026-07-24T03:20:22.877Z"
   }
 ]
