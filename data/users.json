@@ -16,5 +16,14 @@
     "active": true,
     "createdAt": "2026-07-21T01:39:12.520Z",
     "updatedAt": "2026-07-24T02:05:06.947Z"
+  },
+  {
+    "id": "mrydek535pu7e",
+    "username": "Camila",
+    "passwordHash": "80d161545383dd77c8703ec50d566ae19f9f6bb5b68b42b26482f1cdf21bf8f2",
+    "role": "professor",
+    "active": true,
+    "createdAt": "2026-07-24T03:18:17.463Z",
+    "updatedAt": "2026-07-24T03:18:17.463Z"
   }
 ]
