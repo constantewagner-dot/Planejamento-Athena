@@ -183,11 +183,6 @@
 <!-- ══════════════════════════════════════════════
      ⚠️ CONFIGURAÇÃO DO GITHUB (altere aqui)
      ══════════════════════════════════════════════ -->
-<!--
-  Cole seu Token de Acesso do GitHub (PAT) com permissão "repo".
-  Gere em: https://github.com/settings/tokens → Generate new token (classic)
-  ⚠️ Mantenha este arquivo em local seguro. Não compartilhe o token publicamente.
--->
 <script>
 // ══════════════════════════════════════════════
 //  🔧 CONFIGURAÇÃO DO GITHUB
@@ -196,8 +191,8 @@
 // ══════════════════════════════════════════════
 const GITHUB_CONFIG = {
   token:  'ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',  // ← SUBSTITUA pelo seu token
-  owner:  'colegio-athena',                            // ← seu usuário/organização
-  repo:   'athena-planejamento',                       // ← nome do repositório
+  owner:  'seu-usuario',                               // ← seu usuário/organização
+  repo:   'nome-do-repositorio',                       // ← nome do repositório
   branch: 'main'                                       // ← branch (main ou master)
 };
 </script>
@@ -421,9 +416,13 @@ async function ghGetConfig(){
   return {token, owner, repo, branch, ok: !!(token && owner && repo)};
 }
 
-// Verifica se o GITHUB_CONFIG foi preenchido (não está com placeholder)
+// Verifica se o GITHUB_CONFIG foi preenchido corretamente
 function isGithubConfigValid(){
-  return GITHUB_CONFIG.token && GITHUB_CONFIG.token.startsWith('ghp_') && GITHUB_CONFIG.owner && GITHUB_CONFIG.repo && GITHUB_CONFIG.owner !== 'colegio-athena';
+  const t = GITHUB_CONFIG.token || '';
+  const o = GITHUB_CONFIG.owner || '';
+  const r = GITHUB_CONFIG.repo || '';
+  // Verifica se não está com placeholder
+  return t.length > 10 && !t.includes('xxx') && o.length > 0 && r.length > 0;
 }
 
 function ghAuthHeaders(token){return {Authorization:`Bearer ${token}`,Accept:'application/vnd.github.v3+json'};}
@@ -580,7 +579,6 @@ async function updateSyncUI(){
 //  GITHUB CONFIG UI (Admin)
 // ══════════════════════════════════════════════
 async function loadGithubConfigIntoForm(){
-  // Mostra valores salvos (ou placeholder vazio se estiver usando o padrão)
   document.getElementById('ghToken').value = await getSetting('github_token', '');
   document.getElementById('ghOwner').value = await getSetting('github_owner', '');
   document.getElementById('ghRepo').value  = await getSetting('github_repo',  '');
@@ -651,18 +649,43 @@ async function updateBackupStatus(fs){
 async function checkFirstAccess(){
   const localUsers = await dbGetAll(S_USERS);
   if (localUsers.length > 0) return false;
+  
   // Tenta puxar do GitHub
   const config = await ghGetConfig();
   if (config.ok) {
-    try { await ghPullStore(S_USERS); const remoteUsers = await dbGetAll(S_USERS); return remoteUsers.length === 0; }
-    catch { return localUsers.length === 0; }
+    try { 
+      await ghPullStore(S_USERS); 
+      const remoteUsers = await dbGetAll(S_USERS); 
+      return remoteUsers.length === 0; 
+    } catch { 
+      return localUsers.length === 0; 
+    }
   }
   return localUsers.length === 0;
 }
 
 async function setupLoginUI(){
+  const config = await ghGetConfig();
+  const configValid = isGithubConfigValid() || config.ok;
+  
+  // Se GitHub configurado, tenta sincronizar automaticamente
+  if (config.ok) {
+    const localUsers = await dbGetAll(S_USERS);
+    if (localUsers.length === 0) {
+      // IndexedDB vazio → puxa dados do GitHub
+      try {
+        for (const store of GH_STORES) {
+          await ghPullStore(store);
+        }
+        await setSetting('github_last_sync', now());
+      } catch (e) {
+        console.log('Sync inicial falhou:', e.message);
+      }
+    }
+  }
+  
+  // Agora verifica se é primeiro acesso (após o pull)
   const isFirst = await checkFirstAccess();
-  const configValid = isGithubConfigValid();
 
   document.getElementById('loginTitle').textContent = isFirst ? '🔐 Primeiro Acesso' : 'Planejamento Athena';
   document.getElementById('loginSubtitle').textContent = isFirst
@@ -676,7 +699,7 @@ async function setupLoginUI(){
 
   // Aviso se GitHub não estiver configurado
   const hintEl = document.getElementById('configHint');
-  if (!configValid) {
+  if (!configValid && !config.ok) {
     hintEl.style.display = 'block';
     hintEl.className = 'config-hint';
     hintEl.innerHTML = '⚠️ <strong>GitHub não configurado.</strong><br>Edite o <code>GITHUB_CONFIG</code> no código-fonte com seu token, owner e repositório.';
@@ -698,8 +721,12 @@ async function handleLogin(e){
   if (config.ok) {
     document.getElementById('loginSpinner').classList.add('visible');
     document.getElementById('loginBtn').disabled = true;
-    try { for (const store of GH_STORES) { await ghPullStore(store); } await setSetting('github_last_sync', now()); }
-    catch { /* continua com dados locais */ }
+    try { 
+      for (const store of GH_STORES) { 
+        await ghPullStore(store); 
+      } 
+      await setSetting('github_last_sync', now()); 
+    } catch { /* continua com dados locais */ }
     document.getElementById('loginSpinner').classList.remove('visible');
     document.getElementById('loginBtn').disabled = false;
   }
@@ -910,24 +937,7 @@ document.addEventListener('DOMContentLoaded',async()=>{
     clearSession();
   }
 
-  // Tenta sincronizar automaticamente se GitHub configurado e IndexedDB vazio
-  const config=await ghGetConfig();
-  if(config.ok){
-    const localUsers=await dbGetAll(S_USERS);
-    if(localUsers.length===0){
-      // IndexedDB vazio → puxa dados do GitHub automaticamente
-      const spinner=document.getElementById('loginSpinner');
-      spinner.classList.add('visible');
-      document.getElementById('loginBtn').disabled=true;
-      try{
-        for(const store of GH_STORES){await ghPullStore(store);}
-        await setSetting('github_last_sync',now());
-      }catch{/* silencioso — vai mostrar primeiro acesso se falhar */}
-      spinner.classList.remove('visible');
-      document.getElementById('loginBtn').disabled=false;
-    }
-  }
-
+  // Configura a UI do login (que já faz sync automático se necessário)
   await setupLoginUI();
   document.getElementById('loginOverlay').classList.remove('hidden');
   document.getElementById('appWrapper').classList.add('main-hidden');
