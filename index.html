@@ -13,14 +13,33 @@
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:16px}
-.login-overlay{display:flex;position:fixed;inset:0;background:linear-gradient(135deg,#0f2744,#1a3d64,#1a56a0);z-index:10000;align-items:center;justify-content:center;padding:20px}
-.login-overlay.hidden{display:none}
-.login-box{background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.28);width:100%;max-width:400px;padding:32px 26px}
-.logo-area{text-align:center;margin-bottom:20px}
-.logo-area .icon{font-size:2.6rem}
-.logo-area h2{font-size:1.15rem;color:var(--primary);font-weight:700;margin-top:4px}
-.logo-area p{font-size:.82rem;color:var(--muted);margin-top:2px}
-.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+header{background:var(--primary);color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.12);position:sticky;top:0;z-index:100}
+.header-info{flex:1;min-width:150px}
+.header-info h1{font-size:1.05rem;font-weight:700}
+.header-info p{font-size:.75rem;opacity:.78}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sync-indicator{font-size:.74rem;padding:5px 10px;border-radius:12px;font-weight:600;white-space:nowrap}
+.sync-indicator.synced{background:rgba(255,255,255,.15)}
+.sync-indicator.pending{background:rgba(255,193,7,.25);color:#ffe082;animation:pulse 1.5s infinite}
+.sync-indicator.syncing{background:rgba(255,255,255,.2)}
+.sync-indicator.error{background:rgba(255,82,82,.3);color:#ffcdd2}
+.sync-indicator.offline{background:rgba(255,255,255,.08);opacity:.65}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+.btn-icon{background:rgba(255,255,255,.15);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:1.15rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
+.btn-icon:hover{background:rgba(255,255,255,.28);transform:rotate(20deg)}
+main{max-width:1200px;margin:0 auto;padding:16px 12px 60px}
+.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab-btn{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:.9rem;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.card-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-header h2{font-size:1.02rem;font-weight:700;color:var(--primary)}
+.hint{font-size:.8rem;color:var(--muted);margin-top:2px}
+.card-body{padding:16px 18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.full{grid-column:1/-1}
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:0}
 .form-group label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
 input,select,textarea{padding:11px 12px;border:1px solid var(--border);border-radius:7px;font-size:1rem;background:#fafbfc;font-family:inherit;color:var(--text);min-height:44px}
 textarea{min-height:80px;resize:vertical}
@@ -33,40 +52,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary)
 .btn-warning{background:#e67e22;color:#fff}.btn-warning:hover{background:#ca6f1e}
 .btn-small{padding:7px 14px;font-size:.85rem;min-height:36px}
 .btn:disabled{opacity:.6;cursor:not-allowed}
-.btn-block{width:100%}
-.login-error{color:var(--danger);font-size:.85rem;text-align:center;margin-top:10px;min-height:20px;font-weight:600;line-height:1.4}
-.login-spinner{display:none;text-align:center;padding:10px;color:var(--primary);font-weight:600;font-size:.88rem}
-.login-spinner.visible{display:block}
-.config-hint{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 14px;font-size:.82rem;color:#856404;margin-bottom:14px;line-height:1.5}
-.config-hint.err{background:#fdecea;border-color:#c0392b;color:#922b21}
-header{background:var(--primary);color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.12);position:sticky;top:0;z-index:100}
-.header-info{flex:1;min-width:150px}
-.header-info h1{font-size:1.05rem;font-weight:700}
-.header-info p{font-size:.75rem;opacity:.78}
-.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.header-user{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);padding:6px 12px;border-radius:20px;font-size:.85rem;font-weight:600}
-.user-badge{background:#fff;color:var(--primary);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800}
-.btn-logout{background:none;border:none;color:#fff;cursor:pointer;font-size:1rem;opacity:.8;padding:4px 8px}
-.sync-indicator{font-size:.74rem;padding:5px 10px;border-radius:12px;font-weight:600;white-space:nowrap}
-.sync-indicator.synced{background:rgba(255,255,255,.15)}
-.sync-indicator.pending{background:rgba(255,193,7,.25);color:#ffe082;animation:pulse 1.5s infinite}
-.sync-indicator.syncing{background:rgba(255,255,255,.2)}
-.sync-indicator.error{background:rgba(255,82,82,.3);color:#ffcdd2}
-.sync-indicator.offline{background:rgba(255,255,255,.08);opacity:.65}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-main{max-width:1200px;margin:0 auto;padding:16px 12px 60px}
-.main-hidden{display:none!important}
-.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
-.tab-btn{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:.9rem;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
-.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
-.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
-.card-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.card-header h2{font-size:1.02rem;font-weight:700;color:var(--primary)}
-.hint{font-size:.8rem;color:var(--muted);margin-top:2px}
-.card-body{padding:16px 18px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
-.full{grid-column:1/-1}
 .btn-group{display:flex;gap:10px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
 .filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
 .selection-toolbar{display:none;align-items:center;gap:8px;background:var(--primary);color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:12px;flex-wrap:wrap}
@@ -85,17 +70,13 @@ input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:var(--pr
 .kpi{background:var(--primary-light);color:var(--primary);padding:5px 12px;border-radius:16px;font-size:.8rem;font-weight:700}
 .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
 .admin-box{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.admin-box .head{background:var(--primary-light);padding:9px 12px;font-weight:700;color:var(--primary);font-size:.9rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.admin-box .head{background:var(--primary-light);padding:9px 12px;font-weight:700;color:var(--primary);font-size:.9rem}
 .admin-box .body{padding:12px;display:flex;flex-direction:column;gap:8px}
 .admin-list{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto}
 .admin-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#fafbfc}
 .admin-item.inactive{opacity:.5}
 .admin-item .name{flex:1;font-size:.88rem}
 .row-inline{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.users-table{width:100%;border-collapse:collapse}
-.users-table th{text-align:left;padding:8px;font-size:.74rem;color:var(--muted);text-transform:uppercase;border-bottom:2px solid var(--border)}
-.users-table td{padding:8px;font-size:.87rem;border-bottom:1px solid #f0f2f6}
-.users-table tbody tr.inactive-row{opacity:.48}
 .backup-status{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:14px;font-size:.8rem;font-weight:600}
 .backup-status.ok{background:var(--success-light);color:var(--success)}
 .backup-status.warn{background:var(--warning-light);color:var(--warning)}
@@ -109,12 +90,13 @@ input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:var(--pr
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.open{display:flex}
 .modal{background:#fff;border-radius:var(--radius);width:100%;max-width:480px;max-height:90vh;display:flex;flex-direction:column}
+.modal.modal-lg{max-width:620px}
 .modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .modal-header h3{font-size:1rem;color:var(--primary)}
 .modal-body{padding:16px 18px;overflow-y:auto;flex:1}
-.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .btn-close-modal{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted)}
-.locked-note{font-size:.8rem;color:var(--muted);font-style:italic}
+.config-hint{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 14px;font-size:.82rem;color:#856404;margin-bottom:14px;line-height:1.5}
 @media(max-width:768px){
   .grid-3,.grid-2{grid-template-columns:1fr}
   .btn{width:100%}
@@ -129,58 +111,25 @@ input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:var(--pr
 <body>
 
 <!-- ══════════════════════════════════════
-     CONFIG PADRÃO DO GITHUB
-     ⚠️ IMPORTANTE: Este arquivo é o MESMO para
-     todos os usuários (hospedado no GitHub Pages).
-     Preencha aqui com os dados REAIS do seu
-     repositório para que o login funcione em
-     QUALQUER dispositivo, mesmo sem configuração
-     prévia no navegador.
+     CONFIG DO GITHUB
+     Preencha aqui os dados REAIS do seu
+     repositório para habilitar a sincronização
+     de dados entre todos os acessos ao link.
      ══════════════════════════════════════ -->
 <script>
 const GITHUB_CONFIG_DEFAULT = {
-  token:  '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',  // ← Token real aqui
-  owner:  'constantewagner-dot',                          // ← Dono do repositório
-  repo:   'Planejamento-Athena',                        // ← Nome do repositório
-  branch: 'main'                                         // ← Branch
+  token:  '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',
+  owner:  'constantewagner-dot',
+  repo:   'Planejamento-Athena',
+  branch: 'main'
 };
 </script>
 
-<!-- ═══════ LOGIN ═══════ -->
-<div class="login-overlay" id="loginOverlay">
-  <div class="login-box">
-    <div class="logo-area">
-      <div class="icon">🏫</div>
-      <h2 id="loginTitle">Planejamento Athena</h2>
-      <p id="loginSubtitle">Colégio Athena — Supervisão Pedagógica</p>
-    </div>
-    <div class="config-hint" id="configHint" style="display:none"></div>
-    <form id="loginForm">
-      <div class="form-group"><label>Usuário</label><input type="text" id="loginUsername" required autocomplete="username" /></div>
-      <div class="form-group"><label>Senha</label><input type="password" id="loginPassword" required autocomplete="current-password" /></div>
-      <div class="form-group" id="confirmGroup" style="display:none"><label>Confirmar senha</label><input type="password" id="loginConfirm" /></div>
-      <button type="button" class="btn btn-primary btn-block" id="loginBtn" onclick="handleLogin(event)">Entrar</button>
-    </form>
-    <div class="login-spinner" id="loginSpinner">🔄 Conectando ao GitHub...</div>
-    <div class="login-error" id="loginError"></div>
-    <div id="retryWrap" style="display:none;margin-top:10px;text-align:center">
-      <button type="button" class="btn btn-ghost btn-small" onclick="retryInitialSync()">🔄 Tentar novamente</button>
-    </div>
-  </div>
-</div>
-
-<!-- ═══════ APP ═══════ -->
-<div id="appWrapper" class="main-hidden">
 <header>
   <div class="header-info"><h1>🏫 Supervisão Pedagógica</h1><p>Planejamento de Aulas — Colégio Athena</p></div>
   <div class="header-right">
     <div class="sync-indicator offline" id="syncIndicator">☁️ Offline</div>
-    <div class="header-user">
-      <div class="user-badge" id="userBadge">A</div>
-      <span id="headerUserName">—</span>
-      <span id="headerUserRole" style="font-size:.72rem;opacity:.7"></span>
-      <button class="btn-logout" onclick="doLogout()" title="Sair">⏻</button>
-    </div>
+    <button class="btn-icon" onclick="openSettingsModal()" title="Configurações">⚙️</button>
   </div>
 </header>
 
@@ -188,8 +137,7 @@ const GITHUB_CONFIG_DEFAULT = {
   <div class="tabs">
     <button class="tab-btn active" id="tab-btn-novo" onclick="setTab('novo')">📝 Novo Planejamento</button>
     <button class="tab-btn" id="tab-btn-consultas" onclick="setTab('consultas')">🔍 Consultas</button>
-    <button class="tab-btn" id="tab-btn-backup" onclick="setTab('backup')">☁️ Backup</button>
-    <button class="tab-btn" id="tab-btn-admin" onclick="setTab('admin')" style="display:none">⚙️ Administração</button>
+    <button class="tab-btn" id="tab-btn-admin" onclick="setTab('admin')">📋 Cadastros</button>
   </div>
 
   <!-- ABA NOVO -->
@@ -238,7 +186,7 @@ const GITHUB_CONFIG_DEFAULT = {
           <span class="sel-count" id="selCount">0 selecionado(s)</span>
           <button class="btn btn-small" style="background:#fff;color:var(--primary)" onclick="acaoEditar()">✏️ Editar</button>
           <button class="btn btn-small" style="background:rgba(255,255,255,.2);color:#fff" onclick="acaoCopiar()">📋 Copiar</button>
-          <button class="btn btn-small btn-danger" id="btnToolbarDelete" onclick="acaoExcluir()" style="display:none">🗑️ Excluir</button>
+          <button class="btn btn-small btn-danger" onclick="acaoExcluir()">🗑️ Excluir</button>
         </div>
         <div class="table-wrap">
           <table class="list">
@@ -251,69 +199,19 @@ const GITHUB_CONFIG_DEFAULT = {
     </div>
   </section>
 
-  <!-- ABA BACKUP -->
-  <section id="backup-view" style="display:none">
-    <div class="card">
-      <div class="card-header"><div><h2>☁️ Backup e Sincronização</h2><div class="hint">Dados sincronizados automaticamente com o GitHub.</div></div><div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Não configurado</div></div>
-      <div class="card-body">
-        <div class="row-inline" style="margin-bottom:12px">
-          <button class="btn btn-success" onclick="syncNow()">🔄 Sincronizar Agora</button>
-          <button class="btn btn-warning" onclick="forcePushAll()">📤 Forçar Upload Completo</button>
-        </div>
-        <div id="ghLastBackup" style="font-size:.85rem;color:var(--muted)"></div>
-        <div id="adminGhConfigWrap" style="display:none;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
-          <h3 style="font-size:.95rem;color:var(--primary);margin-bottom:10px">⚙️ Configuração do GitHub (somente Admin)</h3>
-          <div class="config-hint">
-            ℹ️ Esta configuração (quando salva aqui) é armazenada <strong>apenas neste navegador</strong>.
-            Para que o login funcione em <strong>qualquer dispositivo</strong>, o Token/Owner/Repo/Branch REAIS
-            devem estar preenchidos no <code>GITHUB_CONFIG_DEFAULT</code>, dentro do código-fonte do
-            arquivo <code>index.html</code>, antes de publicar no GitHub Pages.
-          </div>
-          <div class="grid-2">
-            <div class="form-group"><label>Token de Acesso</label><input type="password" id="ghToken" placeholder="Deixe em branco p/ usar padrão" /></div>
-            <div class="form-group"><label>Dono do Repositório</label><input type="text" id="ghOwner" /></div>
-            <div class="form-group"><label>Nome do Repositório</label><input type="text" id="ghRepo" /></div>
-            <div class="form-group"><label>Branch</label><input type="text" id="ghBranch" placeholder="main" /></div>
-          </div>
-          <div class="row-inline" style="margin-top:12px">
-            <button class="btn btn-primary" onclick="saveGithubConfig()">💾 Salvar (só neste navegador)</button>
-            <button class="btn btn-ghost" id="btnTestGh" onclick="testGithubConnection()">🔍 Testar Conexão</button>
-            <button class="btn btn-danger btn-small" onclick="resetGithubConfig()">↺ Resetar</button>
-          </div>
-        </div>
-        <div id="notAdminNote" class="locked-note" style="display:none;margin-top:14px">🔒 A configuração do repositório é gerenciada apenas por administradores.</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABA ADMIN -->
+  <!-- ABA CADASTROS -->
   <section id="admin-view" style="display:none">
-    <div class="card">
-      <div class="card-header"><div><h2>👥 Gestão de Usuários</h2></div><label style="font-size:.8rem;display:flex;gap:6px;align-items:center"><input type="checkbox" id="showInactiveUsers" onchange="renderUsers()" /> Mostrar inativos</label></div>
-      <div class="card-body">
-        <div class="row-inline" style="margin-bottom:14px;background:var(--primary-light);padding:12px;border-radius:8px">
-          <input type="text" id="newUsername" placeholder="Usuário" style="flex:1;min-width:130px" />
-          <input type="password" id="newUserPass" placeholder="Senha (mín. 4)" style="flex:1;min-width:130px" />
-          <select id="newUserRole" style="width:130px"><option value="professor">Professor</option><option value="admin">Admin</option></select>
-          <button class="btn btn-primary" onclick="addUser()">➕ Criar</button>
-        </div>
-        <div class="table-wrap"><table class="users-table">
-          <thead><tr><th>Usuário</th><th>Perfil</th><th>Status</th><th></th></tr></thead>
-          <tbody id="usersTableBody"></tbody>
-        </table></div>
-      </div>
-    </div>
     <div class="card">
       <div class="card-header"><h2>📋 Cadastros Auxiliares</h2></div>
       <div class="card-body">
         <div class="split">
-          <div class="admin-box"><div class="head"><span>👨‍🏫 Professores</span></div><div class="body">
+          <div class="admin-box"><div class="head">👨‍🏫 Professores</div><div class="body">
             <div class="row-inline"><input type="text" id="teacherName" placeholder="Nome" style="flex:1" /><button class="btn btn-small btn-primary" onclick="addTeacher()">+</button></div>
             <div class="admin-list" id="teachersList"></div></div></div>
-          <div class="admin-box"><div class="head"><span>📚 Turmas</span></div><div class="body">
+          <div class="admin-box"><div class="head">📚 Turmas</div><div class="body">
             <div class="row-inline"><input type="text" id="className" placeholder="Ex: 3º B" style="flex:1" /><button class="btn btn-small btn-primary" onclick="addClass()">+</button></div>
             <div class="admin-list" id="classesList"></div></div></div>
-          <div class="admin-box"><div class="head"><span>📖 Disciplinas</span></div><div class="body">
+          <div class="admin-box"><div class="head">📖 Disciplinas</div><div class="body">
             <div class="row-inline"><input type="text" id="subjectName" placeholder="Ex: Matemática" style="flex:1" /><button class="btn btn-small btn-primary" onclick="addSubject()">+</button></div>
             <div class="admin-list" id="subjectsList"></div></div></div>
         </div>
@@ -321,9 +219,10 @@ const GITHUB_CONFIG_DEFAULT = {
     </div>
   </section>
 </main>
-</div>
 
 <div class="toast" id="toast"></div>
+
+<!-- MODAL CONFIRMAÇÃO -->
 <div class="modal-overlay" id="modalConfirm">
   <div class="modal">
     <div class="modal-header"><h3 id="modalConfirmTitle">Confirmar</h3><button class="btn-close-modal" onclick="closeModal('modalConfirm')">×</button></div>
@@ -332,25 +231,60 @@ const GITHUB_CONFIG_DEFAULT = {
   </div>
 </div>
 
+<!-- MODAL CONFIGURAÇÕES (⚙️) -->
+<div class="modal-overlay" id="modalSettings">
+  <div class="modal modal-lg">
+    <div class="modal-header"><h3>⚙️ Configurações — Backup e Sincronização</h3><button class="btn-close-modal" onclick="closeModal('modalSettings')">×</button></div>
+    <div class="modal-body">
+      <div class="row-inline" style="margin-bottom:12px;justify-content:space-between">
+        <div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Não configurado</div>
+      </div>
+      <div class="row-inline" style="margin-bottom:12px">
+        <button class="btn btn-success btn-small" onclick="syncNow()">🔄 Sincronizar Agora</button>
+        <button class="btn btn-warning btn-small" onclick="forcePushAll()">📤 Forçar Upload Completo</button>
+      </div>
+      <div id="ghLastBackup" style="font-size:.85rem;color:var(--muted);margin-bottom:14px"></div>
+
+      <div class="config-hint">
+        ℹ️ Esta configuração (quando salva aqui) vale <strong>apenas para este navegador</strong>.
+        Para que a sincronização funcione em qualquer dispositivo, preencha o
+        <code>GITHUB_CONFIG_DEFAULT</code> direto no código-fonte do <code>index.html</code>
+        antes de publicar no GitHub Pages.
+      </div>
+
+      <div class="grid-2">
+        <div class="form-group"><label>Token de Acesso</label><input type="password" id="ghToken" placeholder="Deixe em branco p/ usar padrão" /></div>
+        <div class="form-group"><label>Dono do Repositório</label><input type="text" id="ghOwner" /></div>
+        <div class="form-group"><label>Nome do Repositório</label><input type="text" id="ghRepo" /></div>
+        <div class="form-group"><label>Branch</label><input type="text" id="ghBranch" placeholder="main" /></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-small" onclick="resetGithubConfig()">↺ Resetar</button>
+      <button class="btn btn-ghost" id="btnTestGh" onclick="testGithubConnection()">🔍 Testar Conexão</button>
+      <button class="btn btn-primary" onclick="saveGithubConfig()">💾 Salvar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 /* ══════════════════ CONSTANTES ══════════════════ */
-const DB_NAME='athenaDB', DB_VERSION=10;
+const DB_NAME='athenaDB', DB_VERSION=11;
 const S_PLANS='plans', S_ATTS='attachments', S_TEACHERS='teachers', S_CLASSES='classes',
-      S_SUBJECTS='subjects', S_USERS='users', S_SETTINGS='settings', S_SYNC='_syncMeta';
-const SESSION_KEY='athena_session';
-const GH_STORES=[S_USERS,S_TEACHERS,S_CLASSES,S_SUBJECTS,S_PLANS,S_ATTS];
+      S_SUBJECTS='subjects', S_SETTINGS='settings', S_SYNC='_syncMeta';
+const GH_STORES=[S_TEACHERS,S_CLASSES,S_SUBJECTS,S_PLANS,S_ATTS];
 const SYNC_DEBOUNCE_MS=2500, SYNC_POLL_INTERVAL=120000;
 
-let _db=null,_session=null,_pushTimers={},_syncLoopId=null;
-let _cache={teachers:[],classes:[],subjects:[],plans:[],users:[],attachments:[]};
+let _db=null,_pushTimers={},_syncLoopId=null;
+let _cache={teachers:[],classes:[],subjects:[],plans:[],attachments:[]};
 let _selectedIds=new Set(), _pendingAttachments=[];
 
 /* ══════════════════ HELPERS ══════════════════ */
-async function sha256(t){const e=new TextEncoder(),b=await crypto.subtle.digest('SHA-256',e.encode(t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 function now(){return new Date().toISOString();}
 function fmtDate(iso){if(!iso)return '';const d=new Date(iso+'T00:00:00');return d.toLocaleDateString('pt-BR');}
 function fmtDateTime(iso){if(!iso)return '—';return new Date(iso).toLocaleString('pt-BR');}
+function escapeHtml(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
 /* ══════════════════ INDEXEDDB ══════════════════ */
 function openDB(){
@@ -359,15 +293,17 @@ function openDB(){
     const r=indexedDB.open(DB_NAME,DB_VERSION);
     r.onupgradeneeded=()=>{
       const d=r.result;
-      [S_PLANS,S_ATTS,S_TEACHERS,S_CLASSES,S_SUBJECTS,S_USERS].forEach(n=>{
+      [S_PLANS,S_ATTS,S_TEACHERS,S_CLASSES,S_SUBJECTS].forEach(n=>{
         if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:'id'});
       });
       [S_SETTINGS,S_SYNC].forEach(n=>{
         if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:'key'});
       });
+      if(d.objectStoreNames.contains('users')) d.deleteObjectStore('users');
     };
     r.onsuccess=()=>{_db=r.result;res(_db);};
     r.onerror=()=>rej(r.error);
+    r.onblocked=()=>console.warn('Abertura do IndexedDB bloqueada — feche outras abas do app.');
   });
 }
 function dbTx(store,mode,fn){return openDB().then(db=>new Promise((res,rej)=>{const tx=db.transaction(store,mode);const req=fn(tx.objectStore(store));req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);}));}
@@ -378,12 +314,6 @@ function dbGet(store,key){return dbTx(store,'readonly',s=>s.get(key));}
 function dbClear(store){return openDB().then(db=>new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).clear();r.onsuccess=()=>res();r.onerror=()=>rej(r.error);}));}
 async function getSetting(key,dflt=null){try{const r=await dbGet(S_SETTINGS,key);return r?r.value:dflt;}catch{return dflt;}}
 async function setSetting(key,value){await dbPut(S_SETTINGS,{key,value,updatedAt:now()});}
-
-/* ══════════════════ SESSÃO ══════════════════ */
-function saveSession(s){_session=s;sessionStorage.setItem(SESSION_KEY,JSON.stringify(s));}
-function loadSession(){try{const r=sessionStorage.getItem(SESSION_KEY);if(r){_session=JSON.parse(r);return _session;}}catch{}return null;}
-function clearSession(){_session=null;sessionStorage.removeItem(SESSION_KEY);}
-function isAdmin(){return _session&&_session.role==='admin';}
 
 /* ══════════════════ GITHUB SYNC ══════════════════ */
 function isValidToken(t){
@@ -396,8 +326,6 @@ async function ghGetConfig(){
   const owner=await getSetting('github_owner',GITHUB_CONFIG_DEFAULT.owner);
   const repo=await getSetting('github_repo',GITHUB_CONFIG_DEFAULT.repo);
   const branch=await getSetting('github_branch',GITHUB_CONFIG_DEFAULT.branch);
-  const valid = isValidToken(token) && !!owner && !!repo && owner!=='seu-usuario-github' && repo!=='athena-planejamentos' || (isValidToken(token) && !!owner && !!repo);
-  // validação simplificada: token válido + owner/repo preenchidos
   const ok = isValidToken(token) && !!owner && !!repo;
   return {token,owner,repo,branch,ok};
 }
@@ -528,9 +456,8 @@ async function updateSyncUI(){
   setSyncUI(lastSync?'synced':'pending',lastSync?'Sincronizado':'Conectado');
 }
 
-/* ══════════════════ CONFIG GITHUB (ADMIN) ══════════════════ */
+/* ══════════════════ CONFIG GITHUB ══════════════════ */
 async function loadGithubConfigIntoForm(){
-  if(!isAdmin())return;
   document.getElementById('ghToken').value='';
   document.getElementById('ghOwner').value=await getSetting('github_owner','');
   document.getElementById('ghRepo').value=await getSetting('github_repo','');
@@ -582,201 +509,7 @@ async function updateBackupStatus(fs){
   else{badge.className='backup-status warn';badge.innerHTML='<span class="dot yellow"></span> Conectado';lastEl.textContent='Use "Sincronizar Agora".';}
 }
 
-/* ══════════════════ LOGIN — LÓGICA CORRIGIDA ══════════════════ */
-
-/**
- * attemptInitialSync — Tenta baixar TODOS os dados do GitHub.
- * Retorna um objeto com o resultado detalhado:
- *  { ok:true }                             → sucesso
- *  { ok:false, reason:'not_configured' }   → GitHub não configurado (uso normal offline)
- *  { ok:false, reason:'error', message }   → FALHOU (rede/token/permissão) — NÃO assumir "sem usuários"!
- */
-async function attemptInitialSync(){
-  const config=await ghGetConfig();
-  if(!config.ok) return {ok:false, reason:'not_configured'};
-  try{
-    for(const s of GH_STORES) await ghPullStore(s);
-    await setSetting('github_last_sync',now());
-    return {ok:true};
-  }catch(e){
-    console.error('❌ Falha na sincronização inicial:', e);
-    return {ok:false, reason:'error', message:e.message};
-  }
-}
-
-async function checkFirstAccess(){
-  const localUsers=await dbGetAll(S_USERS);
-  return localUsers.length===0;
-}
-
-let _lastConfigOk=false;
-
-async function setupLoginUI(){
-  document.getElementById('loginSpinner').classList.add('visible');
-  document.getElementById('loginError').textContent='';
-  document.getElementById('retryWrap').style.display='none';
-
-  const syncResult = await attemptInitialSync();
-  document.getElementById('loginSpinner').classList.remove('visible');
-
-  const hint=document.getElementById('configHint');
-
-  if(syncResult.ok===false && syncResult.reason==='error'){
-    // Falha real de sincronização — NÃO assumir primeiro acesso!
-    hint.style.display='block';
-    hint.className='config-hint err';
-    hint.innerHTML=`❌ <strong>Não foi possível conectar ao GitHub.</strong><br>${escapeHtml(syncResult.message)}<br><br>Verifique sua conexão com a internet. Se o problema persistir, o token/configuração no código-fonte pode estar incorreto.`;
-    document.getElementById('loginTitle').textContent='⚠️ Erro de Conexão';
-    document.getElementById('loginSubtitle').textContent='Não foi possível verificar os usuários cadastrados.';
-    document.getElementById('retryWrap').style.display='block';
-    document.getElementById('loginBtn').textContent='Entrar (modo offline)';
-    document.getElementById('confirmGroup').style.display='none';
-    return;
-  }
-
-  const isFirst=await checkFirstAccess();
-  document.getElementById('loginTitle').textContent=isFirst?'🔐 Primeiro Acesso':'Planejamento Athena';
-  document.getElementById('loginSubtitle').textContent=isFirst?'Nenhum usuário encontrado. Crie o administrador.':'Colégio Athena — Supervisão Pedagógica';
-  document.getElementById('loginBtn').textContent=isFirst?'Criar Administrador':'Entrar';
-  document.getElementById('confirmGroup').style.display=isFirst?'':'none';
-  document.getElementById('loginError').textContent='';
-
-  if(syncResult.reason==='not_configured'){
-    hint.style.display='block';
-    hint.className='config-hint';
-    hint.innerHTML='⚠️ <strong>GitHub não configurado.</strong> Configure o <code>GITHUB_CONFIG_DEFAULT</code> no código-fonte para sincronizar entre dispositivos.';
-  } else {
-    hint.style.display='none';
-  }
-}
-
-async function retryInitialSync(){
-  await setupLoginUI();
-}
-
-/**
- * handleLogin — CORRIGIDO
- * - Não assume mais "usuário não encontrado" quando na verdade
- *   a sincronização com o GitHub falhou.
- * - Sempre tenta re-sincronizar antes de validar credenciais.
- * - Erros de rede/token são exibidos claramente ao usuário.
- */
-async function handleLogin(e){
-  if(e && e.preventDefault) e.preventDefault();
-
-  const loginBtn = document.getElementById('loginBtn');
-  const errEl = document.getElementById('loginError');
-  errEl.textContent = '';
-
-  const username = document.getElementById('loginUsername').value.trim();
-  const password = document.getElementById('loginPassword').value;
-
-  if(!username || !password){
-    errEl.textContent = 'Preencha usuário e senha.';
-    return;
-  }
-
-  loginBtn.disabled = true;
-  const originalText = loginBtn.textContent;
-  loginBtn.textContent = 'Entrando...';
-  document.getElementById('loginSpinner').classList.add('visible');
-
-  try {
-    const syncResult = await attemptInitialSync();
-    document.getElementById('loginSpinner').classList.remove('visible');
-
-    if(syncResult.ok===false && syncResult.reason==='error'){
-      // Sincronização falhou — avisa mas permite tentar login com dados locais (se houver)
-      errEl.innerHTML = `⚠️ Falha ao conectar ao GitHub: ${escapeHtml(syncResult.message)}<br>Tentando validar com dados locais...`;
-    }
-
-    const isFirst = await checkFirstAccess();
-
-    if(isFirst){
-      // Só permite criar admin se REALMENTE não há usuários (sync ok ou github não configurado)
-      if(syncResult.ok===false && syncResult.reason==='error'){
-        errEl.innerHTML = `❌ Não foi possível verificar se já existe um administrador cadastrado, pois a conexão com o GitHub falhou.<br>${escapeHtml(syncResult.message)}<br><br>Tente novamente quando a conexão for restabelecida.`;
-        return;
-      }
-      const confirmVal = document.getElementById('loginConfirm').value;
-      if(!document.getElementById('confirmGroup').offsetParent){
-        // confirmGroup estava oculto — provavelmente não é realmente primeiro acesso, refazer UI
-        await setupLoginUI();
-        errEl.textContent = 'Situação alterada. Tente novamente.';
-        return;
-      }
-      if(password !== confirmVal){ errEl.textContent = 'As senhas não coincidem.'; return; }
-      if(password.length < 4){ errEl.textContent = 'Senha: mínimo 4 caracteres.'; return; }
-
-      const user = {
-        id: uid(), username,
-        passwordHash: await sha256(password),
-        role: 'admin', active: true,
-        createdAt: now(), updatedAt: now()
-      };
-      await dbPut(S_USERS, user);
-      const config = await ghGetConfig();
-      if(config.ok){ try{ await ghPushStore(S_USERS); }catch(err){ console.warn(err); } }
-      saveSession({ userId: user.id, username: user.username, role: user.role });
-      await enterApp();
-      toast('✅ Administrador criado!', 'ok');
-      return;
-    }
-
-    const users = await dbGetAll(S_USERS);
-    const found = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-    if(!found){
-      if(syncResult.ok===false && syncResult.reason==='error'){
-        errEl.innerHTML = `❌ Usuário não encontrado localmente, e não foi possível sincronizar com o GitHub para verificar.<br><small>${escapeHtml(syncResult.message)}</small><br>Verifique sua conexão e tente novamente.`;
-      } else {
-        errEl.textContent = 'Usuário não encontrado.';
-      }
-      return;
-    }
-    if(!found.active){ errEl.textContent = 'Usuário inativo.'; return; }
-    if(await sha256(password) !== found.passwordHash){ errEl.textContent = 'Senha incorreta.'; return; }
-
-    saveSession({ userId: found.id, username: found.username, role: found.role });
-    await enterApp();
-    toast(`👋 Bem-vindo(a), ${found.username}!`, 'ok');
-
-  } catch(err) {
-    console.error('Erro no login:', err);
-    errEl.textContent = 'Erro inesperado: ' + err.message;
-  } finally {
-    loginBtn.disabled = false;
-    loginBtn.textContent = originalText;
-    document.getElementById('loginSpinner').classList.remove('visible');
-  }
-}
-
-async function enterApp(){
-  document.getElementById('loginOverlay').classList.add('hidden');
-  document.getElementById('appWrapper').classList.remove('main-hidden');
-  updateHeaderUI();
-  await loadAllCaches();
-  populateSelects();
-  setTab('novo');
-  loadGithubConfigIntoForm();
-  updateSyncUI();updateBackupStatus();
-  document.getElementById('adminGhConfigWrap').style.display=isAdmin()?'':'none';
-  document.getElementById('notAdminNote').style.display=isAdmin()?'none':'';
-  const config=await ghGetConfig();
-  if(config.ok) startSyncLoop();
-}
-function doLogout(){
-  clearSession();
-  document.getElementById('loginOverlay').classList.remove('hidden');
-  document.getElementById('appWrapper').classList.add('main-hidden');
-  ['loginUsername','loginPassword','loginConfirm'].forEach(id=>document.getElementById(id).value='');
-  if(_syncLoopId){clearInterval(_syncLoopId);_syncLoopId=null;}
-  Object.values(_pushTimers).forEach(t=>clearTimeout(t));_pushTimers={};
-  setupLoginUI();
-}
-
-/* ══════════════════ UI HELPERS ══════════════════ */
-let _toastTimer=null;
-function toast(m,t='ok',d=3000){const el=document.getElementById('toast');el.textContent=m;el.className=`toast show ${t}`;clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>el.className='toast',d);}
+/* ══════════════════ MODAIS ══════════════════ */
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
 function confirmDialog(title,msg,onConfirm){
@@ -785,24 +518,22 @@ function confirmDialog(title,msg,onConfirm){
   document.getElementById('modalConfirmBtn').onclick=()=>{closeModal('modalConfirm');onConfirm();};
   openModal('modalConfirm');
 }
-function updateHeaderUI(){
-  if(!_session)return;
-  document.getElementById('headerUserName').textContent=_session.username;
-  document.getElementById('headerUserRole').textContent=isAdmin()?'(Admin)':'(Professor)';
-  document.getElementById('userBadge').textContent=(_session.username[0]||'A').toUpperCase();
-  document.getElementById('tab-btn-admin').style.display=isAdmin()?'':'none';
-  document.getElementById('btnToolbarDelete').style.display=isAdmin()?'':'none';
+function openSettingsModal(){
+  loadGithubConfigIntoForm();
+  openModal('modalSettings');
 }
+
+/* ══════════════════ UI HELPERS ══════════════════ */
+let _toastTimer=null;
+function toast(m,t='ok',d=3000){const el=document.getElementById('toast');el.textContent=m;el.className=`toast show ${t}`;clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>el.className='toast',d);}
 function setTab(tab){
-  if(tab==='admin'&&!isAdmin()){toast('Acesso restrito.','err');return;}
-  ['novo','consultas','backup','admin'].forEach(t=>{
+  ['novo','consultas','admin'].forEach(t=>{
     document.getElementById(`${t}-view`).style.display=t===tab?'block':'none';
     document.getElementById(`tab-btn-${t}`).classList.toggle('active',t===tab);
   });
   if(tab==='novo') limparForm(false);
   if(tab==='consultas') renderLista();
-  if(tab==='admin'){renderUsers();renderTeachers();renderClasses();renderSubjects();}
-  if(tab==='backup'){updateBackupStatus();document.getElementById('adminGhConfigWrap').style.display=isAdmin()?'':'none';document.getElementById('notAdminNote').style.display=isAdmin()?'none':'';}
+  if(tab==='admin'){renderTeachers();renderClasses();renderSubjects();}
 }
 
 /* ══════════════════ CACHE / DADOS ══════════════════ */
@@ -811,7 +542,6 @@ async function loadAllCaches(){
   _cache.classes=await dbGetAll(S_CLASSES);
   _cache.subjects=await dbGetAll(S_SUBJECTS);
   _cache.plans=await dbGetAll(S_PLANS);
-  _cache.users=await dbGetAll(S_USERS);
   _cache.attachments=await dbGetAll(S_ATTS);
 }
 function refreshAllUI(){
@@ -819,7 +549,7 @@ function refreshAllUI(){
   const consultasVisible=document.getElementById('consultas-view').style.display!=='none';
   if(consultasVisible) renderLista();
   const adminVisible=document.getElementById('admin-view').style.display!=='none';
-  if(adminVisible){renderUsers();renderTeachers();renderClasses();renderSubjects();}
+  if(adminVisible){renderTeachers();renderClasses();renderSubjects();}
 }
 function populateSelects(){
   const activeTeachers=_cache.teachers.filter(t=>t.active);
@@ -843,7 +573,6 @@ function populateSelects(){
   fAno.innerHTML='<option value="">Todos</option>'+Array.from(anos).sort().reverse().map(a=>`<option value="${a}">${a}</option>`).join('');
   if(curAno)fAno.value=curAno;
 }
-function escapeHtml(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
 /* ══════════════════ PLANEJAMENTOS (CRUD) ══════════════════ */
 function limparForm(showToast){
@@ -876,14 +605,6 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
     });
   }
-
-  /* Enter dispara login */
-  const loginPass=document.getElementById('loginPassword');
-  const loginConf=document.getElementById('loginConfirm');
-  const loginUser=document.getElementById('loginUsername');
-  if(loginUser) loginUser.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleLogin(e); });
-  if(loginPass) loginPass.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleLogin(e); });
-  if(loginConf) loginConf.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleLogin(e); });
 });
 function fileToBase64(file){
   return new Promise((res,rej)=>{
@@ -916,7 +637,6 @@ async function salvarPlanejamento(){
     avaliacao:document.getElementById('avaliacao').value.trim(),
     observacoes:document.getElementById('observacoes').value.trim(),
     anexosIds: editingId ? (_cache.plans.find(p=>p.id===editingId)?.anexosIds||[]) : [],
-    userId:_session.userId,
     createdAt: editingId ? (_cache.plans.find(p=>p.id===editingId)?.createdAt||nowIso) : nowIso,
     updatedAt: nowIso
   };
@@ -949,7 +669,6 @@ function getFilteredPlans(){
     if(ft&&p.classId!==ft)return false;
     if(fd&&p.subjectId!==fd)return false;
     if(fa&&!(p.dataLancamento||'').startsWith(fa))return false;
-    if(!isAdmin() && p.userId!==_session.userId) return false;
     return true;
   }).sort((a,b)=>(b.dataLancamento||'').localeCompare(a.dataLancamento||''));
 }
@@ -1018,7 +737,7 @@ async function acaoCopiar(){
   for(const id of _selectedIds){
     const p=_cache.plans.find(x=>x.id===id);
     if(!p)continue;
-    const copy={...p,id:uid(),createdAt:now(),updatedAt:now(),userId:_session.userId};
+    const copy={...p,id:uid(),createdAt:now(),updatedAt:now()};
     await dbPut(S_PLANS,copy);
   }
   schedulePush(S_PLANS);
@@ -1028,7 +747,6 @@ async function acaoCopiar(){
   toast('📋 Cópia(s) criada(s)!','ok');
 }
 function acaoExcluir(){
-  if(!isAdmin()){toast('Apenas administradores podem excluir.','err');return;}
   if(_selectedIds.size===0){toast('Selecione ao menos 1 planejamento.','warn');return;}
   confirmDialog('Excluir planejamentos',`Excluir ${_selectedIds.size} planejamento(s)? Esta ação não pode ser desfeita.`,async()=>{
     for(const id of _selectedIds) await dbDelete(S_PLANS,id);
@@ -1040,45 +758,7 @@ function acaoExcluir(){
   });
 }
 
-/* ══════════════════ ADMIN: USUÁRIOS ══════════════════ */
-function renderUsers(){
-  const showInactive=document.getElementById('showInactiveUsers').checked;
-  const list=_cache.users.filter(u=>showInactive||u.active);
-  const body=document.getElementById('usersTableBody');
-  body.innerHTML=list.map(u=>`
-    <tr class="${!u.active?'inactive-row':''}">
-      <td>${escapeHtml(u.username)}</td>
-      <td>${u.role==='admin'?'🛡️ Admin':'👨‍🏫 Professor'}</td>
-      <td>${u.active?'✅ Ativo':'⛔ Inativo'}</td>
-      <td style="text-align:right">
-        <button class="btn btn-small btn-ghost" onclick="toggleUserActive('${u.id}')">${u.active?'Desativar':'Ativar'}</button>
-      </td>
-    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">Nenhum usuário.</td></tr>';
-}
-async function addUser(){
-  const username=document.getElementById('newUsername').value.trim();
-  const pass=document.getElementById('newUserPass').value;
-  const role=document.getElementById('newUserRole').value;
-  if(!username||pass.length<4){toast('Usuário e senha (mín. 4) são obrigatórios.','warn');return;}
-  if(_cache.users.some(u=>u.username.toLowerCase()===username.toLowerCase())){toast('Usuário já existe.','err');return;}
-  const user={id:uid(),username,passwordHash:await sha256(pass),role,active:true,createdAt:now(),updatedAt:now()};
-  await dbPut(S_USERS,user);
-  schedulePush(S_USERS);
-  await loadAllCaches();
-  document.getElementById('newUsername').value='';document.getElementById('newUserPass').value='';
-  renderUsers();
-  toast('✅ Usuário criado!','ok');
-}
-async function toggleUserActive(id){
-  const u=_cache.users.find(x=>x.id===id);if(!u)return;
-  u.active=!u.active;u.updatedAt=now();
-  await dbPut(S_USERS,u);
-  schedulePush(S_USERS);
-  await loadAllCaches();
-  renderUsers();
-}
-
-/* ══════════════════ ADMIN: CADASTROS AUXILIARES ══════════════════ */
+/* ══════════════════ CADASTROS AUXILIARES ══════════════════ */
 function renderTeachers(){renderAdminList('teachers',S_TEACHERS,'teachersList');}
 function renderClasses(){renderAdminList('classes',S_CLASSES,'classesList');}
 function renderSubjects(){renderAdminList('subjects',S_SUBJECTS,'subjectsList');}
@@ -1089,7 +769,7 @@ function renderAdminList(cacheKey,store,elId){
     <div class="admin-item ${!i.active?'inactive':''}">
       <span class="name">${escapeHtml(i.name)}</span>
       <button class="btn btn-small btn-ghost" onclick="toggleActive('${cacheKey}','${store}','${i.id}')">${i.active?'Desativar':'Ativar'}</button>
-    </div>`).join('') || '<div class="locked-note">Nenhum item cadastrado.</div>';
+    </div>`).join('') || '<div style="font-size:.8rem;color:var(--muted);font-style:italic">Nenhum item cadastrado.</div>';
 }
 async function toggleActive(cacheKey,store,id){
   const item=_cache[cacheKey].find(x=>x.id===id);if(!item)return;
@@ -1120,11 +800,17 @@ async function addAuxItem(inputId,store,cacheKey,renderFn){
 /* ══════════════════ INICIALIZAÇÃO ══════════════════ */
 window.addEventListener('load',async()=>{
   await openDB();
-  const s=loadSession();
-  if(s){
-    await enterApp();
-  } else {
-    await setupLoginUI();
+  await loadAllCaches();
+  populateSelects();
+  setTab('novo');
+
+  const config=await ghGetConfig();
+  updateSyncUI();
+  if(config.ok){
+    ghPullAll(false).then(async(ok)=>{
+      if(ok){await loadAllCaches();refreshAllUI();}
+      startSyncLoop();
+    });
   }
 });
 </script>
