@@ -1,350 +1,307 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Planejamento Athena — Supervisão Pedagógica</title>
-  <style>
-    :root {
-      --primary: #1a56a0; --primary-dark: #133f7a; --primary-light: #e8f0fb;
-      --danger: #c0392b; --danger-light: #fdecea; --success: #1a7a45; --success-light: #e6f4ec;
-      --warning: #b07d00; --warning-light: #fff8e1; --muted: #6b7280; --border: #d1d5db;
-      --bg: #f3f6fb; --card: #fff; --text: #1a2236; --radius: 10px; --shadow: 0 2px 12px rgba(26,86,160,.08);
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--text); font-size: .97rem; }
-
-    /* ── LOGIN ── */
-    .login-overlay {
-      display: flex; position: fixed; inset: 0; background: linear-gradient(135deg, #0f2744 0%, #1a3d64 50%, #1a56a0 100%);
-      z-index: 10000; align-items: center; justify-content: center; padding: 20px;
-    }
-    .login-overlay.hidden { display: none; }
-    .login-box { background: #fff; border-radius: 14px; box-shadow: 0 12px 48px rgba(0,0,0,.28); width: 100%; max-width: 400px; padding: 36px 32px 30px; }
-    .login-box .logo-area { text-align: center; margin-bottom: 24px; }
-    .login-box .logo-area .login-icon { font-size: 2.6rem; }
-    .login-box .logo-area h2 { font-size: 1.15rem; color: var(--primary); font-weight: 700; margin-top: 4px; }
-    .login-box .logo-area p  { font-size: .82rem; color: var(--muted); margin-top: 2px; }
-    .login-box .form-group { margin-bottom: 14px; }
-    .login-box .form-group label { font-size: .82rem; font-weight: 700; color: var(--muted); display: block; margin-bottom: 4px; text-transform: uppercase; letter-spacing: .04em; }
-    .login-box .form-group input { width: 100%; padding: 11px 12px; border: 1px solid var(--border); border-radius: 7px; font-size: .96rem; background: #fafbfc; transition: border .16s; font-family: inherit; }
-    .login-box .form-group input:focus { outline: none; border-color: var(--primary); background: #fff; }
-    .login-box .btn { width: 100%; padding: 11px; font-size: 1rem; margin-top: 6px; }
-    .login-box .login-error { color: var(--danger); font-size: .84rem; text-align: center; margin-top: 10px; min-height: 20px; font-weight: 600; }
-    .login-box .login-hint { font-size: .8rem; color: var(--muted); text-align: center; margin-top: 12px; line-height: 1.5; }
-    .login-spinner { display: none; text-align: center; padding: 10px; color: var(--primary); font-weight: 600; font-size: .88rem; }
-    .login-spinner.visible { display: block; }
-
-    /* ── HEADER ── */
-    header { background: var(--primary); color: #fff; padding: 14px 28px; display: flex; align-items: center; gap: 18px; box-shadow: 0 2px 8px rgba(0,0,0,.12); }
-    header .header-icon { font-size: 1.8rem; }
-    .header-divider { width: 2px; height: 36px; background: rgba(255,255,255,.3); border-radius: 2px; }
-    .header-info { flex: 1; }
-    .header-info h1 { font-size: 1.15rem; font-weight: 700; }
-    .header-info p  { font-size: .8rem; opacity: .78; margin-top: 1px; }
-    .header-right { display: flex; align-items: center; gap: 12px; }
-    .header-user { display: flex; align-items: center; gap: 10px; background: rgba(255,255,255,.12); padding: 7px 14px; border-radius: 22px; font-size: .87rem; font-weight: 600; }
-    .header-user .user-badge { background: #fff; color: var(--primary); border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; font-size: .78rem; font-weight: 800; }
-    .header-user .btn-logout { background: none; border: none; color: #fff; cursor: pointer; font-size: .82rem; opacity: .75; padding: 4px 8px; border-radius: 5px; transition: .15s; font-family: inherit; }
-    .header-user .btn-logout:hover { opacity: 1; background: rgba(255,255,255,.15); }
-    .sync-indicator { font-size: .76rem; display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 12px; font-weight: 600; white-space: nowrap; }
-    .sync-indicator.synced  { background: rgba(255,255,255,.15); }
-    .sync-indicator.pending { background: rgba(255,193,7,.25); color: #ffe082; animation: pulse 1.5s infinite; }
-    .sync-indicator.syncing { background: rgba(255,255,255,.2); }
-    .sync-indicator.error   { background: rgba(255,82,82,.3); color: #ffcdd2; }
-    .sync-indicator.offline { background: rgba(255,255,255,.08); opacity: .6; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.55} }
-
-    /* ── MAIN ── */
-    main { max-width: 1280px; margin: 0 auto; padding: 28px 18px 60px; }
-    .main-hidden { display: none !important; }
-    .tabs { display: flex; gap: 6px; margin-bottom: 20px; border-bottom: 2px solid var(--border); padding-bottom: 0; }
-    .tab-btn { padding: 9px 22px; border: none; background: transparent; cursor: pointer; font-size: .97rem; font-weight: 600; color: var(--muted); border-radius: var(--radius) var(--radius) 0 0; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all .18s; }
-    .tab-btn:hover { color: var(--primary); background: var(--primary-light); }
-    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); background: var(--card); }
-    .card { background: var(--card); border-radius: var(--radius); box-shadow: var(--shadow); margin-bottom: 22px; overflow: hidden; }
-    .card-header { padding: 18px 24px 14px; border-bottom: 1px solid var(--border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-    .card-header h2 { font-size: 1.1rem; font-weight: 700; color: var(--primary); }
-    .hint { font-size: .82rem; color: var(--muted); margin-top: 3px; }
-    .card-body { padding: 22px 24px; }
-    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 18px; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 18px; }
-    .form-group { display: flex; flex-direction: column; gap: 5px; }
-    .form-group.full { grid-column: 1 / -1; }
-    .form-group label { font-size: .83rem; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
-    .form-group input[type=text], .form-group input[type=date], .form-group input[type=password], .form-group select, .form-group textarea {
-      padding: 8px 11px; border: 1px solid var(--border); border-radius: 7px; font-size: .96rem; background: #fafbfc; transition: border .16s; font-family: inherit; color: var(--text);
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary); background: #fff; }
-    .form-group textarea { min-height: 90px; resize: vertical; }
-    .muted { font-size: .78rem; color: var(--muted); margin-top: 3px; }
-    .row-inline { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-    .btn { padding: 8px 18px; border: none; border-radius: 7px; cursor: pointer; font-size: .93rem; font-weight: 600; transition: all .17s; font-family: inherit; display: inline-flex; align-items: center; gap: 6px; }
-    .btn-primary { background: var(--primary); color: #fff; } .btn-primary:hover { background: var(--primary-dark); }
-    .btn-ghost { background: #f1f3f7; color: var(--text); border: 1px solid var(--border); } .btn-ghost:hover { background: var(--border); }
-    .btn-danger { background: var(--danger); color: #fff; } .btn-danger:hover { background: #922b21; }
-    .btn-warning { background: #e67e22; color: #fff; } .btn-warning:hover { background: #ca6f1e; }
-    .btn-success { background: var(--success); color: #fff; } .btn-success:hover { background: #145a34; }
-    .btn-small { padding: 5px 12px; font-size: .84rem; }
-    .btn-group { display: flex; gap: 10px; margin-top: 18px; justify-content: flex-end; }
-    .btn:disabled { opacity: .45; cursor: not-allowed; }
-    .filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px 16px; margin-bottom: 16px; }
-    .selection-toolbar { display: none; align-items: center; gap: 10px; background: var(--primary); color: #fff; padding: 10px 18px; border-radius: 8px; margin-bottom: 14px; flex-wrap: wrap; box-shadow: 0 3px 12px rgba(26,86,160,.18); }
-    .selection-toolbar.visible { display: flex; }
-    .selection-toolbar .sel-count { font-weight: 700; font-size: .97rem; margin-right: 6px; white-space: nowrap; }
-    .selection-toolbar .btn { font-size: .87rem; padding: 6px 14px; }
-    .selection-toolbar .btn-toolbar-edit { background: #fff; color: var(--primary); } .selection-toolbar .btn-toolbar-edit:hover { background: var(--primary-light); }
-    .selection-toolbar .btn-toolbar-copy { background: rgba(255,255,255,.18); color: #fff; border: 1px solid rgba(255,255,255,.4); } .selection-toolbar .btn-toolbar-copy:hover { background: rgba(255,255,255,.3); }
-    .selection-toolbar .btn-toolbar-attach { background: rgba(255,255,255,.18); color: #fff; border: 1px solid rgba(255,255,255,.4); } .selection-toolbar .btn-toolbar-attach:hover { background: rgba(255,255,255,.3); }
-    .selection-toolbar .btn-toolbar-delete { background: var(--danger); color: #fff; } .selection-toolbar .btn-toolbar-delete:hover { background: #922b21; }
-    .sel-note { font-size: .8rem; opacity: .75; }
-    .table-wrap { overflow-x: auto; border-radius: 8px; border: 1px solid var(--border); }
-    table.list { width: 100%; border-collapse: collapse; min-width: 780px; }
-    table.list thead tr { background: var(--primary-light); }
-    table.list th { padding: 10px 12px; font-size: .82rem; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: .04em; border-bottom: 2px solid var(--border); white-space: nowrap; text-align: left; }
-    table.list th.col-check { width: 40px; text-align: center; }
-    table.list td { padding: 9px 12px; font-size: .92rem; border-bottom: 1px solid #f0f2f6; vertical-align: middle; }
-    table.list tbody tr:last-child td { border-bottom: none; }
-    table.list tbody tr:hover { background: #f7f9fd; }
-    table.list tbody tr.row-selected { background: var(--primary-light) !important; }
-    table.list td.empty { text-align: center; color: var(--muted); padding: 32px; font-size: .95rem; }
-    table.list td.col-check { text-align: center; }
-    input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: var(--primary); }
-    .countbar { display: flex; gap: 14px; margin-top: 12px; flex-wrap: wrap; }
-    .kpi { background: var(--primary-light); color: var(--primary); padding: 5px 14px; border-radius: 20px; font-size: .84rem; font-weight: 700; }
-
-    .split { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; }
-    .admin-box { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-    .admin-box .head { background: var(--primary-light); padding: 10px 14px; font-weight: 700; color: var(--primary); font-size: .95rem; display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
-    .admin-box .body { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-    .admin-list { display: flex; flex-direction: column; gap: 6px; max-height: 260px; overflow-y: auto; }
-    .admin-item { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border); background: #fafbfc; }
-    .admin-item.inactive { opacity: .52; }
-    .admin-item .item-name { flex: 1; font-size: .93rem; }
-    .admin-item .item-role { font-size: .73rem; font-weight: 700; padding: 3px 9px; border-radius: 10px; white-space: nowrap; }
-    .admin-item .item-role.admin     { background: #dbeafe; color: #1e40af; }
-    .admin-item .item-role.professor { background: #fef3c7; color: #92400e; }
-    .admin-item .btn-icon { padding: 3px 8px; font-size: .78rem; border-radius: 5px; }
-    .users-table { width: 100%; border-collapse: collapse; }
-    .users-table th { text-align: left; padding: 8px 10px; font-size: .78rem; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; border-bottom: 2px solid var(--border); }
-    .users-table td { padding: 8px 10px; font-size: .91rem; border-bottom: 1px solid #f0f2f6; vertical-align: middle; }
-    .users-table tbody tr:last-child td { border-bottom: none; }
-    .users-table tbody tr:hover { background: #f7f9fd; }
-    .users-table tbody tr.inactive-row { opacity: .48; }
-    .users-table .col-actions { text-align: right; white-space: nowrap; }
-
-    .backup-status {
-      display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px;
-      border-radius: 14px; font-size: .82rem; font-weight: 600;
-    }
-    .backup-status.ok     { background: var(--success-light); color: var(--success); }
-    .backup-status.warn   { background: var(--warning-light); color: var(--warning); }
-    .backup-status.err    { background: var(--danger-light); color: var(--danger); }
-    .backup-status.idle   { background: #f1f3f7; color: var(--muted); }
-    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-    .dot.green  { background: var(--success); } .dot.yellow { background: var(--warning); }
-    .dot.red    { background: var(--danger); }  .dot.gray   { background: var(--muted); }
-
-    .toast { position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px); background: #1a2236; color: #fff; padding: 11px 26px; border-radius: 22px; font-size: .94rem; font-weight: 600; opacity: 0; pointer-events: none; transition: all .28s; z-index: 9999; white-space: nowrap; box-shadow: 0 4px 18px rgba(0,0,0,.22); }
-    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-    .toast.ok   { background: var(--success); } .toast.err { background: var(--danger); } .toast.warn { background: var(--warning); color: #fff; }
-
-    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.38); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
-    .modal-overlay.open { display: flex; }
-    .modal { background: #fff; border-radius: var(--radius); box-shadow: 0 8px 40px rgba(0,0,0,.18); width: 100%; max-width: 520px; max-height: 90vh; display: flex; flex-direction: column; animation: modalIn .22s ease; }
-    @keyframes modalIn { from { opacity: 0; transform: scale(.96); } to { opacity: 1; transform: scale(1); } }
-    .modal-header { padding: 16px 22px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; }
-    .modal-header h3 { font-size: 1.05rem; font-weight: 700; color: var(--primary); }
-    .modal-body { padding: 20px 22px; overflow-y: auto; flex: 1; }
-    .modal-footer { padding: 14px 22px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
-    .btn-close-modal { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); line-height: 1; padding: 0 4px; }
-    .btn-close-modal:hover { color: var(--danger); }
-    .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: #fff; border-radius: 50%; animation: spin .6s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .config-hint {
-      background: #fff3cd; border: 1px solid #ffc107; border-radius: 8px; padding: 12px 16px;
-      font-size: .84rem; color: #856404; margin-bottom: 16px; line-height: 1.6;
-    }
-    .config-hint.success { background: #d4edda; border-color: #28a745; color: #155724; }
-
-    @media (max-width: 700px) {
-      .grid-3, .grid-2 { grid-template-columns: 1fr; }
-      .form-group.full { grid-column: 1; }
-      main { padding: 12px 6px 40px; }
-      .card-body { padding: 14px 10px; }
-      table.list { min-width: 600px; }
-      .header-right { flex-direction: column; gap: 6px; align-items: flex-end; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
+<title>Planejamento Athena — Supervisão Pedagógica</title>
+<style>
+:root{
+  --primary:#1a56a0;--primary-dark:#133f7a;--primary-light:#e8f0fb;
+  --danger:#c0392b;--danger-light:#fdecea;--success:#1a7a45;--success-light:#e6f4ec;
+  --warning:#b07d00;--warning-light:#fff8e1;--muted:#6b7280;--border:#d1d5db;
+  --bg:#f3f6fb;--card:#fff;--text:#1a2236;--radius:10px;--shadow:0 2px 12px rgba(26,86,160,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:16px}
+.login-overlay{display:flex;position:fixed;inset:0;background:linear-gradient(135deg,#0f2744,#1a3d64,#1a56a0);z-index:10000;align-items:center;justify-content:center;padding:20px}
+.login-overlay.hidden{display:none}
+.login-box{background:#fff;border-radius:14px;box-shadow:0 12px 48px rgba(0,0,0,.28);width:100%;max-width:400px;padding:32px 26px}
+.logo-area{text-align:center;margin-bottom:20px}
+.logo-area .icon{font-size:2.6rem}
+.logo-area h2{font-size:1.15rem;color:var(--primary);font-weight:700;margin-top:4px}
+.logo-area p{font-size:.82rem;color:var(--muted);margin-top:2px}
+.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.form-group label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+input,select,textarea{padding:11px 12px;border:1px solid var(--border);border-radius:7px;font-size:1rem;background:#fafbfc;font-family:inherit;color:var(--text);min-height:44px}
+textarea{min-height:80px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);background:#fff}
+.btn{padding:11px 18px;border:none;border-radius:7px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;transition:.15s}
+.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
+.btn-ghost{background:#f1f3f7;color:var(--text);border:1px solid var(--border)}.btn-ghost:hover{background:var(--border)}
+.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#922b21}
+.btn-success{background:var(--success);color:#fff}.btn-success:hover{background:#145a34}
+.btn-warning{background:#e67e22;color:#fff}.btn-warning:hover{background:#ca6f1e}
+.btn-small{padding:7px 14px;font-size:.85rem;min-height:36px}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn-block{width:100%}
+.login-error{color:var(--danger);font-size:.85rem;text-align:center;margin-top:10px;min-height:20px;font-weight:600}
+.login-spinner{display:none;text-align:center;padding:10px;color:var(--primary);font-weight:600;font-size:.88rem}
+.login-spinner.visible{display:block}
+.config-hint{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 14px;font-size:.82rem;color:#856404;margin-bottom:14px;line-height:1.5}
+header{background:var(--primary);color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.12);position:sticky;top:0;z-index:100}
+.header-info{flex:1;min-width:150px}
+.header-info h1{font-size:1.05rem;font-weight:700}
+.header-info p{font-size:.75rem;opacity:.78}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.header-user{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.12);padding:6px 12px;border-radius:20px;font-size:.85rem;font-weight:600}
+.user-badge{background:#fff;color:var(--primary);border-radius:50%;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:.78rem;font-weight:800}
+.btn-logout{background:none;border:none;color:#fff;cursor:pointer;font-size:1rem;opacity:.8;padding:4px 8px}
+.sync-indicator{font-size:.74rem;padding:5px 10px;border-radius:12px;font-weight:600;white-space:nowrap}
+.sync-indicator.synced{background:rgba(255,255,255,.15)}
+.sync-indicator.pending{background:rgba(255,193,7,.25);color:#ffe082;animation:pulse 1.5s infinite}
+.sync-indicator.syncing{background:rgba(255,255,255,.2)}
+.sync-indicator.error{background:rgba(255,82,82,.3);color:#ffcdd2}
+.sync-indicator.offline{background:rgba(255,255,255,.08);opacity:.65}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+main{max-width:1200px;margin:0 auto;padding:16px 12px 60px}
+.main-hidden{display:none!important}
+.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab-btn{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:.9rem;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
+.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
+.card-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.card-header h2{font-size:1.02rem;font-weight:700;color:var(--primary)}
+.hint{font-size:.8rem;color:var(--muted);margin-top:2px}
+.card-body{padding:16px 18px}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.full{grid-column:1/-1}
+.btn-group{display:flex;gap:10px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
+.selection-toolbar{display:none;align-items:center;gap:8px;background:var(--primary);color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:12px;flex-wrap:wrap}
+.selection-toolbar.visible{display:flex}
+.sel-count{font-weight:700;font-size:.9rem;margin-right:4px}
+.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
+table.list{width:100%;border-collapse:collapse;min-width:760px}
+table.list thead tr{background:var(--primary-light)}
+table.list th{padding:9px 10px;font-size:.76rem;font-weight:800;color:var(--primary);text-transform:uppercase;border-bottom:2px solid var(--border);text-align:left;white-space:nowrap}
+table.list td{padding:8px 10px;font-size:.87rem;border-bottom:1px solid #f0f2f6;vertical-align:middle}
+table.list tbody tr:hover{background:#f7f9fd}
+table.list tbody tr.row-selected{background:var(--primary-light)!important}
+table.list td.empty{text-align:center;color:var(--muted);padding:26px}
+input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:var(--primary)}
+.countbar{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
+.kpi{background:var(--primary-light);color:var(--primary);padding:5px 12px;border-radius:16px;font-size:.8rem;font-weight:700}
+.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.admin-box{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.admin-box .head{background:var(--primary-light);padding:9px 12px;font-weight:700;color:var(--primary);font-size:.9rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.admin-box .body{padding:12px;display:flex;flex-direction:column;gap:8px}
+.admin-list{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto}
+.admin-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#fafbfc}
+.admin-item.inactive{opacity:.5}
+.admin-item .name{flex:1;font-size:.88rem}
+.row-inline{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.users-table{width:100%;border-collapse:collapse}
+.users-table th{text-align:left;padding:8px;font-size:.74rem;color:var(--muted);text-transform:uppercase;border-bottom:2px solid var(--border)}
+.users-table td{padding:8px;font-size:.87rem;border-bottom:1px solid #f0f2f6}
+.users-table tbody tr.inactive-row{opacity:.48}
+.backup-status{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:14px;font-size:.8rem;font-weight:600}
+.backup-status.ok{background:var(--success-light);color:var(--success)}
+.backup-status.warn{background:var(--warning-light);color:var(--warning)}
+.backup-status.err{background:var(--danger-light);color:var(--danger)}
+.backup-status.idle{background:#f1f3f7;color:var(--muted)}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.dot.green{background:var(--success)}.dot.yellow{background:var(--warning)}.dot.red{background:var(--danger)}.dot.gray{background:var(--muted)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a2236;color:#fff;padding:11px 22px;border-radius:22px;font-size:.9rem;font-weight:600;opacity:0;pointer-events:none;transition:.28s;z-index:9999;max-width:90vw;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.22)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.ok{background:var(--success)}.toast.err{background:var(--danger)}.toast.warn{background:var(--warning)}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:#fff;border-radius:var(--radius);width:100%;max-width:480px;max-height:90vh;display:flex;flex-direction:column}
+.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font-size:1rem;color:var(--primary)}
+.modal-body{padding:16px 18px;overflow-y:auto;flex:1}
+.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.btn-close-modal{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted)}
+.locked-note{font-size:.8rem;color:var(--muted);font-style:italic}
+@media(max-width:768px){
+  .grid-3,.grid-2{grid-template-columns:1fr}
+  .btn{width:100%}
+  .btn-group{flex-direction:column}
+  .btn-group .btn{width:100%}
+  .row-inline .btn{width:auto}
+  header{flex-direction:column;align-items:stretch;text-align:center}
+  .header-right{justify-content:center}
+}
+</style>
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════
-     ⚠️ CONFIGURAÇÃO DO GITHUB (altere aqui)
-     ══════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════
+     CONFIG PADRÃO DO GITHUB (pode ser sobrescrita
+     pelo admin na tela de Backup/Configurações)
+     ══════════════════════════════════════ -->
 <script>
-// ══════════════════════════════════════════════
-//  🔧 CONFIGURAÇÃO DO GITHUB
-//     Altere APENAS as 3 linhas abaixo.
-//     Todos os usuários herdam essa configuração.
-// ══════════════════════════════════════════════
-const GITHUB_CONFIG = {
-  token:  'ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',  // ← SUBSTITUA pelo seu token
-  owner:  'seu-usuario',                               // ← seu usuário/organização
-  repo:   'nome-do-repositorio',                       // ← nome do repositório
-  branch: 'main'                                       // ← branch (main ou master)
+const GITHUB_CONFIG_DEFAULT = {
+  token:  'ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+  owner:  'seu-usuario-github',
+  repo:   'athena-planejamentos',
+  branch: 'main'
 };
 </script>
 
-<!-- ═══════════ LOGIN ═══════════ -->
+<!-- ═══════ LOGIN ═══════ -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-box">
     <div class="logo-area">
-      <div class="login-icon">🏫</div>
+      <div class="icon">🏫</div>
       <h2 id="loginTitle">Planejamento Athena</h2>
       <p id="loginSubtitle">Colégio Athena — Supervisão Pedagógica</p>
     </div>
-    <div class="config-hint" id="configHint" style="display:none;"></div>
-    <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
-      <div class="form-group"><label>Usuário</label><input type="text" id="loginUsername" placeholder="Seu nome de usuário" autocomplete="username" required /></div>
-      <div class="form-group"><label>Senha</label><input type="password" id="loginPassword" placeholder="Sua senha" autocomplete="current-password" required /></div>
-      <div class="form-group" id="confirmGroup" style="display:none;"><label>Confirmar senha</label><input type="password" id="loginConfirm" placeholder="Repita a senha" autocomplete="off" /></div>
-      <button type="submit" class="btn btn-primary" id="loginBtn">Entrar</button>
+    <div class="config-hint" id="configHint" style="display:none"></div>
+    <form id="loginForm">
+      <div class="form-group"><label>Usuário</label><input type="text" id="loginUsername" required autocomplete="username" /></div>
+      <div class="form-group"><label>Senha</label><input type="password" id="loginPassword" required autocomplete="current-password" /></div>
+      <div class="form-group" id="confirmGroup" style="display:none"><label>Confirmar senha</label><input type="password" id="loginConfirm" /></div>
+      <button type="button" class="btn btn-primary btn-block" id="loginBtn" onclick="handleLogin(event)">Entrar</button>
     </form>
-    <div class="login-spinner" id="loginSpinner">🔄 Conectando ao servidor...</div>
+    <div class="login-spinner" id="loginSpinner">🔄 Conectando ao GitHub...</div>
     <div class="login-error" id="loginError"></div>
-    <div class="login-hint" id="loginHint"></div>
   </div>
 </div>
 
-<!-- ═══════════ APP ═══════════ -->
+<!-- ═══════ APP ═══════ -->
 <div id="appWrapper" class="main-hidden">
-
 <header>
-  <div class="header-icon">🏫</div><div class="header-divider"></div>
-  <div class="header-info"><h1>Supervisão Pedagógica</h1><p>Planejamento de Aulas — Colégio Athena</p></div>
+  <div class="header-info"><h1>🏫 Supervisão Pedagógica</h1><p>Planejamento de Aulas — Colégio Athena</p></div>
   <div class="header-right">
-    <div class="sync-indicator offline" id="syncIndicator" title="Status de sincronização">☁️ Offline</div>
+    <div class="sync-indicator offline" id="syncIndicator">☁️ Offline</div>
     <div class="header-user">
       <div class="user-badge" id="userBadge">A</div>
-      <span id="headerUserName">Admin</span>
-      <span style="font-size:.73rem;opacity:.7;" id="headerUserRole"></span>
+      <span id="headerUserName">—</span>
+      <span id="headerUserRole" style="font-size:.72rem;opacity:.7"></span>
       <button class="btn-logout" onclick="doLogout()" title="Sair">⏻</button>
     </div>
   </div>
 </header>
 
 <main>
-  <div class="tabs" role="tablist">
-    <button class="tab-btn active"  id="tab-btn-novo"     type="button" onclick="setTab('novo')">Novo Planejamento</button>
-    <button class="tab-btn"         id="tab-btn-consultas" type="button" onclick="setTab('consultas')">Consultas</button>
-    <button class="tab-btn"         id="tab-btn-admin"     type="button" onclick="setTab('admin')" style="display:none;">⚙️ Administração</button>
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-btn-novo" onclick="setTab('novo')">📝 Novo Planejamento</button>
+    <button class="tab-btn" id="tab-btn-consultas" onclick="setTab('consultas')">🔍 Consultas</button>
+    <button class="tab-btn" id="tab-btn-backup" onclick="setTab('backup')">☁️ Backup</button>
+    <button class="tab-btn" id="tab-btn-admin" onclick="setTab('admin')" style="display:none">⚙️ Administração</button>
   </div>
 
-  <!-- ═════ ABA: NOVO ═════ -->
+  <!-- ABA NOVO -->
   <section id="novo-view">
     <div class="card">
-      <div class="card-header"><div><h2 id="formTitle">Novo Planejamento</h2><div class="hint" id="formHint">Preencha os campos e clique em "Salvar".</div></div></div>
+      <div class="card-header"><div><h2 id="formTitle">Novo Planejamento</h2><div class="hint">Preencha os campos e clique em "Salvar".</div></div></div>
       <div class="card-body">
-        <form id="planForm" novalidate>
-          <input type="hidden" id="editingId" value="" />
+        <form id="planForm">
+          <input type="hidden" id="editingId" />
           <div class="grid-3">
             <div class="form-group"><label>Professor(a) *</label><select id="professorSel"></select></div>
             <div class="form-group"><label>Turma *</label><select id="turmaSel"></select></div>
             <div class="form-group"><label>Data de lançamento *</label><input type="date" id="dataLancamento" /></div>
             <div class="form-group"><label>Disciplina *</label><select id="disciplinaSel"></select></div>
-            <div class="form-group"><label>Período (início)</label><input type="date" id="periodoInicio" /></div>
-            <div class="form-group"><label>Período (fim)</label><input type="date" id="periodoFim" /></div>
-            <div class="form-group"><label>Conteúdo</label><input type="text" id="conteudoTxt" placeholder="Digite o conteúdo" /></div>
-            <div class="form-group full"><label>Objetivos de aprendizagem</label><textarea id="objetivos" placeholder="Descreva os objetivos..."></textarea></div>
-            <div class="form-group full"><label>Descrição do planejamento / Metodologia</label><textarea id="descricao" placeholder="Descreva a metodologia..."></textarea></div>
-            <div class="form-group"><label>Recursos didáticos</label><input type="text" id="recursos" placeholder="Ex: quadro, projetor..." /></div>
-            <div class="form-group"><label>Forma de avaliação</label><input type="text" id="avaliacao" placeholder="Ex: prova, trabalho..." /></div>
-            <div class="form-group full"><label>Anexos</label><input type="file" id="anexos" multiple /><div class="muted">Arquivos armazenados e sincronizados automaticamente.</div><div class="row-inline" id="anexosResumo" style="margin-top:6px;"></div></div>
-            <div class="form-group full"><label>Observações / Anotações da supervisão</label><textarea id="observacoes" style="min-height:72px" placeholder="Observações internas..."></textarea></div>
+            <div class="form-group"><label>Período início</label><input type="date" id="periodoInicio" /></div>
+            <div class="form-group"><label>Período fim</label><input type="date" id="periodoFim" /></div>
+            <div class="form-group full"><label>Conteúdo</label><input type="text" id="conteudoTxt" /></div>
+            <div class="form-group full"><label>Objetivos de aprendizagem</label><textarea id="objetivos"></textarea></div>
+            <div class="form-group full"><label>Descrição / Metodologia</label><textarea id="descricao"></textarea></div>
+            <div class="form-group"><label>Recursos didáticos</label><input type="text" id="recursos" /></div>
+            <div class="form-group"><label>Forma de avaliação</label><input type="text" id="avaliacao" /></div>
+            <div class="form-group full"><label>Anexos</label><input type="file" id="anexos" multiple /><div id="anexosResumo" class="row-inline" style="margin-top:6px"></div></div>
+            <div class="form-group full"><label>Observações da supervisão</label><textarea id="observacoes"></textarea></div>
           </div>
           <div class="btn-group">
             <button type="button" class="btn btn-ghost" onclick="limparForm(true)">Limpar</button>
-            <button type="button" class="btn btn-primary" id="btnSalvar" onclick="salvarPlanejamento()">💾 Salvar planejamento</button>
+            <button type="button" class="btn btn-primary" onclick="salvarPlanejamento()">💾 Salvar planejamento</button>
           </div>
         </form>
       </div>
     </div>
   </section>
 
-  <!-- ═════ ABA: CONSULTAS ═════ -->
-  <section id="consultas-view" style="display:none;">
+  <!-- ABA CONSULTAS -->
+  <section id="consultas-view" style="display:none">
     <div class="card">
-      <div class="card-header"><div><h2>Consultas</h2><div class="hint">Selecione um ou mais planejamentos usando os checkboxes.</div></div><button class="btn btn-small btn-ghost" onclick="limparFiltros()">Limpar filtros</button></div>
+      <div class="card-header"><div><h2>Consultas</h2><div class="hint">Selecione um ou mais planejamentos.</div></div><button class="btn btn-small btn-ghost" onclick="limparFiltros()">Limpar filtros</button></div>
       <div class="card-body">
         <div class="filters">
-          <div class="form-group"><label>Professor(a)</label><select id="fProfessorSel" onchange="renderLista()"><option value="">Todos(as)</option></select></div>
+          <div class="form-group"><label>Professor</label><select id="fProfessorSel" onchange="renderLista()"><option value="">Todos</option></select></div>
           <div class="form-group"><label>Turma</label><select id="fTurmaSel" onchange="renderLista()"><option value="">Todas</option></select></div>
           <div class="form-group"><label>Disciplina</label><select id="fDisciplinaSel" onchange="renderLista()"><option value="">Todas</option></select></div>
-          <div class="form-group"><label>Ano de inclusão</label><select id="fAnoSel" onchange="renderLista()"><option value="">Todos</option></select></div>
+          <div class="form-group"><label>Ano</label><select id="fAnoSel" onchange="renderLista()"><option value="">Todos</option></select></div>
         </div>
         <div class="selection-toolbar" id="selectionToolbar">
           <span class="sel-count" id="selCount">0 selecionado(s)</span>
-          <button class="btn btn-toolbar-edit" onclick="acaoEditar()">✏️ Editar</button>
-          <button class="btn btn-toolbar-copy" onclick="acaoCopiar()">📋 Criar cópia</button>
-          <button class="btn btn-toolbar-attach" onclick="acaoAnexos()">📎 Baixar anexos</button>
-          <button class="btn btn-toolbar-delete" id="btnToolbarDelete" onclick="acaoExcluir()" style="display:none;">🗑️ Excluir</button>
-          <span class="sel-note" id="selNote"></span>
+          <button class="btn btn-small" style="background:#fff;color:var(--primary)" onclick="acaoEditar()">✏️ Editar</button>
+          <button class="btn btn-small" style="background:rgba(255,255,255,.2);color:#fff" onclick="acaoCopiar()">📋 Copiar</button>
+          <button class="btn btn-small btn-danger" id="btnToolbarDelete" onclick="acaoExcluir()" style="display:none">🗑️ Excluir</button>
         </div>
         <div class="table-wrap">
-          <table class="list"><thead><tr><th class="col-check"><input type="checkbox" id="checkAll" onchange="toggleSelectAll(this.checked)" /></th><th>Lançamento</th><th>Professor(a)</th><th>Turma</th><th>Disciplina</th><th>Conteúdo</th><th>Período</th><th>Alterado em</th></tr></thead>
-            <tbody id="listaBody"><tr><td colspan="8" class="empty">Nenhum planejamento salvo ainda.</td></tr></tbody></table>
+          <table class="list">
+            <thead><tr><th style="width:36px"><input type="checkbox" id="checkAll" onchange="toggleSelectAll(this.checked)" /></th><th>Lançamento</th><th>Professor</th><th>Turma</th><th>Disciplina</th><th>Conteúdo</th><th>Período</th></tr></thead>
+            <tbody id="listaBody"><tr><td colspan="7" class="empty">Nenhum planejamento salvo.</td></tr></tbody>
+          </table>
         </div>
-        <div class="countbar"><div class="kpi" id="kpiTotal">0 planejamento(s)</div><div class="kpi" id="kpiFiltrados">0 exibido(s)</div><div class="kpi" id="kpiSelecionados" style="display:none; background:var(--primary); color:#fff;">0 selecionado(s)</div></div>
+        <div class="countbar"><div class="kpi" id="kpiTotal">0 total</div><div class="kpi" id="kpiFiltrados">0 exibido(s)</div></div>
       </div>
     </div>
   </section>
 
-  <!-- ═════ ABA: ADMIN ═════ -->
-  <section id="admin-view" style="display:none;">
+  <!-- ABA BACKUP -->
+  <section id="backup-view" style="display:none">
     <div class="card">
-      <div class="card-header"><div><h2>👥 Gestão de Usuários</h2><div class="hint">Crie e gerencie perfis de acesso.</div></div><label style="font-size:.82rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;"><input type="checkbox" id="showInactiveUsers" onchange="renderUsers()" /> Mostrar inativos</label></div>
+      <div class="card-header"><div><h2>☁️ Backup e Sincronização</h2><div class="hint">Dados sincronizados automaticamente com o GitHub.</div></div><div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Não configurado</div></div>
       <div class="card-body">
-        <div class="row-inline" style="margin-bottom:16px; background:var(--primary-light); padding:14px 16px; border-radius:8px;">
-          <input type="text" id="newUsername" placeholder="Nome de usuário" style="flex:1;min-width:140px;" />
-          <input type="password" id="newUserPass" placeholder="Senha (mín. 4 caracteres)" style="flex:1;min-width:160px;" />
-          <select id="newUserRole" style="width:130px;"><option value="professor">👨‍🏫 Professor</option><option value="admin">🛡️ Admin</option></select>
-          <button class="btn btn-primary" type="button" onclick="addUser()">➕ Criar Usuário</button>
+        <div class="row-inline" style="margin-bottom:12px">
+          <button class="btn btn-success" onclick="syncNow()">🔄 Sincronizar Agora</button>
+          <button class="btn btn-warning" onclick="forcePushAll()">📤 Forçar Upload Completo</button>
         </div>
-        <div class="table-wrap"><table class="users-table"><thead><tr><th>Usuário</th><th>Perfil</th><th>Status</th><th>Criado em</th><th class="col-actions">Ações</th></tr></thead>
-          <tbody id="usersTableBody"><tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">Nenhum usuário cadastrado.</td></tr></tbody></table></div>
+        <div id="ghLastBackup" style="font-size:.85rem;color:var(--muted)"></div>
+        <div id="adminGhConfigWrap" style="display:none;margin-top:18px;padding-top:16px;border-top:1px solid var(--border)">
+          <h3 style="font-size:.95rem;color:var(--primary);margin-bottom:10px">⚙️ Configuração do GitHub (somente Admin)</h3>
+          <div class="grid-2">
+            <div class="form-group"><label>Token de Acesso</label><input type="password" id="ghToken" placeholder="Deixe em branco p/ usar padrão" /></div>
+            <div class="form-group"><label>Dono do Repositório</label><input type="text" id="ghOwner" /></div>
+            <div class="form-group"><label>Nome do Repositório</label><input type="text" id="ghRepo" /></div>
+            <div class="form-group"><label>Branch</label><input type="text" id="ghBranch" placeholder="main" /></div>
+          </div>
+          <div class="row-inline" style="margin-top:12px">
+            <button class="btn btn-primary" onclick="saveGithubConfig()">💾 Salvar</button>
+            <button class="btn btn-ghost" id="btnTestGh" onclick="testGithubConnection()">🔍 Testar Conexão</button>
+            <button class="btn btn-danger btn-small" onclick="resetGithubConfig()">↺ Resetar</button>
+          </div>
+        </div>
+        <div id="notAdminNote" class="locked-note" style="display:none;margin-top:14px">🔒 A configuração do repositório é gerenciada apenas por administradores.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABA ADMIN -->
+  <section id="admin-view" style="display:none">
+    <div class="card">
+      <div class="card-header"><div><h2>👥 Gestão de Usuários</h2></div><label style="font-size:.8rem;display:flex;gap:6px;align-items:center"><input type="checkbox" id="showInactiveUsers" onchange="renderUsers()" /> Mostrar inativos</label></div>
+      <div class="card-body">
+        <div class="row-inline" style="margin-bottom:14px;background:var(--primary-light);padding:12px;border-radius:8px">
+          <input type="text" id="newUsername" placeholder="Usuário" style="flex:1;min-width:130px" />
+          <input type="password" id="newUserPass" placeholder="Senha (mín. 4)" style="flex:1;min-width:130px" />
+          <select id="newUserRole" style="width:130px"><option value="professor">Professor</option><option value="admin">Admin</option></select>
+          <button class="btn btn-primary" onclick="addUser()">➕ Criar</button>
+        </div>
+        <div class="table-wrap"><table class="users-table">
+          <thead><tr><th>Usuário</th><th>Perfil</th><th>Status</th><th></th></tr></thead>
+          <tbody id="usersTableBody"></tbody>
+        </table></div>
       </div>
     </div>
     <div class="card">
-      <div class="card-header"><div><h2>📋 Cadastros Auxiliares</h2><div class="hint">Gerencie professores, turmas e disciplinas.</div></div></div>
+      <div class="card-header"><h2>📋 Cadastros Auxiliares</h2></div>
       <div class="card-body">
         <div class="split">
-          <div class="admin-box"><div class="head"><span>👨‍🏫 Professores</span><label style="font-size:.78rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="showInactiveTeachers" onchange="renderTeachers()" /> Inativos</label></div><div class="body"><div class="row-inline"><input type="text" id="teacherName" placeholder="Nome do(a) professor(a)" style="flex:1;" /><button class="btn btn-small btn-primary" type="button" onclick="addTeacher()">+</button></div><div class="admin-list" id="teachersList"></div></div></div>
-          <div class="admin-box"><div class="head"><span>📚 Turmas</span><label style="font-size:.78rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="showInactiveClasses" onchange="renderClasses()" /> Inativos</label></div><div class="body"><div class="row-inline"><input type="text" id="className" placeholder="Ex: 3º Ano B — EM" style="flex:1;" /><button class="btn btn-small btn-primary" type="button" onclick="addClass()">+</button></div><div class="admin-list" id="classesList"></div></div></div>
-          <div class="admin-box"><div class="head"><span>📖 Disciplinas</span><label style="font-size:.78rem;font-weight:600;cursor:pointer;"><input type="checkbox" id="showInactiveSubjects" onchange="renderSubjects()" /> Inativos</label></div><div class="body"><div class="row-inline"><input type="text" id="subjectName" placeholder="Ex: Matemática" style="flex:1;" /><button class="btn btn-small btn-primary" type="button" onclick="addSubject()">+</button></div><div class="admin-list" id="subjectsList"></div></div></div>
+          <div class="admin-box"><div class="head"><span>👨‍🏫 Professores</span></div><div class="body">
+            <div class="row-inline"><input type="text" id="teacherName" placeholder="Nome" style="flex:1" /><button class="btn btn-small btn-primary" onclick="addTeacher()">+</button></div>
+            <div class="admin-list" id="teachersList"></div></div></div>
+          <div class="admin-box"><div class="head"><span>📚 Turmas</span></div><div class="body">
+            <div class="row-inline"><input type="text" id="className" placeholder="Ex: 3º B" style="flex:1" /><button class="btn btn-small btn-primary" onclick="addClass()">+</button></div>
+            <div class="admin-list" id="classesList"></div></div></div>
+          <div class="admin-box"><div class="head"><span>📖 Disciplinas</span></div><div class="body">
+            <div class="row-inline"><input type="text" id="subjectName" placeholder="Ex: Matemática" style="flex:1" /><button class="btn btn-small btn-primary" onclick="addSubject()">+</button></div>
+            <div class="admin-list" id="subjectsList"></div></div></div>
         </div>
-      </div>
-    </div>
-    <!-- ── CARD: GITHUB / SINCRONIZAÇÃO ── -->
-    <div class="card">
-      <div class="card-header"><div><h2>☁️ Sincronização via GitHub</h2><div class="hint">Os dados são sincronizados automaticamente entre todos os usuários. A configuração está embutida no código-fonte.</div></div><div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Não configurado</div></div>
-      <div class="card-body">
-        <div class="grid-2">
-          <div class="form-group"><label>Token de Acesso (sobrescrever)</label><input type="password" id="ghToken" placeholder="Deixe em branco para usar o padrão" autocomplete="off" /><div class="muted">Preencha apenas se precisar usar outro token.</div></div>
-          <div class="form-group"><label>Dono do Repositório</label><input type="text" id="ghOwner" placeholder="Deixe em branco para usar o padrão" autocomplete="off" /></div>
-          <div class="form-group"><label>Nome do Repositório</label><input type="text" id="ghRepo" placeholder="Deixe em branco para usar o padrão" autocomplete="off" /></div>
-          <div class="form-group"><label>Branch</label><input type="text" id="ghBranch" placeholder="main" autocomplete="off" /></div>
-        </div>
-        <div class="row-inline" style="margin-top:14px; gap:8px; flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="saveGithubConfig()">💾 Salvar Configurações</button>
-          <button class="btn btn-ghost" id="btnTestGh" onclick="testGithubConnection()">🔍 Testar Conexão</button>
-          <button class="btn btn-success" id="btnSyncNow" onclick="syncNow()">🔄 Sincronizar Agora</button>
-          <button class="btn btn-warning" id="btnForcePush" onclick="forcePushAll()">📤 Forçar Push Completo</button>
-          <button class="btn btn-danger btn-small" id="btnResetConfig" onclick="resetGithubConfig()" title="Voltar para configuração padrão do código">↺ Resetar</button>
-        </div>
-        <div style="margin-top:12px; font-size:.82rem; color:var(--muted);" id="ghLastBackup"></div>
-        <div class="muted" style="margin-top:8px;">📁 Dados: <code>data/plans.json</code> · <code>data/users.json</code> · <code>data/teachers.json</code> · <code>data/classes.json</code> · <code>data/subjects.json</code> · <code>data/attachments.json</code></div>
       </div>
     </div>
   </section>
@@ -353,39 +310,52 @@ const GITHUB_CONFIG = {
 
 <div class="toast" id="toast"></div>
 <div class="modal-overlay" id="modalConfirm">
-  <div class="modal" style="max-width:420px;">
+  <div class="modal">
     <div class="modal-header"><h3 id="modalConfirmTitle">Confirmar</h3><button class="btn-close-modal" onclick="closeModal('modalConfirm')">×</button></div>
-    <div class="modal-body"><p id="modalConfirmMsg" style="line-height:1.6;"></p></div>
+    <div class="modal-body"><p id="modalConfirmMsg"></p></div>
     <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalConfirm')">Cancelar</button><button class="btn btn-danger" id="modalConfirmBtn">Confirmar</button></div>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
-//  CONSTANTES
-// ══════════════════════════════════════════════
-const DB_NAME='athenaDB', DB_VERSION=9;
-const S_PLANS='plans', S_ATTS='attachments', S_TEACHERS='teachers', S_CLASSES='classes', S_SUBJECTS='subjects', S_USERS='users', S_SETTINGS='settings';
-const S_SYNC='_syncMeta';
+/* ══════════════════ CONSTANTES ══════════════════ */
+const DB_NAME='athenaDB', DB_VERSION=1;
+const S_PLANS='plans', S_ATTS='attachments', S_TEACHERS='teachers', S_CLASSES='classes',
+      S_SUBJECTS='subjects', S_USERS='users', S_SETTINGS='settings', S_SYNC='_syncMeta';
 const SESSION_KEY='athena_session';
-const GH_STORES = [S_USERS, S_PLANS, S_TEACHERS, S_CLASSES, S_SUBJECTS, S_ATTS];
-const SYNC_DEBOUNCE_MS = 2500;
-const SYNC_POLL_INTERVAL = 120000;
+const GH_STORES=[S_USERS,S_TEACHERS,S_CLASSES,S_SUBJECTS,S_PLANS,S_ATTS];
+const SYNC_DEBOUNCE_MS=2500, SYNC_POLL_INTERVAL=120000;
 
-let _db=null, _session=null, _pushTimers={}, _dirtyStores=new Set(), _syncLoopId=null;
+let _db=null,_session=null,_pushTimers={},_syncLoopId=null;
+let _cache={teachers:[],classes:[],subjects:[],plans:[],users:[],attachments:[]};
+let _selectedIds=new Set(), _pendingAttachments=[];
 
-// ══════════════════════════════════════════════
-//  CRYPTO
-// ══════════════════════════════════════════════
-async function sha256(t){const e=new TextEncoder(),b=await crypto.subtle.digest('SHA-256',e.encode(t));return Array.from(new Uint8Array(b)).map(b=>b.toString(16).padStart(2,'0')).join('');}
+/* ══════════════════ HELPERS ══════════════════ */
+async function sha256(t){const e=new TextEncoder(),b=await crypto.subtle.digest('SHA-256',e.encode(t));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('');}
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
 function now(){return new Date().toISOString();}
+function fmtDate(iso){if(!iso)return '';const d=new Date(iso+'T00:00:00');return d.toLocaleDateString('pt-BR');}
+function fmtDateTime(iso){if(!iso)return '—';return new Date(iso).toLocaleString('pt-BR');}
 
-// ══════════════════════════════════════════════
-//  INDEXEDDB
-// ══════════════════════════════════════════════
-function openDB(){if(_db)return Promise.resolve(_db);return new Promise((res,rej)=>{const r=indexedDB.open(DB_NAME,DB_VERSION);r.onupgradeneeded=()=>{const d=r.result;[S_PLANS,S_ATTS,S_TEACHERS,S_CLASSES,S_SUBJECTS,S_USERS,S_SETTINGS,S_SYNC].forEach(n=>{if(!d.objectStoreNames.contains(n)){const s=d.createObjectStore(n,{keyPath:n===S_SETTINGS||n===S_SYNC?'key':'id'});if(n===S_PLANS){s.createIndex('teacherId','teacherId');s.createIndex('classId','classId');s.createIndex('subjectId','subjectId');s.createIndex('userId','userId');}if(n===S_USERS)s.createIndex('username','username');if(n===S_ATTS)s.createIndex('byPlan','planId');}});};r.onsuccess=()=>{_db=r.result;res(_db);};r.onerror=()=>rej(r.error);});}
-function dbTx(store,mode,fn){return openDB().then(db=>new Promise((res,rej)=>{const tx=db.transaction(store,mode);const r=fn(tx.objectStore(store));r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}));}
+/* ══════════════════ INDEXEDDB ══════════════════ */
+function openDB(){
+  if(_db)return Promise.resolve(_db);
+  return new Promise((res,rej)=>{
+    const r=indexedDB.open(DB_NAME,DB_VERSION);
+    r.onupgradeneeded=()=>{
+      const d=r.result;
+      [S_PLANS,S_ATTS,S_TEACHERS,S_CLASSES,S_SUBJECTS,S_USERS].forEach(n=>{
+        if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:'id'});
+      });
+      [S_SETTINGS,S_SYNC].forEach(n=>{
+        if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:'key'});
+      });
+    };
+    r.onsuccess=()=>{_db=r.result;res(_db);};
+    r.onerror=()=>rej(r.error);
+  });
+}
+function dbTx(store,mode,fn){return openDB().then(db=>new Promise((res,rej)=>{const tx=db.transaction(store,mode);const req=fn(tx.objectStore(store));req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);}));}
 function dbGetAll(store){return openDB().then(db=>new Promise((res,rej)=>{const r=db.transaction(store,'readonly').objectStore(store).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}));}
 function dbPut(store,obj){return dbTx(store,'readwrite',s=>s.put(obj));}
 function dbDelete(store,key){return dbTx(store,'readwrite',s=>s.delete(key));}
@@ -394,180 +364,139 @@ function dbClear(store){return openDB().then(db=>new Promise((res,rej)=>{const r
 async function getSetting(key,dflt=null){try{const r=await dbGet(S_SETTINGS,key);return r?r.value:dflt;}catch{return dflt;}}
 async function setSetting(key,value){await dbPut(S_SETTINGS,{key,value,updatedAt:now()});}
 
-// ══════════════════════════════════════════════
-//  SESSÃO
-// ══════════════════════════════════════════════
+/* ══════════════════ SESSÃO ══════════════════ */
 function saveSession(s){_session=s;sessionStorage.setItem(SESSION_KEY,JSON.stringify(s));}
-function loadSession(){try{const r=sessionStorage.getItem(SESSION_KEY);if(r){_session=JSON.parse(r);return _session;}}catch{}_session=null;return null;}
+function loadSession(){try{const r=sessionStorage.getItem(SESSION_KEY);if(r){_session=JSON.parse(r);return _session;}}catch{}return null;}
 function clearSession(){_session=null;sessionStorage.removeItem(SESSION_KEY);}
 function isAdmin(){return _session&&_session.role==='admin';}
-function currentUserId(){return _session?_session.userId:null;}
 
-// ══════════════════════════════════════════════
-//  GITHUB SYNC ENGINE
-// ══════════════════════════════════════════════
-
-// Obtém configuração: primeiro tenta do IndexedDB, depois fallback para GITHUB_CONFIG
+/* ══════════════════ GITHUB SYNC ══════════════════ */
 async function ghGetConfig(){
-  const token  = await getSetting('github_token',  GITHUB_CONFIG.token);
-  const owner  = await getSetting('github_owner',  GITHUB_CONFIG.owner);
-  const repo   = await getSetting('github_repo',   GITHUB_CONFIG.repo);
-  const branch = await getSetting('github_branch', GITHUB_CONFIG.branch);
-  return {token, owner, repo, branch, ok: !!(token && owner && repo)};
+  const token=await getSetting('github_token',GITHUB_CONFIG_DEFAULT.token);
+  const owner=await getSetting('github_owner',GITHUB_CONFIG_DEFAULT.owner);
+  const repo=await getSetting('github_repo',GITHUB_CONFIG_DEFAULT.repo);
+  const branch=await getSetting('github_branch',GITHUB_CONFIG_DEFAULT.branch);
+  const valid=!!(token && owner && repo && !token.includes('xxx'));
+  return {token,owner,repo,branch,ok:valid};
 }
-
-// Verifica se o GITHUB_CONFIG foi preenchido corretamente
-function isGithubConfigValid(){
-  const t = GITHUB_CONFIG.token || '';
-  const o = GITHUB_CONFIG.owner || '';
-  const r = GITHUB_CONFIG.repo || '';
-  // Verifica se não está com placeholder
-  return t.length > 10 && !t.includes('xxx') && o.length > 0 && r.length > 0;
-}
-
 function ghAuthHeaders(token){return {Authorization:`Bearer ${token}`,Accept:'application/vnd.github.v3+json'};}
 function ghPath(store){return `data/${store}.json`;}
-function toB64(str){const b=new TextEncoder().encode(str);return btoa(Array.from(b,c=>String.fromCodePoint(c)).join(''));}
-function fromB64(b64){const bin=atob(b64);const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));return new TextDecoder().decode(bytes);}
+function toB64(str){return btoa(unescape(encodeURIComponent(str)));}
+function fromB64(b64){return decodeURIComponent(escape(atob(b64)));}
 
 async function ghApiGet(config,path){
   const url=`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}?ref=${config.branch}`;
   const resp=await fetch(url,{headers:ghAuthHeaders(config.token)});
   if(resp.status===404)return null;
-  if(!resp.ok)throw new Error(`GH GET ${path}: ${resp.status} ${(await resp.json().catch(()=>({}))).message||''}`);
+  if(!resp.ok)throw new Error(`GET ${path}: ${resp.status}`);
   return resp.json();
 }
-
 async function ghApiPut(config,path,content,sha,message){
   const url=`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}`;
-  const body={message:message||`Atualização: ${path}`,content:toB64(content),branch:config.branch};
+  const body={message:message||`Sync ${path}`,content:toB64(content),branch:config.branch};
   if(sha)body.sha=sha;
   const resp=await fetch(url,{method:'PUT',headers:{...ghAuthHeaders(config.token),'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(`GH PUT ${path}: ${resp.status} ${e.message||''}`);}
+  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(`PUT ${path}: ${resp.status} ${e.message||''}`);}
   return resp.json();
 }
-
-// Pull: GitHub → IndexedDB
 async function ghPullStore(storeName){
   const config=await ghGetConfig();
   if(!config.ok)return false;
   const file=await ghApiGet(config,ghPath(storeName));
   if(!file||!file.content)return false;
-  const json=fromB64(file.content);
-  const data=JSON.parse(json);
-  const items=Array.isArray(data)?data:(storeName===S_SETTINGS?[data]:[]);
+  const items=JSON.parse(fromB64(file.content));
   await dbClear(storeName);
   for(const item of items)await dbPut(storeName,item);
   await dbPut(S_SYNC,{key:`sha_${storeName}`,sha:file.sha,updatedAt:now()});
   return true;
 }
-
-// Push: IndexedDB → GitHub
+function mergeArrays(local,remote){
+  const map=new Map();
+  for(const item of remote)map.set(item.id,item);
+  for(const item of local){
+    const ex=map.get(item.id);
+    if(!ex || (item.updatedAt && (!ex.updatedAt || item.updatedAt>=ex.updatedAt))) map.set(item.id,item);
+  }
+  return Array.from(map.values());
+}
 async function ghPushStore(storeName,retries=3){
   const config=await ghGetConfig();
   if(!config.ok)return false;
   let items=await dbGetAll(storeName);
-  const payload=JSON.stringify(items,null,2);
   const meta=await dbGet(S_SYNC,`sha_${storeName}`);
   let sha=meta?meta.sha:null;
-
   for(let attempt=1;attempt<=retries;attempt++){
     try{
-      const result=await ghApiPut(config,ghPath(storeName),payload,sha,`🔄 Sync ${storeName} — ${new Date().toLocaleString('pt-BR')}`);
+      const payload=JSON.stringify(items,null,2);
+      const result=await ghApiPut(config,ghPath(storeName),payload,sha,`Sync ${storeName} — ${new Date().toLocaleString('pt-BR')}`);
       await dbPut(S_SYNC,{key:`sha_${storeName}`,sha:result.content.sha,updatedAt:now()});
       return true;
     }catch(e){
       if(attempt===retries)throw e;
-      if(e.message.includes('409')||e.message.includes('conflict')){
+      if(e.message.includes('409')){
         const file=await ghApiGet(config,ghPath(storeName));
         if(file&&file.content){const remote=JSON.parse(fromB64(file.content));sha=file.sha;items=mergeArrays(items,remote);}
-        await new Promise(r=>setTimeout(r,500*attempt));
-      }else{throw e;}
+        await new Promise(r=>setTimeout(r,400*attempt));
+      } else throw e;
     }
   }
-  return false;
 }
-
-function mergeArrays(local,remote){
-  const map=new Map();
-  for(const item of remote)map.set(item.id||item.key,item);
-  for(const item of local){const k=item.id||item.key;if(!map.has(k)||(item.updatedAt&&(!map.get(k).updatedAt||item.updatedAt>=map.get(k).updatedAt)))map.set(k,item);}
-  return Array.from(map.values());
-}
-
 async function ghPullAll(showToast=true){
   const config=await ghGetConfig();
-  if(!config.ok){
-    if(showToast)toast('⚠️ GitHub não configurado.', 'warn');
-    return false;
-  }
+  if(!config.ok){if(showToast)toast('⚠️ GitHub não configurado.','warn');return false;}
   setSyncUI('syncing','Sincronizando...');
   try{
-    for(const store of GH_STORES)await ghPullStore(store);
+    for(const s of GH_STORES) await ghPullStore(s);
     await setSetting('github_last_sync',now());
     setSyncUI('synced','Sincronizado');
-    if(showToast)toast('☁️ Dados sincronizados!','ok',3000);
+    if(showToast)toast('☁️ Dados sincronizados!','ok');
     return true;
-  }catch(e){
-    setSyncUI('error','Erro sync');
-    if(showToast)toast('❌ Erro: '+e.message,'err',5000);
-    return false;
-  }
+  }catch(e){setSyncUI('error','Erro sync');if(showToast)toast('❌ '+e.message,'err',5000);return false;}
 }
-
-async function syncNow(){const ok=await ghPullAll(true);if(ok)await refreshAllUI();}
-
+async function syncNow(){const ok=await ghPullAll(true);if(ok){await loadAllCaches();refreshAllUI();}}
 async function forcePushAll(){
   const config=await ghGetConfig();
   if(!config.ok){toast('Configure o GitHub primeiro.','warn');return;}
   setSyncUI('syncing','Enviando...');
   try{
-    for(const store of GH_STORES){await ghPushStore(store);}
+    for(const s of GH_STORES) await ghPushStore(s);
     await setSetting('github_last_push',now());
     setSyncUI('synced','Sincronizado');
-    toast('📤 Dados enviados!','ok',3000);
-  }catch(e){setSyncUI('error','Erro');toast('❌ Erro: '+e.message,'err',5000);}
+    toast('📤 Upload completo realizado!','ok');
+    updateBackupStatus();
+  }catch(e){setSyncUI('error','Erro');toast('❌ '+e.message,'err',5000);}
 }
-
 function schedulePush(storeName){
-  _dirtyStores.add(storeName);
   if(_pushTimers[storeName])clearTimeout(_pushTimers[storeName]);
+  setSyncUI('pending','Pendente...');
   _pushTimers[storeName]=setTimeout(async()=>{
     const config=await ghGetConfig();
-    if(!config.ok){_dirtyStores.delete(storeName);return;}
-    setSyncUI('pending','Pendente...');
-    try{await ghPushStore(storeName);_dirtyStores.delete(storeName);setSyncUI('synced','Sincronizado');}
-    catch(e){setSyncUI('error','Erro');_dirtyStores.delete(storeName);}
+    if(!config.ok)return;
+    try{await ghPushStore(storeName);setSyncUI('synced','Sincronizado');await setSetting('github_last_push',now());updateBackupStatus();}
+    catch(e){setSyncUI('error','Erro');}
   },SYNC_DEBOUNCE_MS);
 }
-
 function startSyncLoop(){
   if(_syncLoopId)clearInterval(_syncLoopId);
   _syncLoopId=setInterval(async()=>{
     const config=await ghGetConfig();
     if(!config.ok)return;
     try{
-      const dirResp=await ghApiGet(config,'data');
-      if(!dirResp||!Array.isArray(dirResp))return;
-      const remoteShas={};for(const f of dirResp)remoteShas[f.name.replace('.json','')]=f.sha;
+      const dir=await ghApiGet(config,'data');
+      if(!dir||!Array.isArray(dir))return;
+      const remoteShas={};for(const f of dir)remoteShas[f.name.replace('.json','')]=f.sha;
       let changed=false;
-      for(const store of GH_STORES){
-        const meta=await dbGet(S_SYNC,`sha_${store}`);
-        if(!meta||meta.sha!==remoteShas[store]){changed=true;break;}
-      }
-      if(changed){await ghPullAll(false);await refreshAllUI();}
+      for(const s of GH_STORES){const meta=await dbGet(S_SYNC,`sha_${s}`);if(!meta||meta.sha!==remoteShas[s]){changed=true;break;}}
+      if(changed){await ghPullAll(false);await loadAllCaches();refreshAllUI();}
     }catch{}
   },SYNC_POLL_INTERVAL);
 }
-
 function setSyncUI(state,text){
-  const el=document.getElementById('syncIndicator');
-  if(!el)return;
+  const el=document.getElementById('syncIndicator');if(!el)return;
   el.className='sync-indicator '+state;
   const icons={synced:'☁️',pending:'⏳',syncing:'🔄',error:'⚠️',offline:'☁️'};
   el.innerHTML=`${icons[state]||'☁️'} ${text}`;
 }
-
 async function updateSyncUI(){
   const config=await ghGetConfig();
   if(!config.ok){setSyncUI('offline','Offline');return;}
@@ -575,372 +504,536 @@ async function updateSyncUI(){
   setSyncUI(lastSync?'synced':'pending',lastSync?'Sincronizado':'Conectado');
 }
 
-// ══════════════════════════════════════════════
-//  GITHUB CONFIG UI (Admin)
-// ══════════════════════════════════════════════
+/* ══════════════════ CONFIG GITHUB (ADMIN) ══════════════════ */
 async function loadGithubConfigIntoForm(){
-  document.getElementById('ghToken').value = await getSetting('github_token', '');
-  document.getElementById('ghOwner').value = await getSetting('github_owner', '');
-  document.getElementById('ghRepo').value  = await getSetting('github_repo',  '');
-  document.getElementById('ghBranch').value = await getSetting('github_branch', GITHUB_CONFIG.branch || 'main');
+  if(!isAdmin())return;
+  document.getElementById('ghToken').value='';
+  document.getElementById('ghOwner').value=await getSetting('github_owner','');
+  document.getElementById('ghRepo').value=await getSetting('github_repo','');
+  document.getElementById('ghBranch').value=await getSetting('github_branch',GITHUB_CONFIG_DEFAULT.branch);
   updateBackupStatus();
 }
-
 async function saveGithubConfig(){
   const token=document.getElementById('ghToken').value.trim();
   const owner=document.getElementById('ghOwner').value.trim();
   const repo=document.getElementById('ghRepo').value.trim();
   const branch=document.getElementById('ghBranch').value.trim()||'main';
-  if(token) await setSetting('github_token', token);
-  if(owner) await setSetting('github_owner', owner);
-  if(repo)  await setSetting('github_repo',  repo);
-  await setSetting('github_branch', branch);
+  if(token)await setSetting('github_token',token);
+  if(owner)await setSetting('github_owner',owner);
+  if(repo)await setSetting('github_repo',repo);
+  await setSetting('github_branch',branch);
   toast('✅ Configurações salvas!','ok');
-  updateBackupStatus();updateSyncUI();
-  if(token||owner||repo) startSyncLoop();
+  updateBackupStatus();updateSyncUI();startSyncLoop();
 }
-
 async function resetGithubConfig(){
-  confirmDialog('Resetar configuração','Voltar a usar as configurações padrão do código-fonte?',async()=>{
-    await dbDelete(S_SETTINGS,'github_token');
-    await dbDelete(S_SETTINGS,'github_owner');
-    await dbDelete(S_SETTINGS,'github_repo');
-    await dbDelete(S_SETTINGS,'github_branch');
-    document.getElementById('ghToken').value='';
-    document.getElementById('ghOwner').value='';
-    document.getElementById('ghRepo').value='';
-    document.getElementById('ghBranch').value=GITHUB_CONFIG.branch||'main';
+  confirmDialog('Resetar configuração','Voltar às configurações padrão do código-fonte?',async()=>{
+    for(const k of ['github_token','github_owner','github_repo','github_branch']) await dbDelete(S_SETTINGS,k);
+    loadGithubConfigIntoForm();
     toast('↺ Configuração resetada!','ok');
-    updateBackupStatus();updateSyncUI();
-    const config=await ghGetConfig();
-    if(config.ok) startSyncLoop();
+    updateSyncUI();
   });
 }
-
 async function testGithubConnection(){
   const config=await ghGetConfig();
-  if(!config.ok){toast('GitHub não configurado. Verifique o GITHUB_CONFIG no código.','warn');return;}
-  const btn=document.getElementById('btnTestGh');btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Testando...';
+  if(!config.ok){toast('GitHub não configurado.','warn');return;}
+  const btn=document.getElementById('btnTestGh');btn.disabled=true;btn.textContent='Testando...';
   try{
     const resp=await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}`,{headers:ghAuthHeaders(config.token)});
     if(resp.ok){const d=await resp.json();toast(`✅ Conectado! ${d.full_name}`,'ok',4000);updateBackupStatus('ok');}
-    else if(resp.status===401){toast('❌ Token inválido ou expirado.','err');updateBackupStatus('err');}
+    else if(resp.status===401){toast('❌ Token inválido.','err');updateBackupStatus('err');}
     else if(resp.status===404){toast('❌ Repositório não encontrado.','err');updateBackupStatus('err');}
     else{toast(`❌ Erro ${resp.status}`,'err');updateBackupStatus('err');}
-  }catch(e){toast('❌ Erro: '+e.message,'err');updateBackupStatus('err');}
-  finally{btn.disabled=false;btn.innerHTML='🔍 Testar Conexão';}
+  }catch(e){toast('❌ '+e.message,'err');updateBackupStatus('err');}
+  finally{btn.disabled=false;btn.textContent='🔍 Testar Conexão';}
 }
-
 async function updateBackupStatus(fs){
   const badge=document.getElementById('ghStatusBadge'),lastEl=document.getElementById('ghLastBackup');
   if(!badge)return;
   const config=await ghGetConfig();
-  if(!config.ok){badge.className='backup-status idle';badge.innerHTML='<span class="dot gray"></span> Não configurado';lastEl.textContent='⚠️ Configure o token no código-fonte (GITHUB_CONFIG).';return;}
+  if(!config.ok){badge.className='backup-status idle';badge.innerHTML='<span class="dot gray"></span> Não configurado';lastEl.textContent='⚠️ GitHub não configurado.';return;}
   const lastSync=await getSetting('github_last_sync',null),lastPush=await getSetting('github_last_push',null);
   const s=fs||(lastSync||lastPush?'ok':null);
   if(s==='ok'){badge.className='backup-status ok';badge.innerHTML='<span class="dot green"></span> Conectado';lastEl.innerHTML=`✅ Última sincronização: <strong>${fmtDateTime(lastSync||lastPush)}</strong>`;}
   else if(s==='err'){badge.className='backup-status err';badge.innerHTML='<span class="dot red"></span> Erro';lastEl.textContent='❌ Verifique token e repositório.';}
-  else{badge.className='backup-status warn';badge.innerHTML='<span class="dot yellow"></span> Conectado (sem sync)';lastEl.textContent='Use "Sincronizar Agora" para baixar os dados.';}
+  else{badge.className='backup-status warn';badge.innerHTML='<span class="dot yellow"></span> Conectado';lastEl.textContent='Use "Sincronizar Agora".';}
 }
 
-// ══════════════════════════════════════════════
-//  LOGIN (simplificado — apenas usuário/senha)
-// ══════════════════════════════════════════════
+/* ══════════════════ LOGIN ══════════════════ */
 async function checkFirstAccess(){
-  const localUsers = await dbGetAll(S_USERS);
-  if (localUsers.length > 0) return false;
-  
-  // Tenta puxar do GitHub
-  const config = await ghGetConfig();
-  if (config.ok) {
-    try { 
-      await ghPullStore(S_USERS); 
-      const remoteUsers = await dbGetAll(S_USERS); 
-      return remoteUsers.length === 0; 
-    } catch { 
-      return localUsers.length === 0; 
-    }
-  }
-  return localUsers.length === 0;
+  const localUsers=await dbGetAll(S_USERS);
+  return localUsers.length===0;
 }
-
 async function setupLoginUI(){
-  const config = await ghGetConfig();
-  const configValid = isGithubConfigValid() || config.ok;
-  
-  // Se GitHub configurado, tenta sincronizar automaticamente
-  if (config.ok) {
-    const localUsers = await dbGetAll(S_USERS);
-    if (localUsers.length === 0) {
-      // IndexedDB vazio → puxa dados do GitHub
-      try {
-        for (const store of GH_STORES) {
-          await ghPullStore(store);
-        }
-        await setSetting('github_last_sync', now());
-      } catch (e) {
-        console.log('Sync inicial falhou:', e.message);
-      }
-    }
+  const config=await ghGetConfig();
+  if(config.ok){
+    try{ for(const s of GH_STORES) await ghPullStore(s); await setSetting('github_last_sync',now()); }catch(e){console.log('sync inicial falhou',e.message);}
   }
-  
-  // Agora verifica se é primeiro acesso (após o pull)
-  const isFirst = await checkFirstAccess();
-
-  document.getElementById('loginTitle').textContent = isFirst ? '🔐 Primeiro Acesso' : 'Planejamento Athena';
-  document.getElementById('loginSubtitle').textContent = isFirst
-    ? (configValid ? 'Conectado ao repositório. Crie o administrador.' : 'Nenhum usuário cadastrado. Crie o administrador.')
-    : 'Colégio Athena — Supervisão Pedagógica';
-  document.getElementById('loginBtn').textContent = isFirst ? 'Criar Administrador' : 'Entrar';
-  document.getElementById('loginHint').textContent = isFirst ? 'Esta conta terá acesso total.' : '';
-  document.getElementById('confirmGroup').style.display = isFirst ? '' : 'none';
-  document.getElementById('loginError').textContent = '';
-  document.getElementById('loginSpinner').classList.remove('visible');
-
-  // Aviso se GitHub não estiver configurado
-  const hintEl = document.getElementById('configHint');
-  if (!configValid && !config.ok) {
-    hintEl.style.display = 'block';
-    hintEl.className = 'config-hint';
-    hintEl.innerHTML = '⚠️ <strong>GitHub não configurado.</strong><br>Edite o <code>GITHUB_CONFIG</code> no código-fonte com seu token, owner e repositório.';
-  } else {
-    hintEl.style.display = 'none';
-  }
+  const isFirst=await checkFirstAccess();
+  document.getElementById('loginTitle').textContent=isFirst?'🔐 Primeiro Acesso':'Planejamento Athena';
+  document.getElementById('loginSubtitle').textContent=isFirst?'Nenhum usuário encontrado. Crie o administrador.':'Colégio Athena — Supervisão Pedagógica';
+  document.getElementById('loginBtn').textContent=isFirst?'Criar Administrador':'Entrar';
+  document.getElementById('confirmGroup').style.display=isFirst?'':'none';
+  document.getElementById('loginError').textContent='';
+  const hint=document.getElementById('configHint');
+  if(!config.ok){hint.style.display='block';hint.innerHTML='⚠️ <strong>GitHub não configurado.</strong> O administrador poderá configurar após o primeiro login.';}
+  else hint.style.display='none';
 }
 
+/**
+ * handleLogin — CORRIGIDO
+ * - Botão do tipo "button" (não depende de submit/validação nativa do form)
+ * - try/catch/finally garante que o botão nunca fique travado
+ * - Funciona com clique do mouse, toque (mobile) e tecla Enter
+ */
 async function handleLogin(e){
-  e.preventDefault();
+  if(e && e.preventDefault) e.preventDefault();
+
+  const loginBtn = document.getElementById('loginBtn');
+  const errEl = document.getElementById('loginError');
+  errEl.textContent = '';
+
   const username = document.getElementById('loginUsername').value.trim();
   const password = document.getElementById('loginPassword').value;
-  const errorEl = document.getElementById('loginError');
-  errorEl.textContent = '';
-  if (!username || !password) { errorEl.textContent = 'Preencha usuário e senha.'; return; }
 
-  // Tenta sincronizar do GitHub antes de validar
-  const config = await ghGetConfig();
-  if (config.ok) {
-    document.getElementById('loginSpinner').classList.add('visible');
-    document.getElementById('loginBtn').disabled = true;
-    try { 
-      for (const store of GH_STORES) { 
-        await ghPullStore(store); 
-      } 
-      await setSetting('github_last_sync', now()); 
-    } catch { /* continua com dados locais */ }
+  if(!username || !password){
+    errEl.textContent = 'Preencha usuário e senha.';
+    return;
+  }
+
+  loginBtn.disabled = true;
+  const originalText = loginBtn.textContent;
+  loginBtn.textContent = 'Entrando...';
+
+  try {
+    const config = await ghGetConfig();
+    if(config.ok){
+      document.getElementById('loginSpinner').classList.add('visible');
+      try {
+        for(const s of GH_STORES) await ghPullStore(s);
+        await setSetting('github_last_sync', now());
+      } catch(err) {
+        console.warn('Falha ao sincronizar antes do login:', err.message);
+      }
+      document.getElementById('loginSpinner').classList.remove('visible');
+    }
+
+    const isFirst = await checkFirstAccess();
+
+    if(isFirst){
+      const confirmVal = document.getElementById('loginConfirm').value;
+      if(password !== confirmVal){ errEl.textContent = 'As senhas não coincidem.'; return; }
+      if(password.length < 4){ errEl.textContent = 'Senha: mínimo 4 caracteres.'; return; }
+
+      const user = {
+        id: uid(), username,
+        passwordHash: await sha256(password),
+        role: 'admin', active: true,
+        createdAt: now(), updatedAt: now()
+      };
+      await dbPut(S_USERS, user);
+      if(config.ok){ try{ await ghPushStore(S_USERS); }catch(err){ console.warn(err); } }
+      saveSession({ userId: user.id, username: user.username, role: user.role });
+      await enterApp();
+      toast('✅ Administrador criado!', 'ok');
+      return;
+    }
+
+    const users = await dbGetAll(S_USERS);
+    const found = users.find(u => u.username.toLowerCase() === username.toLowerCase());
+    if(!found){ errEl.textContent = 'Usuário não encontrado.'; return; }
+    if(!found.active){ errEl.textContent = 'Usuário inativo.'; return; }
+    if(await sha256(password) !== found.passwordHash){ errEl.textContent = 'Senha incorreta.'; return; }
+
+    saveSession({ userId: found.id, username: found.username, role: found.role });
+    await enterApp();
+    toast(`👋 Bem-vindo(a), ${found.username}!`, 'ok');
+
+  } catch(err) {
+    console.error('Erro no login:', err);
+    errEl.textContent = 'Erro inesperado: ' + err.message;
+  } finally {
+    loginBtn.disabled = false;
+    loginBtn.textContent = originalText;
     document.getElementById('loginSpinner').classList.remove('visible');
-    document.getElementById('loginBtn').disabled = false;
   }
-
-  const isFirst = await checkFirstAccess();
-  if (isFirst) {
-    document.getElementById('confirmGroup').style.display = '';
-    document.getElementById('loginTitle').textContent = '🔐 Primeiro Acesso';
-    document.getElementById('loginBtn').textContent = 'Criar Administrador';
-    const confirm = document.getElementById('loginConfirm').value;
-    if (password !== confirm) { errorEl.textContent = 'As senhas não coincidem.'; return; }
-    if (password.length < 4) { errorEl.textContent = 'Senha: mínimo 4 caracteres.'; return; }
-    const user = { id: uid(), username, passwordHash: await sha256(password), role: 'admin', active: true, createdAt: now(), updatedAt: now() };
-    await dbPut(S_USERS, user);
-    if (config.ok) { try { await ghPushStore(S_USERS); } catch {} }
-    saveSession({ userId: user.id, username: user.username, role: user.role });
-    enterApp(); toast('✅ Administrador criado!', 'ok', 4000); return;
-  }
-
-  const users = await dbGetAll(S_USERS);
-  const found = users.find(u => u.username.toLowerCase() === username.toLowerCase());
-  if (!found) { errorEl.textContent = 'Usuário não encontrado.'; return; }
-  if (!found.active) { errorEl.textContent = 'Usuário inativo.'; return; }
-  if (await sha256(password) !== found.passwordHash) { errorEl.textContent = 'Senha incorreta.'; return; }
-  saveSession({ userId: found.id, username: found.username, role: found.role });
-  enterApp(); toast(`👋 Bem-vindo(a), ${found.username}!`, 'ok', 3000);
 }
 
 async function enterApp(){
   document.getElementById('loginOverlay').classList.add('hidden');
   document.getElementById('appWrapper').classList.remove('main-hidden');
-  updateHeaderUI(); setTab('novo'); loadGithubConfigIntoForm(); updateSyncUI();
-  const config = await ghGetConfig();
-  if (config.ok) { startSyncLoop(); }
+  updateHeaderUI();
+  await loadAllCaches();
+  populateSelects();
+  setTab('novo');
+  loadGithubConfigIntoForm();
+  updateSyncUI();updateBackupStatus();
+  document.getElementById('adminGhConfigWrap').style.display=isAdmin()?'':'none';
+  document.getElementById('notAdminNote').style.display=isAdmin()?'none':'';
+  const config=await ghGetConfig();
+  if(config.ok) startSyncLoop();
 }
-
 function doLogout(){
   clearSession();
   document.getElementById('loginOverlay').classList.remove('hidden');
   document.getElementById('appWrapper').classList.add('main-hidden');
   ['loginUsername','loginPassword','loginConfirm'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('loginError').textContent='';
   if(_syncLoopId){clearInterval(_syncLoopId);_syncLoopId=null;}
-  Object.values(_pushTimers).forEach(t=>clearTimeout(t));_pushTimers={};_dirtyStores.clear();
+  Object.values(_pushTimers).forEach(t=>clearTimeout(t));_pushTimers={};
   setupLoginUI();
 }
 
-// ══════════════════════════════════════════════
-//  UI HELPERS
-// ══════════════════════════════════════════════
-function updateHeaderUI(){
-  if(!_session)return;
-  document.getElementById('headerUserName').textContent=_session.username;
-  document.getElementById('headerUserRole').textContent=isAdmin()?'(Admin)':'';
-  document.getElementById('userBadge').textContent=(_session.username[0]||'A').toUpperCase();
-  const at=document.getElementById('tab-btn-admin');if(at)at.style.display=isAdmin()?'':'none';
-  const bd=document.getElementById('btnToolbarDelete');if(bd)bd.style.display=isAdmin()?'':'none';
-}
+/* ══════════════════ UI HELPERS ══════════════════ */
 let _toastTimer=null;
 function toast(m,t='ok',d=3000){const el=document.getElementById('toast');el.textContent=m;el.className=`toast show ${t}`;clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>el.className='toast',d);}
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
-function confirmDialog(title,msg,onConfirm){document.getElementById('modalConfirmTitle').textContent=title;document.getElementById('modalConfirmMsg').textContent=msg;document.getElementById('modalConfirmBtn').onclick=()=>{closeModal('modalConfirm');onConfirm();};openModal('modalConfirm');}
+function confirmDialog(title,msg,onConfirm){
+  document.getElementById('modalConfirmTitle').textContent=title;
+  document.getElementById('modalConfirmMsg').textContent=msg;
+  document.getElementById('modalConfirmBtn').onclick=()=>{closeModal('modalConfirm');onConfirm();};
+  openModal('modalConfirm');
+}
+function updateHeaderUI(){
+  if(!_session)return;
+  document.getElementById('headerUserName').textContent=_session.username;
+  document.getElementById('headerUserRole').textContent=isAdmin()?'(Admin)':'(Professor)';
+  document.getElementById('userBadge').textContent=(_session.username[0]||'A').toUpperCase();
+  document.getElementById('tab-btn-admin').style.display=isAdmin()?'':'none';
+  document.getElementById('btnToolbarDelete').style.display=isAdmin()?'':'none';
+}
 function setTab(tab){
   if(tab==='admin'&&!isAdmin()){toast('Acesso restrito.','err');return;}
-  ['novo','consultas','admin'].forEach(t=>{document.getElementById(`${t}-view`).style.display=t===tab?'block':'none';const b=document.getElementById(`tab-btn-${t}`);if(b)b.classList.toggle('active',t===tab);});
-  if(tab==='novo'){limparForm(true);carregarSelects();}
-  if(tab==='consultas'){refreshConsultaFilters().then(renderLista);}
-  if(tab==='admin'){renderUsers();renderTeachers();renderClasses();renderSubjects();loadGithubConfigIntoForm();updateBackupStatus();}
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-async function refreshAllUI(){const curTab=document.querySelector('.tab-btn.active');if(curTab&&curTab.id==='tab-btn-consultas'){await refreshConsultaFilters();await renderLista();}}
-function fmtDate(s){if(!s)return'—';const[y,m,d]=s.split('-');return`${d}/${m}/${y}`;}
-function fmtDateTime(s){if(!s)return'—';return new Date(s).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});}
-function esc(s){if(!s)return'';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-
-// ══════════════════════════════════════════════
-//  FORMULÁRIO
-// ══════════════════════════════════════════════
-async function carregarSelects(){
-  const[teachers,classes,subjects]=await Promise.all([dbGetAll(S_TEACHERS),dbGetAll(S_CLASSES),dbGetAll(S_SUBJECTS)]);
-  fillSelect('professorSel',teachers.filter(t=>t.active).sort((a,b)=>a.name.localeCompare(b.name)));
-  fillSelect('turmaSel',classes.filter(c=>c.active).sort((a,b)=>a.name.localeCompare(b.name)));
-  fillSelect('disciplinaSel',subjects.filter(s=>s.active).sort((a,b)=>a.name.localeCompare(b.name)));
-}
-function fillSelect(id,items){const sel=document.getElementById(id),cur=sel.value;sel.innerHTML='<option value="">— Selecione —</option>';items.forEach(i=>{const o=document.createElement('option');o.value=i.id;o.textContent=i.name;sel.appendChild(o);});if(cur)sel.value=cur;}
-function limparForm(resetId=false){
-  if(resetId)document.getElementById('editingId').value='';
-  ['professorSel','turmaSel','disciplinaSel'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  ['dataLancamento','periodoInicio','periodoFim','conteudoTxt','objetivos','descricao','recursos','avaliacao','observacoes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('anexos').value='';document.getElementById('anexosResumo').innerHTML='';
-  document.getElementById('formTitle').textContent='Novo Planejamento';document.getElementById('formHint').textContent='Preencha os campos e clique em "Salvar".';
-  document.getElementById('btnSalvar').textContent='💾 Salvar planejamento';
+  ['novo','consultas','backup','admin'].forEach(t=>{
+    document.getElementById(`${t}-view`).style.display=t===tab?'block':'none';
+    document.getElementById(`tab-btn-${t}`).classList.toggle('active',t===tab);
+  });
+  if(tab==='novo') limparForm(false);
+  if(tab==='consultas') renderLista();
+  if(tab==='admin'){renderUsers();renderTeachers();renderClasses();renderSubjects();}
+  if(tab==='backup'){updateBackupStatus();document.getElementById('adminGhConfigWrap').style.display=isAdmin()?'':'none';document.getElementById('notAdminNote').style.display=isAdmin()?'none':'';}
 }
 
-async function salvarPlanejamento(){
-  const teacherId=document.getElementById('professorSel').value,classId=document.getElementById('turmaSel').value;
-  const subjectId=document.getElementById('disciplinaSel').value,dataLanc=document.getElementById('dataLancamento').value;
-  if(!teacherId||!classId||!subjectId||!dataLanc){toast('Preencha os campos obrigatórios.','err');return;}
-  const[teachers,classes,subjects]=await Promise.all([dbGetAll(S_TEACHERS),dbGetAll(S_CLASSES),dbGetAll(S_SUBJECTS)]);
-  const tName=(teachers.find(t=>t.id===teacherId)||{}).name||'',cName=(classes.find(c=>c.id===classId)||{}).name||'',sName=(subjects.find(s=>s.id===subjectId)||{}).name||'';
-  const editingId=document.getElementById('editingId').value,id=editingId||uid();
-  const existing=editingId?await dbGet(S_PLANS,editingId):null;
-  if(existing&&existing.userId!==currentUserId()&&!isAdmin()){toast('Sem permissão para editar.','err');return;}
-  const plan={id,userId:existing?existing.userId:currentUserId(),teacherId,teacherName:tName,classId,className:cName,subjectId,subjectName:sName,dataLancamento:dataLanc,periodoInicio:document.getElementById('periodoInicio').value,periodoFim:document.getElementById('periodoFim').value,contentName:document.getElementById('conteudoTxt').value.trim(),objetivos:document.getElementById('objetivos').value.trim(),descricao:document.getElementById('descricao').value.trim(),recursos:document.getElementById('recursos').value.trim(),avaliacao:document.getElementById('avaliacao').value.trim(),observacoes:document.getElementById('observacoes').value.trim(),createdAt:existing?existing.createdAt:now(),updatedAt:now()};
-  await dbPut(S_PLANS,plan);
-  schedulePush(S_PLANS);
-  const filesInput=document.getElementById('anexos');
-  if(filesInput.files.length>0){for(const file of filesInput.files){await dbPut(S_ATTS,{key:`${id}__${uid()}__${file.name}`,planId:id,name:file.name,type:file.type,dataBase64:await fileToBase64(file)});}schedulePush(S_ATTS);}
-  toast(editingId?'✅ Planejamento atualizado!':'✅ Planejamento salvo!','ok');limparForm(true);
+/* ══════════════════ CACHE / DADOS ══════════════════ */
+async function loadAllCaches(){
+  _cache.teachers=await dbGetAll(S_TEACHERS);
+  _cache.classes=await dbGetAll(S_CLASSES);
+  _cache.subjects=await dbGetAll(S_SUBJECTS);
+  _cache.plans=await dbGetAll(S_PLANS);
+  _cache.users=await dbGetAll(S_USERS);
+  _cache.attachments=await dbGetAll(S_ATTS);
 }
-
-function fileToBase64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>{const b64=r.result.split(',')[1];res(b64);};r.onerror=rej;r.readAsDataURL(file);});}
-
-// ══════════════════════════════════════════════
-//  CONSULTAS
-// ══════════════════════════════════════════════
-async function refreshConsultaFilters(){
-  const[teachers,classes,subjects,allPlans]=await Promise.all([dbGetAll(S_TEACHERS),dbGetAll(S_CLASSES),dbGetAll(S_SUBJECTS),dbGetAll(S_PLANS)]);
-  populateFilter('fProfessorSel',teachers.sort((a,b)=>a.name.localeCompare(b.name)));
-  populateFilter('fTurmaSel',classes.sort((a,b)=>a.name.localeCompare(b.name)));
-  populateFilter('fDisciplinaSel',subjects.sort((a,b)=>a.name.localeCompare(b.name)));
-  const years=new Set();allPlans.forEach(p=>{const y=(p.dataLancamento||'').slice(0,4);if(/^\d{4}$/.test(y))years.add(y);});
-  const fAno=document.getElementById('fAnoSel'),cur=fAno.value;fAno.innerHTML='<option value="">Todos</option>';
-  Array.from(years).sort((a,b)=>b.localeCompare(a)).forEach(y=>{const o=document.createElement('option');o.value=y;o.textContent=y;fAno.appendChild(o);});
-  if(cur)fAno.value=cur;
+function refreshAllUI(){
+  populateSelects();
+  const consultasVisible=document.getElementById('consultas-view').style.display!=='none';
+  if(consultasVisible) renderLista();
+  const adminVisible=document.getElementById('admin-view').style.display!=='none';
+  if(adminVisible){renderUsers();renderTeachers();renderClasses();renderSubjects();}
 }
-function populateFilter(id,items){const sel=document.getElementById(id),cur=sel.value;sel.innerHTML='<option value="">Todos(as)</option>';items.forEach(i=>{const o=document.createElement('option');o.value=i.id;o.textContent=i.name+(i.active===false?' (inativo)':'');sel.appendChild(o);});if(cur)sel.value=cur;}
-function limparFiltros(){['fProfessorSel','fTurmaSel','fDisciplinaSel','fAnoSel'].forEach(id=>document.getElementById(id).value='');renderLista();}
-
-let _currentFiltered=[];
-async function renderLista(){
-  const allPlans=await dbGetAll(S_PLANS);let plans=isAdmin()?allPlans:allPlans.filter(p=>p.userId===currentUserId());
-  const f={teacherId:document.getElementById('fProfessorSel').value,classId:document.getElementById('fTurmaSel').value,subjectId:document.getElementById('fDisciplinaSel').value,year:document.getElementById('fAnoSel').value};
-  _currentFiltered=plans.filter(p=>(!f.teacherId||p.teacherId===f.teacherId)&&(!f.classId||p.classId===f.classId)&&(!f.subjectId||p.subjectId===f.subjectId)&&(!f.year||(p.dataLancamento||'').slice(0,4)===f.year)).sort((a,b)=>(b.dataLancamento||'').localeCompare(a.dataLancamento||''));
-  document.getElementById('kpiTotal').textContent=`${plans.length} planejamento(s)`;
-  document.getElementById('kpiFiltrados').textContent=`${_currentFiltered.length} exibido(s)`;
-  const tbody=document.getElementById('listaBody');tbody.innerHTML='';
-  if(!_currentFiltered.length){tbody.innerHTML='<tr><td colspan="8" class="empty">Nenhum resultado.</td></tr>';document.getElementById('checkAll').checked=false;updateToolbar();return;}
-  _currentFiltered.forEach(p=>{const periodo=(p.periodoInicio&&p.periodoFim)?`${fmtDate(p.periodoInicio)} a ${fmtDate(p.periodoFim)}`:(p.periodoInicio?`A partir de ${fmtDate(p.periodoInicio)}`:'—');const tr=document.createElement('tr');tr.dataset.id=p.id;tr.innerHTML=`<td class="col-check"><input type="checkbox" class="row-check" data-id="${p.id}" onchange="onRowCheck()" /></td><td>${fmtDate(p.dataLancamento)}</td><td>${esc(p.teacherName)}</td><td>${esc(p.className)}</td><td>${esc(p.subjectName)}</td><td>${esc(p.contentName||'—')}</td><td style="white-space:nowrap;">${periodo}</td><td style="white-space:nowrap;font-size:.83rem;color:var(--muted);">${fmtDateTime(p.updatedAt)}</td>`;tr.addEventListener('click',e=>{if(e.target.type==='checkbox')return;const cb=tr.querySelector('.row-check');cb.checked=!cb.checked;onRowCheck();});tbody.appendChild(tr);});
-  document.getElementById('checkAll').checked=false;updateToolbar();
+function populateSelects(){
+  const activeTeachers=_cache.teachers.filter(t=>t.active);
+  const activeClasses=_cache.classes.filter(c=>c.active);
+  const activeSubjects=_cache.subjects.filter(s=>s.active);
+  const fill=(id,items,placeholder)=>{
+    const el=document.getElementById(id);
+    const current=el.value;
+    el.innerHTML = (placeholder?`<option value="">${placeholder}</option>`:'') + items.map(i=>`<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('');
+    if(current) el.value=current;
+  };
+  fill('professorSel',activeTeachers,null);
+  fill('turmaSel',activeClasses,null);
+  fill('disciplinaSel',activeSubjects,null);
+  fill('fProfessorSel',activeTeachers,'Todos');
+  fill('fTurmaSel',activeClasses,'Todas');
+  fill('fDisciplinaSel',activeSubjects,'Todas');
+  const anos=new Set(_cache.plans.map(p=>(p.dataLancamento||'').slice(0,4)).filter(Boolean));
+  const fAno=document.getElementById('fAnoSel');
+  const curAno=fAno.value;
+  fAno.innerHTML='<option value="">Todos</option>'+Array.from(anos).sort().reverse().map(a=>`<option value="${a}">${a}</option>`).join('');
+  if(curAno)fAno.value=curAno;
 }
+function escapeHtml(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 
-function getSelectedIds(){return Array.from(document.querySelectorAll('.row-check:checked')).map(cb=>cb.dataset.id);}
-function toggleSelectAll(c){document.querySelectorAll('.row-check').forEach(cb=>cb.checked=c);document.querySelectorAll('#listaBody tr[data-id]').forEach(tr=>tr.classList.toggle('row-selected',c));updateToolbar();}
-function onRowCheck(){const all=document.querySelectorAll('.row-check'),chk=document.querySelectorAll('.row-check:checked');document.getElementById('checkAll').checked=all.length>0&&chk.length===all.length;document.getElementById('checkAll').indeterminate=chk.length>0&&chk.length<all.length;all.forEach(cb=>{const tr=cb.closest('tr');if(tr)tr.classList.toggle('row-selected',cb.checked);});updateToolbar();}
-function updateToolbar(){const ids=getSelectedIds(),n=ids.length;document.getElementById('selectionToolbar').classList.toggle('visible',n>0);document.getElementById('selCount').textContent=`${n} selecionado(s)`;document.getElementById('selNote').textContent=n>1?'✏️ Editar: selecione apenas 1':'';const kpiSel=document.getElementById('kpiSelecionados');if(n>0){kpiSel.style.display='';kpiSel.textContent=`${n} selecionado(s)`;}else{kpiSel.style.display='none';}}
-
-async function acaoEditar(){const ids=getSelectedIds();if(ids.length!==1){toast('Selecione exatamente 1.','warn');return;}const plan=await dbGet(S_PLANS,ids[0]);if(!plan){toast('Não encontrado.','err');return;}if(plan.userId!==currentUserId()&&!isAdmin()){toast('Sem permissão.','err');return;}setTab('novo');await carregarSelects();setTimeout(()=>{document.getElementById('editingId').value=plan.id;document.getElementById('professorSel').value=plan.teacherId||'';document.getElementById('turmaSel').value=plan.classId||'';document.getElementById('disciplinaSel').value=plan.subjectId||'';document.getElementById('dataLancamento').value=plan.dataLancamento||'';document.getElementById('periodoInicio').value=plan.periodoInicio||'';document.getElementById('periodoFim').value=plan.periodoFim||'';document.getElementById('conteudoTxt').value=plan.contentName||'';document.getElementById('objetivos').value=plan.objetivos||'';document.getElementById('descricao').value=plan.descricao||'';document.getElementById('recursos').value=plan.recursos||'';document.getElementById('avaliacao').value=plan.avaliacao||'';document.getElementById('observacoes').value=plan.observacoes||'';document.getElementById('formTitle').textContent='✏️ Editando Planejamento';document.getElementById('formHint').textContent=`Editando: ${plan.teacherName} — ${plan.className} — ${plan.subjectName}`;document.getElementById('btnSalvar').textContent='💾 Atualizar planejamento';},80);}
-async function acaoCopiar(){const ids=getSelectedIds();if(!ids.length){toast('Selecione ao menos 1.','warn');return;}confirmDialog('Criar cópia',`Copiar ${ids.length} planejamento(s)?`,async()=>{let c=0;for(const id of ids){const plan=await dbGet(S_PLANS,id);if(!plan||(plan.userId!==currentUserId()&&!isAdmin()))continue;await dbPut(S_PLANS,{...plan,id:uid(),contentName:plan.contentName?`${plan.contentName} (cópia)`:'(cópia)',dataLancamento:new Date().toISOString().slice(0,10),createdAt:now(),updatedAt:now(),userId:currentUserId()});c++;}toast(`📋 ${c} cópia(s) criada(s)!`,'ok');schedulePush(S_PLANS);await refreshConsultaFilters();await renderLista();});}
-async function acaoAnexos(){const ids=getSelectedIds();if(!ids.length){toast('Selecione ao menos 1.','warn');return;}const allAtts=await dbGetAll(S_ATTS);let t=0;for(const planId of ids){for(const att of(allAtts||[]).filter(a=>a.planId===planId)){if(!att.dataBase64)continue;const bin=atob(att.dataBase64);const bytes=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)bytes[i]=bin.charCodeAt(i);const blob=new Blob([bytes],{type:att.type||'application/octet-stream'});const url=URL.createObjectURL(blob);const a=Object.assign(document.createElement('a'),{href:url,download:att.name});document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),2000);t++;}}toast(t===0?'Nenhum anexo.':'📎 '+t+' anexo(s) baixado(s).',t===0?'warn':'ok');}
-async function acaoExcluir(){if(!isAdmin()){toast('Apenas administradores.','err');return;}const ids=getSelectedIds();if(!ids.length){toast('Selecione ao menos 1.','warn');return;}confirmDialog('Excluir',`Excluir ${ids.length} planejamento(s)?`,async()=>{for(const id of ids){await dbDelete(S_PLANS,id);const atts=await dbGetAll(S_ATTS);for(const a of(atts||[]).filter(x=>x.planId===id))await dbDelete(S_ATTS,a.key);}toast('🗑️ Excluído(s)!','ok');schedulePush(S_PLANS);schedulePush(S_ATTS);await refreshConsultaFilters();await renderLista();});}
-
-// ══════════════════════════════════════════════
-//  ADMIN — USERS
-// ══════════════════════════════════════════════
-function roleLabel(r){return r==='admin'?'Admin':'Professor';}
-function roleClass(r){return r==='admin'?'admin':'professor';}
-async function renderUsers(){
-  if(!isAdmin())return;const show=document.getElementById('showInactiveUsers').checked;
-  const users=(await dbGetAll(S_USERS)).sort((a,b)=>a.username.localeCompare(b.username));
-  const filtered=users.filter(u=>show||u.active!==false);const tbody=document.getElementById('usersTableBody');tbody.innerHTML='';
-  if(!filtered.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">Nenhum.</td></tr>';return;}
-  filtered.forEach(u=>{const isSelf=u.id===currentUserId();const tr=document.createElement('tr');if(u.active===false)tr.classList.add('inactive-row');tr.innerHTML=`<td><strong>${esc(u.username)}</strong>${isSelf?' <span style="font-size:.73rem;color:var(--muted);">(você)</span>':''}</td><td><span class="item-role ${roleClass(u.role)}">${roleLabel(u.role)}</span></td><td>${u.active===false?'<span style="color:var(--danger);font-weight:600;">Inativo</span>':'<span style="color:var(--success);font-weight:600;">Ativo</span>'}</td><td style="font-size:.82rem;color:var(--muted);">${fmtDateTime(u.createdAt)}</td><td class="col-actions"><button class="btn btn-small btn-ghost btn-icon" onclick="resetUserPassword('${u.id}')" title="Redefinir senha">🔑</button>${u.role==='professor'?`<button class="btn btn-small btn-warning btn-icon" onclick="promoteToAdmin('${u.id}')">⬆</button>`:(isSelf?`<button class="btn btn-small btn-ghost btn-icon" disabled>👑</button>`:`<button class="btn btn-small btn-ghost btn-icon" onclick="demoteToProfessor('${u.id}')">⬇</button>`)}<button class="btn btn-small ${u.active===false?'btn-success':'btn-warning'} btn-icon" ${isSelf?'disabled':''} onclick="toggleUserActive('${u.id}')">${u.active===false?'✔':'⏸'}</button></td>`;tbody.appendChild(tr);});
+/* ══════════════════ PLANEJAMENTOS (CRUD) ══════════════════ */
+function limparForm(showToast){
+  document.getElementById('editingId').value='';
+  document.getElementById('professorSel').value='';
+  document.getElementById('turmaSel').value='';
+  document.getElementById('disciplinaSel').value='';
+  ['dataLancamento','periodoInicio','periodoFim','conteudoTxt','objetivos','descricao','recursos','avaliacao','observacoes'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('anexos').value='';
+  document.getElementById('anexosResumo').innerHTML='';
+  _pendingAttachments=[];
+  document.getElementById('formTitle').textContent='Novo Planejamento';
+  if(showToast) toast('Formulário limpo.','ok',1500);
 }
-async function addUser(){
-  if(!isAdmin())return;const username=document.getElementById('newUsername').value.trim(),password=document.getElementById('newUserPass').value,role=document.getElementById('newUserRole').value;
-  if(!username||!password){toast('Preencha usuário e senha.','warn');return;}if(password.length<4){toast('Senha: mínimo 4 caracteres.','warn');return;}
-  const users=await dbGetAll(S_USERS);if(users.some(u=>u.username.toLowerCase()===username.toLowerCase())){toast('Usuário já existe.','warn');return;}
-  await dbPut(S_USERS,{id:uid(),username,passwordHash:await sha256(password),role,active:true,createdAt:now(),updatedAt:now()});
-  document.getElementById('newUsername').value='';document.getElementById('newUserPass').value='';
-  toast('✅ Usuário criado!','ok');schedulePush(S_USERS);renderUsers();
-}
-async function toggleUserActive(uid){
-  if(!isAdmin()||uid===currentUserId()){toast('Não pode inativar a si mesmo.','warn');return;}
-  const u=await dbGet(S_USERS,uid);if(!u)return;u.active=u.active===false?true:false;u.updatedAt=now();
-  await dbPut(S_USERS,u);toast(u.active?'✅ Reativado.':'⏸ Inativado.','ok');schedulePush(S_USERS);renderUsers();
-}
-async function promoteToAdmin(uid){const u=await dbGet(S_USERS,uid);if(!u)return;u.role='admin';u.updatedAt=now();await dbPut(S_USERS,u);toast('👑 Promovido!','ok');schedulePush(S_USERS);renderUsers();}
-async function demoteToProfessor(uid){if(uid===currentUserId()){toast('Não pode rebaixar a si mesmo.','warn');return;}const u=await dbGet(S_USERS,uid);if(!u)return;u.role='professor';u.updatedAt=now();await dbPut(S_USERS,u);toast('👨‍🏫 Rebaixado.','ok');schedulePush(S_USERS);renderUsers();}
-async function resetUserPassword(uid){const np=prompt('Nova senha (mín. 4 caracteres):');if(!np||np.length<4){toast('Inválida.','warn');return;}const u=await dbGet(S_USERS,uid);if(!u)return;u.passwordHash=await sha256(np);u.updatedAt=now();await dbPut(S_USERS,u);toast('🔑 Senha redefinida!','ok');schedulePush(S_USERS);}
-
-// ══════════════════════════════════════════════
-//  ADMIN — CADASTROS
-// ══════════════════════════════════════════════
-async function renderTeachers(){const show=document.getElementById('showInactiveTeachers').checked;const items=(await dbGetAll(S_TEACHERS)).sort((a,b)=>a.name.localeCompare(b.name));renderAdminList('teachersList',items.filter(i=>show||i.active!==false),S_TEACHERS);}
-async function addTeacher(){const name=document.getElementById('teacherName').value.trim();if(!name){toast('Digite um nome.','warn');return;}if((await dbGetAll(S_TEACHERS)).some(i=>i.name.toLowerCase()===name.toLowerCase())){toast('Já existe.','warn');return;}await dbPut(S_TEACHERS,{id:uid(),name,active:true,createdAt:now(),updatedAt:now()});document.getElementById('teacherName').value='';toast('✅ Adicionado.','ok');schedulePush(S_TEACHERS);renderTeachers();}
-async function renderClasses(){const show=document.getElementById('showInactiveClasses').checked;const items=(await dbGetAll(S_CLASSES)).sort((a,b)=>a.name.localeCompare(b.name));renderAdminList('classesList',items.filter(i=>show||i.active!==false),S_CLASSES);}
-async function addClass(){const name=document.getElementById('className').value.trim();if(!name){toast('Digite um nome.','warn');return;}if((await dbGetAll(S_CLASSES)).some(i=>i.name.toLowerCase()===name.toLowerCase())){toast('Já existe.','warn');return;}await dbPut(S_CLASSES,{id:uid(),name,active:true,createdAt:now(),updatedAt:now()});document.getElementById('className').value='';toast('✅ Adicionado.','ok');schedulePush(S_CLASSES);renderClasses();}
-async function renderSubjects(){const show=document.getElementById('showInactiveSubjects').checked;const items=(await dbGetAll(S_SUBJECTS)).sort((a,b)=>a.name.localeCompare(b.name));renderAdminList('subjectsList',items.filter(i=>show||i.active!==false),S_SUBJECTS);}
-async function addSubject(){const name=document.getElementById('subjectName').value.trim();if(!name){toast('Digite um nome.','warn');return;}if((await dbGetAll(S_SUBJECTS)).some(i=>i.name.toLowerCase()===name.toLowerCase())){toast('Já existe.','warn');return;}await dbPut(S_SUBJECTS,{id:uid(),name,active:true,createdAt:now(),updatedAt:now()});document.getElementById('subjectName').value='';toast('✅ Adicionado.','ok');schedulePush(S_SUBJECTS);renderSubjects();}
-
-function renderAdminList(containerId,items,store){const el=document.getElementById(containerId);el.innerHTML='';if(!items.length){el.innerHTML='<div class="muted" style="padding:8px 0;">Nenhum item.</div>';return;}items.forEach(item=>{const div=document.createElement('div');div.className=`admin-item${item.active===false?' inactive':''}`;div.innerHTML=`<span class="item-name">${esc(item.name)}</span><button class="btn btn-small btn-icon btn-ghost" onclick="editAdminItem('${store}','${item.id}')">✏️</button><button class="btn btn-small btn-icon ${item.active===false?'btn-success':'btn-warning'}" onclick="toggleAdminItem('${store}','${item.id}')">${item.active===false?'✔':'⏸'}</button>`;el.appendChild(div);});}
-async function toggleAdminItem(store,id){const item=await dbGet(store,id);if(!item)return;item.active=item.active===false?true:false;item.updatedAt=now();await dbPut(store,item);toast(item.active?'✅ Reativado.':'⏸ Inativado.','ok');schedulePush(store);setTab('admin');}
-async function editAdminItem(store,id){const item=await dbGet(store,id);if(!item)return;const nn=prompt('Novo nome:',item.name);if(!nn||!nn.trim()||nn.trim()===item.name)return;item.name=nn.trim();item.updatedAt=now();await dbPut(store,item);toast('✅ Atualizado.','ok');schedulePush(store);setTab('admin');}
-
-// ══════════════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded',async()=>{
-  await openDB();
-
-  // Verifica se há sessão ativa
-  const sess=loadSession();
-  if(sess&&sess.userId){
-    const user=await dbGet(S_USERS,sess.userId);
-    if(user&&user.active){_session=sess;await enterApp();return;}
-    clearSession();
+document.addEventListener('DOMContentLoaded',()=>{
+  const anexosInput=document.getElementById('anexos');
+  if(anexosInput){
+    anexosInput.addEventListener('change',async(e)=>{
+      const files=Array.from(e.target.files||[]);
+      const resumo=document.getElementById('anexosResumo');
+      resumo.innerHTML='';
+      _pendingAttachments=[];
+      for(const f of files){
+        if(f.size>5*1024*1024){toast(`⚠️ "${f.name}" excede 5MB e será ignorado.`,'warn',4000);continue;}
+        const b64=await fileToBase64(f);
+        _pendingAttachments.push({id:uid(),fileName:f.name,fileSize:f.size,mimeType:f.type,data:b64,createdAt:now()});
+        const span=document.createElement('span');
+        span.className='kpi';span.textContent=`📎 ${f.name}`;
+        resumo.appendChild(span);
+      }
+    });
   }
 
-  // Configura a UI do login (que já faz sync automático se necessário)
-  await setupLoginUI();
-  document.getElementById('loginOverlay').classList.remove('hidden');
-  document.getElementById('appWrapper').classList.add('main-hidden');
+  /* Enter dispara login */
+  const loginPass=document.getElementById('loginPassword');
+  const loginConf=document.getElementById('loginConfirm');
+  const loginUser=document.getElementById('loginUsername');
+  if(loginUser) loginUser.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleLogin(e); });
+  if(loginPass) loginPass.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleLogin(e); });
+  if(loginConf) loginConf.addEventListener('keypress',(e)=>{ if(e.key==='Enter') handleLogin(e); });
+});
+function fileToBase64(file){
+  return new Promise((res,rej)=>{
+    const reader=new FileReader();
+    reader.onload=()=>res(reader.result.split(',')[1]);
+    reader.onerror=rej;
+    reader.readAsDataURL(file);
+  });
+}
+async function salvarPlanejamento(){
+  const professorId=document.getElementById('professorSel').value;
+  const turmaId=document.getElementById('turmaSel').value;
+  const disciplinaId=document.getElementById('disciplinaSel').value;
+  const dataLancamento=document.getElementById('dataLancamento').value;
+  if(!professorId||!turmaId||!disciplinaId||!dataLancamento){
+    toast('⚠️ Preencha Professor, Turma, Disciplina e Data de Lançamento.','warn',4000);return;
+  }
+  const editingId=document.getElementById('editingId').value;
+  const nowIso=now();
+  const plan={
+    id:editingId||uid(),
+    teacherId:professorId, classId:turmaId, subjectId:disciplinaId,
+    dataLancamento,
+    periodoInicio:document.getElementById('periodoInicio').value,
+    periodoFim:document.getElementById('periodoFim').value,
+    conteudo:document.getElementById('conteudoTxt').value.trim(),
+    objetivos:document.getElementById('objetivos').value.trim(),
+    descricao:document.getElementById('descricao').value.trim(),
+    recursos:document.getElementById('recursos').value.trim(),
+    avaliacao:document.getElementById('avaliacao').value.trim(),
+    observacoes:document.getElementById('observacoes').value.trim(),
+    anexosIds: editingId ? (_cache.plans.find(p=>p.id===editingId)?.anexosIds||[]) : [],
+    userId:_session.userId,
+    createdAt: editingId ? (_cache.plans.find(p=>p.id===editingId)?.createdAt||nowIso) : nowIso,
+    updatedAt: nowIso
+  };
+  for(const att of _pendingAttachments){
+    att.planId=plan.id;
+    await dbPut(S_ATTS,att);
+    plan.anexosIds.push(att.id);
+  }
+  await dbPut(S_PLANS,plan);
+  schedulePush(S_PLANS);
+  if(_pendingAttachments.length) schedulePush(S_ATTS);
+  await loadAllCaches();
+  limparForm(false);
+  toast('💾 Planejamento salvo!','ok');
+  setTab('consultas');
+}
+
+/* ══════════════════ CONSULTAS ══════════════════ */
+function limparFiltros(){
+  ['fProfessorSel','fTurmaSel','fDisciplinaSel','fAnoSel'].forEach(id=>document.getElementById(id).value='');
+  renderLista();
+}
+function getFilteredPlans(){
+  const fp=document.getElementById('fProfessorSel').value;
+  const ft=document.getElementById('fTurmaSel').value;
+  const fd=document.getElementById('fDisciplinaSel').value;
+  const fa=document.getElementById('fAnoSel').value;
+  return _cache.plans.filter(p=>{
+    if(fp&&p.teacherId!==fp)return false;
+    if(ft&&p.classId!==ft)return false;
+    if(fd&&p.subjectId!==fd)return false;
+    if(fa&&!(p.dataLancamento||'').startsWith(fa))return false;
+    if(!isAdmin() && p.userId!==_session.userId) return false;
+    return true;
+  }).sort((a,b)=>(b.dataLancamento||'').localeCompare(a.dataLancamento||''));
+}
+function nameOf(store,id){const item=_cache[store].find(i=>i.id===id);return item?item.name:'—';}
+function renderLista(){
+  const list=getFilteredPlans();
+  const body=document.getElementById('listaBody');
+  if(!list.length){
+    body.innerHTML='<tr><td colspan="7" class="empty">Nenhum planejamento encontrado.</td></tr>';
+  } else {
+    body.innerHTML=list.map(p=>`
+      <tr class="${_selectedIds.has(p.id)?'row-selected':''}">
+        <td><input type="checkbox" data-id="${p.id}" ${_selectedIds.has(p.id)?'checked':''} onchange="toggleSelect('${p.id}',this.checked)" /></td>
+        <td>${fmtDate(p.dataLancamento)}</td>
+        <td>${escapeHtml(nameOf('teachers',p.teacherId))}</td>
+        <td>${escapeHtml(nameOf('classes',p.classId))}</td>
+        <td>${escapeHtml(nameOf('subjects',p.subjectId))}</td>
+        <td>${escapeHtml(p.conteudo||'')}</td>
+        <td>${fmtDate(p.periodoInicio)} — ${fmtDate(p.periodoFim)}</td>
+      </tr>`).join('');
+  }
+  document.getElementById('kpiTotal').textContent=`${_cache.plans.length} total`;
+  document.getElementById('kpiFiltrados').textContent=`${list.length} exibido(s)`;
+  updateSelectionToolbar();
+}
+function toggleSelect(id,checked){
+  if(checked)_selectedIds.add(id);else _selectedIds.delete(id);
+  updateSelectionToolbar();
+  renderLista();
+}
+function toggleSelectAll(checked){
+  const list=getFilteredPlans();
+  if(checked) list.forEach(p=>_selectedIds.add(p.id));
+  else _selectedIds.clear();
+  renderLista();
+}
+function updateSelectionToolbar(){
+  const bar=document.getElementById('selectionToolbar');
+  const count=_selectedIds.size;
+  document.getElementById('selCount').textContent=`${count} selecionado(s)`;
+  bar.classList.toggle('visible',count>0);
+}
+function acaoEditar(){
+  if(_selectedIds.size!==1){toast('Selecione exatamente 1 planejamento para editar.','warn');return;}
+  const id=Array.from(_selectedIds)[0];
+  const p=_cache.plans.find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('editingId').value=p.id;
+  document.getElementById('professorSel').value=p.teacherId;
+  document.getElementById('turmaSel').value=p.classId;
+  document.getElementById('disciplinaSel').value=p.subjectId;
+  document.getElementById('dataLancamento').value=p.dataLancamento;
+  document.getElementById('periodoInicio').value=p.periodoInicio||'';
+  document.getElementById('periodoFim').value=p.periodoFim||'';
+  document.getElementById('conteudoTxt').value=p.conteudo||'';
+  document.getElementById('objetivos').value=p.objetivos||'';
+  document.getElementById('descricao').value=p.descricao||'';
+  document.getElementById('recursos').value=p.recursos||'';
+  document.getElementById('avaliacao').value=p.avaliacao||'';
+  document.getElementById('observacoes').value=p.observacoes||'';
+  document.getElementById('formTitle').textContent='Editando Planejamento';
+  setTab('novo');
+}
+async function acaoCopiar(){
+  if(_selectedIds.size===0){toast('Selecione ao menos 1 planejamento.','warn');return;}
+  for(const id of _selectedIds){
+    const p=_cache.plans.find(x=>x.id===id);
+    if(!p)continue;
+    const copy={...p,id:uid(),createdAt:now(),updatedAt:now(),userId:_session.userId};
+    await dbPut(S_PLANS,copy);
+  }
+  schedulePush(S_PLANS);
+  await loadAllCaches();
+  _selectedIds.clear();
+  renderLista();
+  toast('📋 Cópia(s) criada(s)!','ok');
+}
+function acaoExcluir(){
+  if(!isAdmin()){toast('Apenas administradores podem excluir.','err');return;}
+  if(_selectedIds.size===0){toast('Selecione ao menos 1 planejamento.','warn');return;}
+  confirmDialog('Excluir planejamentos',`Excluir ${_selectedIds.size} planejamento(s)? Esta ação não pode ser desfeita.`,async()=>{
+    for(const id of _selectedIds) await dbDelete(S_PLANS,id);
+    schedulePush(S_PLANS);
+    await loadAllCaches();
+    _selectedIds.clear();
+    renderLista();
+    toast('🗑️ Excluído(s) com sucesso.','ok');
+  });
+}
+
+/* ══════════════════ ADMIN: USUÁRIOS ══════════════════ */
+function renderUsers(){
+  const showInactive=document.getElementById('showInactiveUsers').checked;
+  const list=_cache.users.filter(u=>showInactive||u.active);
+  const body=document.getElementById('usersTableBody');
+  body.innerHTML=list.map(u=>`
+    <tr class="${!u.active?'inactive-row':''}">
+      <td>${escapeHtml(u.username)}</td>
+      <td>${u.role==='admin'?'🛡️ Admin':'👨‍🏫 Professor'}</td>
+      <td>${u.active?'✅ Ativo':'⛔ Inativo'}</td>
+      <td style="text-align:right">
+        <button class="btn btn-small btn-ghost" onclick="toggleUserActive('${u.id}')">${u.active?'Desativar':'Ativar'}</button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:var(--muted);padding:14px">Nenhum usuário.</td></tr>';
+}
+async function addUser(){
+  const username=document.getElementById('newUsername').value.trim();
+  const pass=document.getElementById('newUserPass').value;
+  const role=document.getElementById('newUserRole').value;
+  if(!username||pass.length<4){toast('Usuário e senha (mín. 4) são obrigatórios.','warn');return;}
+  if(_cache.users.some(u=>u.username.toLowerCase()===username.toLowerCase())){toast('Usuário já existe.','err');return;}
+  const user={id:uid(),username,passwordHash:await sha256(pass),role,active:true,createdAt:now(),updatedAt:now()};
+  await dbPut(S_USERS,user);
+  schedulePush(S_USERS);
+  await loadAllCaches();
+  document.getElementById('newUsername').value='';document.getElementById('newUserPass').value='';
+  renderUsers();
+  toast('✅ Usuário criado!','ok');
+}
+async function toggleUserActive(id){
+  const u=_cache.users.find(x=>x.id===id);if(!u)return;
+  u.active=!u.active;u.updatedAt=now();
+  await dbPut(S_USERS,u);
+  schedulePush(S_USERS);
+  await loadAllCaches();
+  renderUsers();
+}
+
+/* ══════════════════ ADMIN: CADASTROS AUXILIARES ══════════════════ */
+function renderTeachers(){renderAdminList('teachers',S_TEACHERS,'teachersList');}
+function renderClasses(){renderAdminList('classes',S_CLASSES,'classesList');}
+function renderSubjects(){renderAdminList('subjects',S_SUBJECTS,'subjectsList');}
+function renderAdminList(cacheKey,store,elId){
+  const items=_cache[cacheKey];
+  const el=document.getElementById(elId);
+  el.innerHTML=items.map(i=>`
+    <div class="admin-item ${!i.active?'inactive':''}">
+      <span class="name">${escapeHtml(i.name)}</span>
+      <button class="btn btn-small btn-ghost" onclick="toggleActive('${cacheKey}','${store}','${i.id}')">${i.active?'Desativar':'Ativar'}</button>
+    </div>`).join('') || '<div class="locked-note">Nenhum item cadastrado.</div>';
+}
+async function toggleActive(cacheKey,store,id){
+  const item=_cache[cacheKey].find(x=>x.id===id);if(!item)return;
+  item.active=!item.active;item.updatedAt=now();
+  await dbPut(store,item);
+  schedulePush(store);
+  await loadAllCaches();
+  renderTeachers();renderClasses();renderSubjects();populateSelects();
+}
+async function addTeacher(){await addAuxItem('teacherName',S_TEACHERS,'teachers',renderTeachers);}
+async function addClass(){await addAuxItem('className',S_CLASSES,'classes',renderClasses);}
+async function addSubject(){await addAuxItem('subjectName',S_SUBJECTS,'subjects',renderSubjects);}
+async function addAuxItem(inputId,store,cacheKey,renderFn){
+  const input=document.getElementById(inputId);
+  const name=input.value.trim();
+  if(!name){toast('Digite um nome.','warn');return;}
+  if(_cache[cacheKey].some(i=>i.name.toLowerCase()===name.toLowerCase()&&i.active)){toast('Já existe um item ativo com esse nome.','warn');return;}
+  const item={id:uid(),name,active:true,createdAt:now(),updatedAt:now()};
+  await dbPut(store,item);
+  schedulePush(store);
+  await loadAllCaches();
+  input.value='';
+  renderFn();
+  populateSelects();
+  toast('✅ Adicionado!','ok',1500);
+}
+
+/* ══════════════════ INICIALIZAÇÃO ══════════════════ */
+window.addEventListener('load',async()=>{
+  await openDB();
+  const s=loadSession();
+  if(s){
+    await enterApp();
+  } else {
+    await setupLoginUI();
+  }
 });
 </script>
 </body>
