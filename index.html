@@ -67,7 +67,8 @@ table.list tbody tr.row-selected{background:var(--primary-light)!important}
 table.list td.empty{text-align:center;color:var(--muted);padding:26px}
 input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:var(--primary)}
 .countbar{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
-.kpi{background:var(--primary-light);color:var(--primary);padding:5px 12px;border-radius:16px;font-size:.8rem;font-weight:700}
+.kpi{background:var(--primary-light);color:var(--primary);padding:5px 12px;border-radius:16px;font-size:.8rem;font-weight:700;display:inline-flex;align-items:center;gap:6px}
+.kpi .rm{cursor:pointer;font-weight:800;color:var(--danger);margin-left:2px}
 .split{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
 .admin-box{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
 .admin-box .head{background:var(--primary-light);padding:9px 12px;font-weight:700;color:var(--primary);font-size:.9rem}
@@ -90,13 +91,14 @@ input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:var(--pr
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center;padding:16px}
 .modal-overlay.open{display:flex}
 .modal{background:#fff;border-radius:var(--radius);width:100%;max-width:480px;max-height:90vh;display:flex;flex-direction:column}
-.modal.modal-lg{max-width:620px}
+.modal.modal-lg{max-width:600px}
 .modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .modal-header h3{font-size:1rem;color:var(--primary)}
 .modal-body{padding:16px 18px;overflow-y:auto;flex:1}
 .modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .btn-close-modal{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted)}
-.config-hint{background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 14px;font-size:.82rem;color:#856404;margin-bottom:14px;line-height:1.5}
+.section-divider{margin:18px 0 12px;padding-top:14px;border-top:1px solid var(--border)}
+.section-divider h4{font-size:.88rem;color:var(--primary);margin-bottom:6px}
 @media(max-width:768px){
   .grid-3,.grid-2{grid-template-columns:1fr}
   .btn{width:100%}
@@ -109,21 +111,6 @@ input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:var(--pr
 </style>
 </head>
 <body>
-
-<!-- ══════════════════════════════════════
-     CONFIG DO GITHUB
-     Preencha aqui os dados REAIS do seu
-     repositório para habilitar a sincronização
-     de dados entre todos os acessos ao link.
-     ══════════════════════════════════════ -->
-<script>
-const GITHUB_CONFIG_DEFAULT = {
-  token:  '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',
-  owner:  'constantewagner-dot',
-  repo:   'Planejamento-Athena',
-  branch: 'main'
-};
-</script>
 
 <header>
   <div class="header-info"><h1>🏫 Supervisão Pedagógica</h1><p>Planejamento de Aulas — Colégio Athena</p></div>
@@ -159,7 +146,11 @@ const GITHUB_CONFIG_DEFAULT = {
             <div class="form-group full"><label>Descrição / Metodologia</label><textarea id="descricao"></textarea></div>
             <div class="form-group"><label>Recursos didáticos</label><input type="text" id="recursos" /></div>
             <div class="form-group"><label>Forma de avaliação</label><input type="text" id="avaliacao" /></div>
-            <div class="form-group full"><label>Anexos</label><input type="file" id="anexos" multiple /><div id="anexosResumo" class="row-inline" style="margin-top:6px"></div></div>
+            <div class="form-group full">
+              <label>Anexos</label>
+              <input type="file" id="anexos" multiple />
+              <div id="anexosResumo" class="row-inline" style="margin-top:6px"></div>
+            </div>
             <div class="form-group full"><label>Observações da supervisão</label><textarea id="observacoes"></textarea></div>
           </div>
           <div class="btn-group">
@@ -237,47 +228,49 @@ const GITHUB_CONFIG_DEFAULT = {
     <div class="modal-header"><h3>⚙️ Configurações — Backup e Sincronização</h3><button class="btn-close-modal" onclick="closeModal('modalSettings')">×</button></div>
     <div class="modal-body">
       <div class="row-inline" style="margin-bottom:12px;justify-content:space-between">
-        <div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Não configurado</div>
-      </div>
-      <div class="row-inline" style="margin-bottom:12px">
-        <button class="btn btn-success btn-small" onclick="syncNow()">🔄 Sincronizar Agora</button>
-        <button class="btn btn-warning btn-small" onclick="forcePushAll()">📤 Forçar Upload Completo</button>
+        <div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Verificando...</div>
       </div>
       <div id="ghLastBackup" style="font-size:.85rem;color:var(--muted);margin-bottom:14px"></div>
 
-      <div class="config-hint">
-        ℹ️ Esta configuração (quando salva aqui) vale <strong>apenas para este navegador</strong>.
-        Para que a sincronização funcione em qualquer dispositivo, preencha o
-        <code>GITHUB_CONFIG_DEFAULT</code> direto no código-fonte do <code>index.html</code>
-        antes de publicar no GitHub Pages.
+      <div class="row-inline">
+        <button class="btn btn-success btn-small" onclick="syncNow()">🔄 Sincronizar Agora</button>
+        <button class="btn btn-warning btn-small" onclick="forcePushAll()">☁️ Criar Backup Agora</button>
       </div>
 
-      <div class="grid-2">
-        <div class="form-group"><label>Token de Acesso</label><input type="password" id="ghToken" placeholder="Deixe em branco p/ usar padrão" /></div>
-        <div class="form-group"><label>Dono do Repositório</label><input type="text" id="ghOwner" /></div>
-        <div class="form-group"><label>Nome do Repositório</label><input type="text" id="ghRepo" /></div>
-        <div class="form-group"><label>Branch</label><input type="text" id="ghBranch" placeholder="main" /></div>
+      <div class="section-divider">
+        <h4>💾 Backup local (arquivo)</h4>
+        <div class="hint" style="margin-bottom:10px">Exporte um arquivo de backup completo, ou importe um arquivo previamente exportado para restaurar os dados.</div>
+        <div class="row-inline">
+          <button class="btn btn-ghost btn-small" onclick="exportBackupFile()">⬇️ Exportar backup (.json)</button>
+          <button class="btn btn-ghost btn-small" onclick="document.getElementById('importFileInput').click()">⬆️ Importar backup (.json)</button>
+          <input type="file" id="importFileInput" accept="application/json" style="display:none" onchange="importBackupFile(event)" />
+        </div>
       </div>
     </div>
     <div class="modal-footer">
-      <button class="btn btn-danger btn-small" onclick="resetGithubConfig()">↺ Resetar</button>
-      <button class="btn btn-ghost" id="btnTestGh" onclick="testGithubConnection()">🔍 Testar Conexão</button>
-      <button class="btn btn-primary" onclick="saveGithubConfig()">💾 Salvar</button>
+      <button class="btn btn-primary" onclick="closeModal('modalSettings')">Fechar</button>
     </div>
   </div>
 </div>
 
 <script>
+/* ══════════════════ CONFIG GITHUB (INTERNA — NÃO EXIBIR NO FRONTEND) ══════════════════ */
+const GITHUB_CONFIG = {
+  token:  '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',
+  owner:  'constantewagner-dot',
+  repo:   'Planejamento-Athena',
+  branch: 'main'
+};
 /* ══════════════════ CONSTANTES ══════════════════ */
-const DB_NAME='athenaDB', DB_VERSION=11;
+const DB_NAME='athenaDB', DB_VERSION=12;
 const S_PLANS='plans', S_ATTS='attachments', S_TEACHERS='teachers', S_CLASSES='classes',
-      S_SUBJECTS='subjects', S_SETTINGS='settings', S_SYNC='_syncMeta';
+      S_SUBJECTS='subjects', S_SYNC='_syncMeta';
 const GH_STORES=[S_TEACHERS,S_CLASSES,S_SUBJECTS,S_PLANS,S_ATTS];
-const SYNC_DEBOUNCE_MS=2500, SYNC_POLL_INTERVAL=120000;
+const SYNC_POLL_INTERVAL=120000;
 
-let _db=null,_pushTimers={},_syncLoopId=null;
+let _db=null,_syncLoopId=null;
 let _cache={teachers:[],classes:[],subjects:[],plans:[],attachments:[]};
-let _selectedIds=new Set(), _pendingAttachments=[];
+let _selectedIds=new Set(), _pendingAttachments=[], _existingAttachments=[], _removedAttachmentIds=new Set();
 
 /* ══════════════════ HELPERS ══════════════════ */
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
@@ -296,10 +289,9 @@ function openDB(){
       [S_PLANS,S_ATTS,S_TEACHERS,S_CLASSES,S_SUBJECTS].forEach(n=>{
         if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:'id'});
       });
-      [S_SETTINGS,S_SYNC].forEach(n=>{
-        if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:'key'});
-      });
+      if(!d.objectStoreNames.contains(S_SYNC)) d.createObjectStore(S_SYNC,{keyPath:'key'});
       if(d.objectStoreNames.contains('users')) d.deleteObjectStore('users');
+      if(d.objectStoreNames.contains('settings')) d.deleteObjectStore('settings');
     };
     r.onsuccess=()=>{_db=r.result;res(_db);};
     r.onerror=()=>rej(r.error);
@@ -312,49 +304,32 @@ function dbPut(store,obj){return dbTx(store,'readwrite',s=>s.put(obj));}
 function dbDelete(store,key){return dbTx(store,'readwrite',s=>s.delete(key));}
 function dbGet(store,key){return dbTx(store,'readonly',s=>s.get(key));}
 function dbClear(store){return openDB().then(db=>new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).clear();r.onsuccess=()=>res();r.onerror=()=>rej(r.error);}));}
-async function getSetting(key,dflt=null){try{const r=await dbGet(S_SETTINGS,key);return r?r.value:dflt;}catch{return dflt;}}
-async function setSetting(key,value){await dbPut(S_SETTINGS,{key,value,updatedAt:now()});}
 
 /* ══════════════════ GITHUB SYNC ══════════════════ */
-function isValidToken(t){
-  if(!t) return false;
-  if(t.includes('xxx')) return false;
-  return t.startsWith('ghp_') || t.startsWith('github_pat_') || t.length>20;
-}
-async function ghGetConfig(){
-  const token=await getSetting('github_token',GITHUB_CONFIG_DEFAULT.token);
-  const owner=await getSetting('github_owner',GITHUB_CONFIG_DEFAULT.owner);
-  const repo=await getSetting('github_repo',GITHUB_CONFIG_DEFAULT.repo);
-  const branch=await getSetting('github_branch',GITHUB_CONFIG_DEFAULT.branch);
-  const ok = isValidToken(token) && !!owner && !!repo;
-  return {token,owner,repo,branch,ok};
-}
-function ghAuthHeaders(token){return {Authorization:`Bearer ${token}`,Accept:'application/vnd.github.v3+json'};}
+function ghAuthHeaders(){return {Authorization:`Bearer ${GITHUB_CONFIG.token}`,Accept:'application/vnd.github.v3+json'};}
 function ghPath(store){return `data/${store}.json`;}
 function toB64(str){return btoa(unescape(encodeURIComponent(str)));}
 function fromB64(b64){return decodeURIComponent(escape(atob(b64)));}
 
-async function ghApiGet(config,path){
-  const url=`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}?ref=${config.branch}`;
-  const resp=await fetch(url,{headers:ghAuthHeaders(config.token),cache:'no-store'});
+async function ghApiGet(path){
+  const url=`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent(path)}?ref=${GITHUB_CONFIG.branch}`;
+  const resp=await fetch(url,{headers:ghAuthHeaders(),cache:'no-store'});
   if(resp.status===404)return null;
   if(resp.status===401)throw new Error('Token inválido ou expirado (401)');
   if(resp.status===403)throw new Error('Sem permissão de acesso ao repositório (403)');
   if(!resp.ok)throw new Error(`Erro ao ler ${path}: HTTP ${resp.status}`);
   return resp.json();
 }
-async function ghApiPut(config,path,content,sha,message){
-  const url=`https://api.github.com/repos/${config.owner}/${config.repo}/contents/${encodeURIComponent(path)}`;
-  const body={message:message||`Sync ${path}`,content:toB64(content),branch:config.branch};
+async function ghApiPut(path,content,sha,message){
+  const url=`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent(path)}`;
+  const body={message:message||`Sync ${path}`,content:toB64(content),branch:GITHUB_CONFIG.branch};
   if(sha)body.sha=sha;
-  const resp=await fetch(url,{method:'PUT',headers:{...ghAuthHeaders(config.token),'Content-Type':'application/json'},body:JSON.stringify(body)});
+  const resp=await fetch(url,{method:'PUT',headers:{...ghAuthHeaders(),'Content-Type':'application/json'},body:JSON.stringify(body)});
   if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(`PUT ${path}: ${resp.status} ${e.message||''}`);}
   return resp.json();
 }
 async function ghPullStore(storeName){
-  const config=await ghGetConfig();
-  if(!config.ok)return false;
-  const file=await ghApiGet(config,ghPath(storeName));
+  const file=await ghApiGet(ghPath(storeName));
   if(!file||!file.content)return false;
   const items=JSON.parse(fromB64(file.content));
   await dbClear(storeName);
@@ -372,69 +347,64 @@ function mergeArrays(local,remote){
   return Array.from(map.values());
 }
 async function ghPushStore(storeName,retries=3){
-  const config=await ghGetConfig();
-  if(!config.ok)return false;
   let items=await dbGetAll(storeName);
   const meta=await dbGet(S_SYNC,`sha_${storeName}`);
   let sha=meta?meta.sha:null;
   for(let attempt=1;attempt<=retries;attempt++){
     try{
       const payload=JSON.stringify(items,null,2);
-      const result=await ghApiPut(config,ghPath(storeName),payload,sha,`Sync ${storeName} — ${new Date().toLocaleString('pt-BR')}`);
+      const result=await ghApiPut(ghPath(storeName),payload,sha,`Sync ${storeName} — ${new Date().toLocaleString('pt-BR')}`);
       await dbPut(S_SYNC,{key:`sha_${storeName}`,sha:result.content.sha,updatedAt:now()});
       return true;
     }catch(e){
       if(attempt===retries)throw e;
       if(e.message.includes('409')){
-        const file=await ghApiGet(config,ghPath(storeName));
+        const file=await ghApiGet(ghPath(storeName));
         if(file&&file.content){const remote=JSON.parse(fromB64(file.content));sha=file.sha;items=mergeArrays(items,remote);}
         await new Promise(r=>setTimeout(r,400*attempt));
       } else throw e;
     }
   }
 }
-async function ghPullAll(showToast=true){
-  const config=await ghGetConfig();
-  if(!config.ok){if(showToast)toast('⚠️ GitHub não configurado.','warn');return false;}
+async function ghPullAll(showToastMsg=true){
   setSyncUI('syncing','Sincronizando...');
   try{
     for(const s of GH_STORES) await ghPullStore(s);
-    await setSetting('github_last_sync',now());
+    await dbPut(S_SYNC,{key:'last_sync',value:now()});
     setSyncUI('synced','Sincronizado');
-    if(showToast)toast('☁️ Dados sincronizados!','ok');
+    if(showToastMsg)toast('☁️ Dados sincronizados!','ok');
     return true;
-  }catch(e){setSyncUI('error','Erro sync');if(showToast)toast('❌ '+e.message,'err',5000);return false;}
+  }catch(e){setSyncUI('error','Erro sync');if(showToastMsg)toast('❌ '+e.message,'err',5000);return false;}
 }
-async function syncNow(){const ok=await ghPullAll(true);if(ok){await loadAllCaches();refreshAllUI();}}
-async function forcePushAll(){
-  const config=await ghGetConfig();
-  if(!config.ok){toast('Configure o GitHub primeiro.','warn');return;}
+async function ghPushAll(showToastMsg=true){
   setSyncUI('syncing','Enviando...');
   try{
     for(const s of GH_STORES) await ghPushStore(s);
-    await setSetting('github_last_push',now());
+    await dbPut(S_SYNC,{key:'last_push',value:now()});
     setSyncUI('synced','Sincronizado');
-    toast('📤 Upload completo realizado!','ok');
+    if(showToastMsg)toast('☁️ Backup criado com sucesso!','ok');
     updateBackupStatus();
-  }catch(e){setSyncUI('error','Erro');toast('❌ '+e.message,'err',5000);}
+    return true;
+  }catch(e){setSyncUI('error','Erro');if(showToastMsg)toast('❌ '+e.message,'err',5000);return false;}
 }
-function schedulePush(storeName){
-  if(_pushTimers[storeName])clearTimeout(_pushTimers[storeName]);
-  setSyncUI('pending','Pendente...');
-  _pushTimers[storeName]=setTimeout(async()=>{
-    const config=await ghGetConfig();
-    if(!config.ok)return;
-    try{await ghPushStore(storeName);setSyncUI('synced','Sincronizado');await setSetting('github_last_push',now());updateBackupStatus();}
-    catch(e){setSyncUI('error','Erro');}
-  },SYNC_DEBOUNCE_MS);
+async function syncNow(){const ok=await ghPullAll(true);if(ok){await loadAllCaches();refreshAllUI();}}
+async function forcePushAll(){await ghPushAll(true);}
+
+/** Backup silencioso automático — chamado após qualquer alteração de dados */
+let _autoBackupTimer=null;
+function autoBackup(){
+  if(_autoBackupTimer)clearTimeout(_autoBackupTimer);
+  setSyncUI('pending','Salvando backup...');
+  _autoBackupTimer=setTimeout(async()=>{
+    await ghPushAll(false);
+  },1200);
 }
+
 function startSyncLoop(){
   if(_syncLoopId)clearInterval(_syncLoopId);
   _syncLoopId=setInterval(async()=>{
-    const config=await ghGetConfig();
-    if(!config.ok)return;
     try{
-      const dir=await ghApiGet(config,'data');
+      const dir=await ghApiGet('data');
       if(!dir||!Array.isArray(dir))return;
       const remoteShas={};for(const f of dir)remoteShas[f.name.replace('.json','')]=f.sha;
       let changed=false;
@@ -449,64 +419,80 @@ function setSyncUI(state,text){
   const icons={synced:'☁️',pending:'⏳',syncing:'🔄',error:'⚠️',offline:'☁️'};
   el.innerHTML=`${icons[state]||'☁️'} ${text}`;
 }
-async function updateSyncUI(){
-  const config=await ghGetConfig();
-  if(!config.ok){setSyncUI('offline','Offline');return;}
-  const lastSync=await getSetting('github_last_sync',null);
-  setSyncUI(lastSync?'synced':'pending',lastSync?'Sincronizado':'Conectado');
-}
-
-/* ══════════════════ CONFIG GITHUB ══════════════════ */
-async function loadGithubConfigIntoForm(){
-  document.getElementById('ghToken').value='';
-  document.getElementById('ghOwner').value=await getSetting('github_owner','');
-  document.getElementById('ghRepo').value=await getSetting('github_repo','');
-  document.getElementById('ghBranch').value=await getSetting('github_branch',GITHUB_CONFIG_DEFAULT.branch);
-  updateBackupStatus();
-}
-async function saveGithubConfig(){
-  const token=document.getElementById('ghToken').value.trim();
-  const owner=document.getElementById('ghOwner').value.trim();
-  const repo=document.getElementById('ghRepo').value.trim();
-  const branch=document.getElementById('ghBranch').value.trim()||'main';
-  if(token)await setSetting('github_token',token);
-  if(owner)await setSetting('github_owner',owner);
-  if(repo)await setSetting('github_repo',repo);
-  await setSetting('github_branch',branch);
-  toast('✅ Configurações salvas neste navegador!','ok',4000);
-  updateBackupStatus();updateSyncUI();startSyncLoop();
-}
-async function resetGithubConfig(){
-  confirmDialog('Resetar configuração','Voltar às configurações padrão do código-fonte?',async()=>{
-    for(const k of ['github_token','github_owner','github_repo','github_branch']) await dbDelete(S_SETTINGS,k);
-    loadGithubConfigIntoForm();
-    toast('↺ Configuração resetada!','ok');
-    updateSyncUI();
-  });
-}
-async function testGithubConnection(){
-  const config=await ghGetConfig();
-  if(!config.ok){toast('GitHub não configurado.','warn');return;}
-  const btn=document.getElementById('btnTestGh');btn.disabled=true;btn.textContent='Testando...';
-  try{
-    const resp=await fetch(`https://api.github.com/repos/${config.owner}/${config.repo}`,{headers:ghAuthHeaders(config.token)});
-    if(resp.ok){const d=await resp.json();toast(`✅ Conectado! ${d.full_name}`,'ok',4000);updateBackupStatus('ok');}
-    else if(resp.status===401){toast('❌ Token inválido.','err');updateBackupStatus('err');}
-    else if(resp.status===404){toast('❌ Repositório não encontrado.','err');updateBackupStatus('err');}
-    else{toast(`❌ Erro ${resp.status}`,'err');updateBackupStatus('err');}
-  }catch(e){toast('❌ '+e.message,'err');updateBackupStatus('err');}
-  finally{btn.disabled=false;btn.textContent='🔍 Testar Conexão';}
-}
-async function updateBackupStatus(fs){
+async function updateBackupStatus(){
   const badge=document.getElementById('ghStatusBadge'),lastEl=document.getElementById('ghLastBackup');
   if(!badge)return;
-  const config=await ghGetConfig();
-  if(!config.ok){badge.className='backup-status idle';badge.innerHTML='<span class="dot gray"></span> Não configurado';lastEl.textContent='⚠️ GitHub não configurado.';return;}
-  const lastSync=await getSetting('github_last_sync',null),lastPush=await getSetting('github_last_push',null);
-  const s=fs||(lastSync||lastPush?'ok':null);
-  if(s==='ok'){badge.className='backup-status ok';badge.innerHTML='<span class="dot green"></span> Conectado';lastEl.innerHTML=`✅ Última sincronização: <strong>${fmtDateTime(lastSync||lastPush)}</strong>`;}
-  else if(s==='err'){badge.className='backup-status err';badge.innerHTML='<span class="dot red"></span> Erro';lastEl.textContent='❌ Verifique token e repositório.';}
-  else{badge.className='backup-status warn';badge.innerHTML='<span class="dot yellow"></span> Conectado';lastEl.textContent='Use "Sincronizar Agora".';}
+  try{
+    const resp=await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}`,{headers:ghAuthHeaders()});
+    if(!resp.ok){
+      badge.className='backup-status err';badge.innerHTML='<span class="dot red"></span> Erro de conexão';
+      lastEl.textContent='❌ Não foi possível conectar ao repositório de backup.';
+      return;
+    }
+    const lastSyncM=await dbGet(S_SYNC,'last_sync'), lastPushM=await dbGet(S_SYNC,'last_push');
+    const lastSync=lastSyncM?lastSyncM.value:null, lastPush=lastPushM?lastPushM.value:null;
+    badge.className='backup-status ok';badge.innerHTML='<span class="dot green"></span> Conectado';
+    lastEl.innerHTML=`✅ Última sincronização: <strong>${fmtDateTime(lastSync)}</strong><br>✅ Último backup: <strong>${fmtDateTime(lastPush)}</strong>`;
+  }catch(e){
+    badge.className='backup-status err';badge.innerHTML='<span class="dot red"></span> Erro de conexão';
+    lastEl.textContent='❌ '+e.message;
+  }
+}
+
+/* ══════════════════ BACKUP LOCAL (ARQUIVO) ══════════════════ */
+async function exportBackupFile(){
+  try{
+    const bundle={
+      _meta:{app:'Planejamento Athena',exportedAt:now(),version:DB_VERSION},
+      teachers:await dbGetAll(S_TEACHERS),
+      classes:await dbGetAll(S_CLASSES),
+      subjects:await dbGetAll(S_SUBJECTS),
+      plans:await dbGetAll(S_PLANS),
+      attachments:await dbGetAll(S_ATTS)
+    };
+    const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
+    a.href=url;a.download=`athena-backup-${stamp}.json`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    toast('⬇️ Backup exportado com sucesso!','ok');
+  }catch(e){toast('❌ Erro ao exportar: '+e.message,'err',5000);}
+}
+async function importBackupFile(event){
+  const file=event.target.files[0];
+  if(!file)return;
+  try{
+    const text=await file.text();
+    const bundle=JSON.parse(text);
+    const required=['teachers','classes','subjects','plans'];
+    for(const k of required){
+      if(!Array.isArray(bundle[k])) throw new Error(`Arquivo inválido: campo "${k}" ausente ou incorreto.`);
+    }
+    confirmDialog(
+      'Importar backup',
+      'Isso substituirá TODOS os dados atuais (locais e no GitHub) pelos dados do arquivo importado. Deseja continuar?',
+      async()=>{
+        try{
+          await dbClear(S_TEACHERS);for(const i of bundle.teachers)await dbPut(S_TEACHERS,i);
+          await dbClear(S_CLASSES);for(const i of bundle.classes)await dbPut(S_CLASSES,i);
+          await dbClear(S_SUBJECTS);for(const i of bundle.subjects)await dbPut(S_SUBJECTS,i);
+          await dbClear(S_PLANS);for(const i of bundle.plans)await dbPut(S_PLANS,i);
+          if(Array.isArray(bundle.attachments)){await dbClear(S_ATTS);for(const i of bundle.attachments)await dbPut(S_ATTS,i);}
+          await loadAllCaches();
+          refreshAllUI();
+          toast('✅ Backup importado! Enviando para o GitHub...','ok',4000);
+          await ghPushAll(false);
+          toast('☁️ Importação concluída e sincronizada!','ok');
+        }catch(e){toast('❌ Erro ao restaurar: '+e.message,'err',5000);}
+      }
+    );
+  }catch(e){
+    toast('❌ Arquivo inválido: '+e.message,'err',5000);
+  }finally{
+    event.target.value='';
+  }
 }
 
 /* ══════════════════ MODAIS ══════════════════ */
@@ -519,19 +505,19 @@ function confirmDialog(title,msg,onConfirm){
   openModal('modalConfirm');
 }
 function openSettingsModal(){
-  loadGithubConfigIntoForm();
+  updateBackupStatus();
   openModal('modalSettings');
 }
 
 /* ══════════════════ UI HELPERS ══════════════════ */
 let _toastTimer=null;
 function toast(m,t='ok',d=3000){const el=document.getElementById('toast');el.textContent=m;el.className=`toast show ${t}`;clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>el.className='toast',d);}
+
 function setTab(tab){
   ['novo','consultas','admin'].forEach(t=>{
     document.getElementById(`${t}-view`).style.display=t===tab?'block':'none';
     document.getElementById(`tab-btn-${t}`).classList.toggle('active',t===tab);
   });
-  if(tab==='novo') limparForm(false);
   if(tab==='consultas') renderLista();
   if(tab==='admin'){renderTeachers();renderClasses();renderSubjects();}
 }
@@ -555,9 +541,9 @@ function populateSelects(){
   const activeTeachers=_cache.teachers.filter(t=>t.active);
   const activeClasses=_cache.classes.filter(c=>c.active);
   const activeSubjects=_cache.subjects.filter(s=>s.active);
-  const fill=(id,items,placeholder)=>{
+  const fill=(id,items,placeholder,keepValue)=>{
     const el=document.getElementById(id);
-    const current=el.value;
+    const current=keepValue!==undefined?keepValue:el.value;
     el.innerHTML = (placeholder?`<option value="">${placeholder}</option>`:'') + items.map(i=>`<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('');
     if(current) el.value=current;
   };
@@ -584,25 +570,43 @@ function limparForm(showToast){
   document.getElementById('anexos').value='';
   document.getElementById('anexosResumo').innerHTML='';
   _pendingAttachments=[];
+  _existingAttachments=[];
+  _removedAttachmentIds=new Set();
   document.getElementById('formTitle').textContent='Novo Planejamento';
   if(showToast) toast('Formulário limpo.','ok',1500);
 }
+
+function renderAnexosResumo(){
+  const resumo=document.getElementById('anexosResumo');
+  resumo.innerHTML='';
+  _existingAttachments.filter(a=>!_removedAttachmentIds.has(a.id)).forEach(att=>{
+    const span=document.createElement('span');
+    span.className='kpi';
+    span.innerHTML=`📎 ${escapeHtml(att.fileName)} <span class="rm" onclick="removeExistingAttachment('${att.id}')" title="Remover">×</span>`;
+    resumo.appendChild(span);
+  });
+  _pendingAttachments.forEach(att=>{
+    const span=document.createElement('span');
+    span.className='kpi';
+    span.innerHTML=`📎 ${escapeHtml(att.fileName)} <span class="rm" onclick="removePendingAttachment('${att.id}')" title="Remover">×</span>`;
+    resumo.appendChild(span);
+  });
+}
+function removeExistingAttachment(id){ _removedAttachmentIds.add(id); renderAnexosResumo(); }
+function removePendingAttachment(id){ _pendingAttachments=_pendingAttachments.filter(a=>a.id!==id); renderAnexosResumo(); }
+
 document.addEventListener('DOMContentLoaded',()=>{
   const anexosInput=document.getElementById('anexos');
   if(anexosInput){
     anexosInput.addEventListener('change',async(e)=>{
       const files=Array.from(e.target.files||[]);
-      const resumo=document.getElementById('anexosResumo');
-      resumo.innerHTML='';
-      _pendingAttachments=[];
       for(const f of files){
         if(f.size>5*1024*1024){toast(`⚠️ "${f.name}" excede 5MB e será ignorado.`,'warn',4000);continue;}
         const b64=await fileToBase64(f);
         _pendingAttachments.push({id:uid(),fileName:f.name,fileSize:f.size,mimeType:f.type,data:b64,createdAt:now()});
-        const span=document.createElement('span');
-        span.className='kpi';span.textContent=`📎 ${f.name}`;
-        resumo.appendChild(span);
       }
+      renderAnexosResumo();
+      e.target.value='';
     });
   }
 });
@@ -614,6 +618,7 @@ function fileToBase64(file){
     reader.readAsDataURL(file);
   });
 }
+
 async function salvarPlanejamento(){
   const professorId=document.getElementById('professorSel').value;
   const turmaId=document.getElementById('turmaSel').value;
@@ -624,6 +629,11 @@ async function salvarPlanejamento(){
   }
   const editingId=document.getElementById('editingId').value;
   const nowIso=now();
+  const existing = editingId ? _cache.plans.find(p=>p.id===editingId) : null;
+
+  // anexos: mantém os existentes que não foram removidos + novos
+  const keptIds = _existingAttachments.filter(a=>!_removedAttachmentIds.has(a.id)).map(a=>a.id);
+
   const plan={
     id:editingId||uid(),
     teacherId:professorId, classId:turmaId, subjectId:disciplinaId,
@@ -636,22 +646,27 @@ async function salvarPlanejamento(){
     recursos:document.getElementById('recursos').value.trim(),
     avaliacao:document.getElementById('avaliacao').value.trim(),
     observacoes:document.getElementById('observacoes').value.trim(),
-    anexosIds: editingId ? (_cache.plans.find(p=>p.id===editingId)?.anexosIds||[]) : [],
-    createdAt: editingId ? (_cache.plans.find(p=>p.id===editingId)?.createdAt||nowIso) : nowIso,
+    anexosIds: keptIds,
+    createdAt: existing ? (existing.createdAt||nowIso) : nowIso,
     updatedAt: nowIso
   };
+
+  // remove anexos marcados para exclusão do banco
+  for(const id of _removedAttachmentIds){ await dbDelete(S_ATTS,id); }
+
+  // grava novos anexos
   for(const att of _pendingAttachments){
     att.planId=plan.id;
     await dbPut(S_ATTS,att);
     plan.anexosIds.push(att.id);
   }
+
   await dbPut(S_PLANS,plan);
-  schedulePush(S_PLANS);
-  if(_pendingAttachments.length) schedulePush(S_ATTS);
   await loadAllCaches();
   limparForm(false);
   toast('💾 Planejamento salvo!','ok');
   setTab('consultas');
+  autoBackup();
 }
 
 /* ══════════════════ CONSULTAS ══════════════════ */
@@ -711,16 +726,42 @@ function updateSelectionToolbar(){
   document.getElementById('selCount').textContent=`${count} selecionado(s)`;
   bar.classList.toggle('visible',count>0);
 }
-function acaoEditar(){
+
+/**
+ * acaoEditar — CORRIGIDO
+ * Antes: preenchia os campos e DEPOIS chamava setTab('novo'), que
+ * sempre executa limparForm() e apaga tudo que acabou de ser preenchido.
+ * Agora: primeiro troca de aba (sem limpar), depois preenche os campos,
+ * incluindo os anexos já existentes do planejamento.
+ */
+async function acaoEditar(){
   if(_selectedIds.size!==1){toast('Selecione exatamente 1 planejamento para editar.','warn');return;}
   const id=Array.from(_selectedIds)[0];
   const p=_cache.plans.find(x=>x.id===id);
-  if(!p)return;
+  if(!p){toast('Planejamento não encontrado.','err');return;}
+
+  // 1) Troca de aba primeiro (exibe o formulário) — SEM limpar os campos ainda
+  document.getElementById('novo-view').style.display='block';
+  document.getElementById('consultas-view').style.display='none';
+  document.getElementById('admin-view').style.display='none';
+  document.getElementById('tab-btn-novo').classList.add('active');
+  document.getElementById('tab-btn-consultas').classList.remove('active');
+  document.getElementById('tab-btn-admin').classList.remove('active');
+
+  // 2) Garante que os selects estejam com as opções atuais
+  populateSelects();
+
+  // 3) Reseta estado de anexos e preenche com os dados do planejamento
+  _pendingAttachments=[];
+  _removedAttachmentIds=new Set();
+  _existingAttachments = (p.anexosIds||[]).map(aid=>_cache.attachments.find(a=>a.id===aid)).filter(Boolean);
+
+  // 4) Preenche todos os campos do formulário
   document.getElementById('editingId').value=p.id;
-  document.getElementById('professorSel').value=p.teacherId;
-  document.getElementById('turmaSel').value=p.classId;
-  document.getElementById('disciplinaSel').value=p.subjectId;
-  document.getElementById('dataLancamento').value=p.dataLancamento;
+  document.getElementById('professorSel').value=p.teacherId||'';
+  document.getElementById('turmaSel').value=p.classId||'';
+  document.getElementById('disciplinaSel').value=p.subjectId||'';
+  document.getElementById('dataLancamento').value=p.dataLancamento||'';
   document.getElementById('periodoInicio').value=p.periodoInicio||'';
   document.getElementById('periodoFim').value=p.periodoFim||'';
   document.getElementById('conteudoTxt').value=p.conteudo||'';
@@ -729,9 +770,13 @@ function acaoEditar(){
   document.getElementById('recursos').value=p.recursos||'';
   document.getElementById('avaliacao').value=p.avaliacao||'';
   document.getElementById('observacoes').value=p.observacoes||'';
+  document.getElementById('anexos').value='';
+  renderAnexosResumo();
+
   document.getElementById('formTitle').textContent='Editando Planejamento';
-  setTab('novo');
+  toast('✏️ Planejamento carregado para edição.','ok',2000);
 }
+
 async function acaoCopiar(){
   if(_selectedIds.size===0){toast('Selecione ao menos 1 planejamento.','warn');return;}
   for(const id of _selectedIds){
@@ -740,21 +785,21 @@ async function acaoCopiar(){
     const copy={...p,id:uid(),createdAt:now(),updatedAt:now()};
     await dbPut(S_PLANS,copy);
   }
-  schedulePush(S_PLANS);
   await loadAllCaches();
   _selectedIds.clear();
   renderLista();
   toast('📋 Cópia(s) criada(s)!','ok');
+  autoBackup();
 }
 function acaoExcluir(){
   if(_selectedIds.size===0){toast('Selecione ao menos 1 planejamento.','warn');return;}
   confirmDialog('Excluir planejamentos',`Excluir ${_selectedIds.size} planejamento(s)? Esta ação não pode ser desfeita.`,async()=>{
     for(const id of _selectedIds) await dbDelete(S_PLANS,id);
-    schedulePush(S_PLANS);
     await loadAllCaches();
     _selectedIds.clear();
     renderLista();
     toast('🗑️ Excluído(s) com sucesso.','ok');
+    autoBackup();
   });
 }
 
@@ -775,9 +820,9 @@ async function toggleActive(cacheKey,store,id){
   const item=_cache[cacheKey].find(x=>x.id===id);if(!item)return;
   item.active=!item.active;item.updatedAt=now();
   await dbPut(store,item);
-  schedulePush(store);
   await loadAllCaches();
   renderTeachers();renderClasses();renderSubjects();populateSelects();
+  autoBackup();
 }
 async function addTeacher(){await addAuxItem('teacherName',S_TEACHERS,'teachers',renderTeachers);}
 async function addClass(){await addAuxItem('className',S_CLASSES,'classes',renderClasses);}
@@ -789,12 +834,12 @@ async function addAuxItem(inputId,store,cacheKey,renderFn){
   if(_cache[cacheKey].some(i=>i.name.toLowerCase()===name.toLowerCase()&&i.active)){toast('Já existe um item ativo com esse nome.','warn');return;}
   const item={id:uid(),name,active:true,createdAt:now(),updatedAt:now()};
   await dbPut(store,item);
-  schedulePush(store);
   await loadAllCaches();
   input.value='';
   renderFn();
   populateSelects();
   toast('✅ Adicionado!','ok',1500);
+  autoBackup();
 }
 
 /* ══════════════════ INICIALIZAÇÃO ══════════════════ */
@@ -804,14 +849,10 @@ window.addEventListener('load',async()=>{
   populateSelects();
   setTab('novo');
 
-  const config=await ghGetConfig();
-  updateSyncUI();
-  if(config.ok){
-    ghPullAll(false).then(async(ok)=>{
-      if(ok){await loadAllCaches();refreshAllUI();}
-      startSyncLoop();
-    });
-  }
+  setSyncUI('syncing','Conectando...');
+  const ok=await ghPullAll(false);
+  if(ok){await loadAllCaches();refreshAllUI();}
+  startSyncLoop();
 });
 </script>
 </body>
