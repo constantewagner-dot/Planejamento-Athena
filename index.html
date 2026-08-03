@@ -21,17 +21,19 @@
   .btn-ghost{background:rgba(255,255,255,.15);color:#fff}
   .btn-ghost:hover{background:rgba(255,255,255,.25)}
   nav{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto}
-  nav button{background:transparent;color:var(--muted);border-radius:0;padding:12px 16px;border-bottom:3px solid transparent}
+  nav button{background:transparent;color:var(--muted);border-radius:0;padding:12px 16px;border-bottom:3px solid transparent;font-size:14px}
   nav button.active{color:var(--primary);border-bottom-color:var(--primary)}
   main{padding:20px;max-width:1100px;margin:0 auto}
   .tab{display:none}
   .tab.active{display:block}
   .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
   .card h2{margin-top:0;font-size:16px}
+  .card h4{margin:16px 0 8px;font-size:13px;color:var(--muted);text-transform:uppercase;border-top:1px solid var(--border);padding-top:14px}
+  .card h4:first-of-type{border-top:none;padding-top:0;margin-top:0}
   .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
   .row > *{flex:1;min-width:160px}
   input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:6px;font-size:14px;font-family:inherit}
-  textarea{resize:vertical;min-height:80px}
+  textarea{resize:vertical;min-height:70px}
   label{display:block;font-weight:600;font-size:13px;margin-bottom:4px;color:var(--muted)}
   table{width:100%;border-collapse:collapse;font-size:14px}
   th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
@@ -57,12 +59,17 @@
   .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;padding:20px}
   .modal-overlay.open{display:flex}
   .modal{background:#fff;border-radius:10px;padding:20px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto}
+  .modal.wide{max-width:640px}
   .modal h3{margin-top:0}
   .file-input-wrap{border:2px dashed var(--border);border-radius:8px;padding:16px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer}
   .att-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
   .att-item{display:flex;justify-content:space-between;align-items:center;background:#f8fafc;padding:6px 10px;border-radius:6px;font-size:13px}
   .status-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px}
   .small{font-size:12px;color:var(--muted)}
+  .view-detail{background:#f8fafc;border:1px solid var(--border);border-radius:8px;padding:14px;margin-top:8px}
+  .view-detail h5{margin:0 0 4px;font-size:12px;color:var(--muted);text-transform:uppercase}
+  .view-detail p{margin:0 0 12px;font-size:14px;white-space:pre-wrap}
+  .plan-meta{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:10px}
 </style>
 </head>
 <body>
@@ -79,18 +86,19 @@
 </header>
 
 <nav>
-  <button class="tab-btn active" data-tab="plans">📝 Planejamentos</button>
-  <button class="tab-btn" data-tab="teachers">👩‍🏫 Professores</button>
-  <button class="tab-btn" data-tab="classes">🏫 Turmas</button>
-  <button class="tab-btn" data-tab="subjects">📖 Disciplinas</button>
+  <button class="tab-btn active" data-tab="form">📝 Planejamento</button>
+  <button class="tab-btn" data-tab="consult">🔎 Consultar Planejamentos</button>
+  <button class="tab-btn" data-tab="registers">🗂️ Cadastros</button>
 </nav>
 
 <main>
 
-  <!-- PLANOS -->
-  <div class="tab active" id="tab-plans">
+  <!-- ============ ABA 1: FORMULÁRIO DE PLANEJAMENTO ============ -->
+  <div class="tab active" id="tab-form">
     <div class="card">
-      <h2>Novo Planejamento</h2>
+      <h2 id="formTitle">Novo Planejamento</h2>
+
+      <h4>Identificação</h4>
       <div class="row">
         <div>
           <label>Professor</label>
@@ -107,23 +115,60 @@
       </div>
       <div class="row">
         <div>
-          <label>Título / Tema da aula</label>
+          <label>Título / Tema</label>
           <input type="text" id="planTitle" placeholder="Ex: Introdução à Álgebra">
         </div>
+      </div>
+
+      <h4>Período do Planejamento</h4>
+      <div class="row">
         <div>
-          <label>Data</label>
-          <input type="date" id="planDate">
+          <label>Data de início</label>
+          <input type="date" id="planStartDate">
+        </div>
+        <div>
+          <label>Data de fim</label>
+          <input type="date" id="planEndDate">
+        </div>
+      </div>
+
+      <h4>Conteúdo e Objetivos</h4>
+      <div class="row">
+        <div style="flex:1 1 100%">
+          <label>Conteúdo</label>
+          <textarea id="planContent" placeholder="Descreva o conteúdo a ser trabalhado..."></textarea>
         </div>
       </div>
       <div class="row">
         <div style="flex:1 1 100%">
-          <label>Conteúdo / Objetivos</label>
-          <textarea id="planContent" placeholder="Descreva o conteúdo, objetivos e metodologia..."></textarea>
+          <label>Objetivo da Aprendizagem</label>
+          <textarea id="planObjective" placeholder="Descreva os objetivos de aprendizagem esperados..."></textarea>
+        </div>
+      </div>
+
+      <h4>Descrição e Recursos</h4>
+      <div class="row">
+        <div style="flex:1 1 100%">
+          <label>Descrição do Planejamento / Metodologia</label>
+          <textarea id="planMethodology" placeholder="Descreva a metodologia e as etapas da aula..."></textarea>
         </div>
       </div>
       <div class="row">
         <div style="flex:1 1 100%">
-          <label>Anexos</label>
+          <label>Recursos Didáticos</label>
+          <textarea id="planResources" placeholder="Ex: quadro, projetor, apostila, jogos..." style="min-height:60px"></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div style="flex:1 1 100%">
+          <label>Forma de Avaliação</label>
+          <textarea id="planEvaluation" placeholder="Descreva como a aprendizagem será avaliada..." style="min-height:60px"></textarea>
+        </div>
+      </div>
+
+      <h4>Anexos</h4>
+      <div class="row">
+        <div style="flex:1 1 100%">
           <div class="file-input-wrap" id="fileDropZone">
             📎 Clique ou arraste arquivos aqui (PDF, imagens, docs)
             <input type="file" id="fileInput" multiple style="display:none">
@@ -131,76 +176,78 @@
           <div class="att-list" id="attPreviewList"></div>
         </div>
       </div>
-      <button class="btn-primary" style="background:var(--primary);color:#fff" id="btnSavePlan">💾 Salvar Planejamento</button>
-      <button class="btn-ghost" style="background:#f1f5f9;color:var(--text);display:none" id="btnCancelEdit">Cancelar edição</button>
-    </div>
 
-    <div class="card">
-      <h2>Planejamentos Cadastrados</h2>
+      <h4>Supervisão</h4>
       <div class="row">
-        <input type="text" id="filterPlans" placeholder="🔍 Buscar por título, professor, turma ou disciplina...">
+        <div style="flex:1 1 100%">
+          <label>Observações / Anotações da Supervisão</label>
+          <textarea id="planSupervisionNotes" placeholder="Espaço reservado para observações da coordenação/supervisão..." style="min-height:60px"></textarea>
+        </div>
       </div>
-      <table id="plansTable">
-        <thead>
-          <tr><th>Data</th><th>Professor</th><th>Turma</th><th>Disciplina</th><th>Título</th><th>Anexos</th><th></th></tr>
-        </thead>
-        <tbody id="plansTbody"></tbody>
-      </table>
-      <div class="empty" id="plansEmpty" style="display:none">Nenhum planejamento cadastrado ainda.</div>
+
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button style="background:var(--primary);color:#fff" id="btnSavePlan">💾 Salvar Planejamento</button>
+        <button style="background:#f1f5f9;color:var(--text);display:none" id="btnCancelEdit">Cancelar edição</button>
+      </div>
     </div>
   </div>
 
-  <!-- PROFESSORES -->
-  <div class="tab" id="tab-teachers">
+  <!-- ============ ABA 2: CONSULTA ============ -->
+  <div class="tab" id="tab-consult">
     <div class="card">
-      <h2>Novo Professor</h2>
+      <h2>Consultar Planejamentos</h2>
+      <div class="row">
+        <input type="text" id="filterPlans" placeholder="🔍 Buscar por título, professor, turma ou disciplina...">
+        <select id="filterTeacher"><option value="">Todos os professores</option></select>
+        <select id="filterClass"><option value="">Todas as turmas</option></select>
+        <select id="filterSubject"><option value="">Todas as disciplinas</option></select>
+      </div>
+      <table id="plansTable">
+        <thead>
+          <tr><th>Período</th><th>Professor</th><th>Turma</th><th>Disciplina</th><th>Título</th><th>Anexos</th><th></th></tr>
+        </thead>
+        <tbody id="plansTbody"></tbody>
+      </table>
+      <div class="empty" id="plansEmpty" style="display:none">Nenhum planejamento encontrado.</div>
+    </div>
+  </div>
+
+  <!-- ============ ABA 3: CADASTROS ============ -->
+  <div class="tab" id="tab-registers">
+    <div class="card">
+      <h2>👩‍🏫 Professores</h2>
       <div class="row">
         <input type="text" id="teacherName" placeholder="Nome completo">
         <input type="email" id="teacherEmail" placeholder="E-mail (opcional)">
-        <button class="btn-primary" style="background:var(--primary);color:#fff;flex:0 0 auto" id="btnAddTeacher">➕ Adicionar</button>
+        <button style="background:var(--primary);color:#fff;flex:0 0 auto" id="btnAddTeacher">➕ Adicionar</button>
       </div>
-    </div>
-    <div class="card">
-      <h2>Professores Cadastrados</h2>
       <table>
         <thead><tr><th>Nome</th><th>E-mail</th><th></th></tr></thead>
         <tbody id="teachersTbody"></tbody>
       </table>
       <div class="empty" id="teachersEmpty" style="display:none">Nenhum professor cadastrado.</div>
     </div>
-  </div>
 
-  <!-- TURMAS -->
-  <div class="tab" id="tab-classes">
     <div class="card">
-      <h2>Nova Turma</h2>
+      <h2>🏫 Turmas</h2>
       <div class="row">
         <input type="text" id="className" placeholder="Ex: 6º Ano A">
         <input type="text" id="classShift" placeholder="Turno (Manhã/Tarde)">
-        <button class="btn-primary" style="background:var(--primary);color:#fff;flex:0 0 auto" id="btnAddClass">➕ Adicionar</button>
+        <button style="background:var(--primary);color:#fff;flex:0 0 auto" id="btnAddClass">➕ Adicionar</button>
       </div>
-    </div>
-    <div class="card">
-      <h2>Turmas Cadastradas</h2>
       <table>
         <thead><tr><th>Turma</th><th>Turno</th><th></th></tr></thead>
         <tbody id="classesTbody"></tbody>
       </table>
       <div class="empty" id="classesEmpty" style="display:none">Nenhuma turma cadastrada.</div>
     </div>
-  </div>
 
-  <!-- DISCIPLINAS -->
-  <div class="tab" id="tab-subjects">
     <div class="card">
-      <h2>Nova Disciplina</h2>
+      <h2>📖 Disciplinas</h2>
       <div class="row">
         <input type="text" id="subjectName" placeholder="Ex: Matemática">
-        <button class="btn-primary" style="background:var(--primary);color:#fff;flex:0 0 auto" id="btnAddSubject">➕ Adicionar</button>
+        <button style="background:var(--primary);color:#fff;flex:0 0 auto" id="btnAddSubject">➕ Adicionar</button>
       </div>
-    </div>
-    <div class="card">
-      <h2>Disciplinas Cadastradas</h2>
       <table>
         <thead><tr><th>Nome</th><th></th></tr></thead>
         <tbody id="subjectsTbody"></tbody>
@@ -210,6 +257,19 @@
   </div>
 
 </main>
+
+<!-- MODAL DE VISUALIZAÇÃO DO PLANEJAMENTO -->
+<div class="modal-overlay" id="viewModal">
+  <div class="modal wide">
+    <h3 id="viewTitle">Planejamento</h3>
+    <div class="plan-meta" id="viewMeta"></div>
+    <div id="viewBody"></div>
+    <div style="display:flex;gap:8px;margin-top:14px">
+      <button style="background:var(--warn);color:#fff" id="btnViewEdit">✏️ Editar</button>
+      <button style="background:#f1f5f9;color:var(--text)" id="btnCloseView">Fechar</button>
+    </div>
+  </div>
+</div>
 
 <!-- MODAL DE CONFIGURAÇÕES -->
 <div class="modal-overlay" id="settingsModal">
@@ -257,7 +317,8 @@
 <script>
 /* ============================================================
    PLANEJAMENTO ATHENA — App completo
-   IndexedDB local + Sincronização manual com GitHub (config editável)
+   3 abas: Planejamento (form) / Consulta / Cadastros
+   IndexedDB local + Sincronização manual com GitHub
    ============================================================ */
 
 /* ---------- TOAST ---------- */
@@ -484,6 +545,12 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
   });
 });
+function goToFormTab(){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelector('.tab-btn[data-tab="form"]').classList.add('active');
+  document.getElementById('tab-form').classList.add('active');
+}
 
 /* ---------- SETTINGS MODAL ---------- */
 document.getElementById('btnOpenSettings').addEventListener('click', ()=>{
@@ -632,7 +699,7 @@ async function renderSubjects(){
   });
 }
 
-/* ---------- SELECTS (Plans form) ---------- */
+/* ---------- SELECTS ---------- */
 async function fillSelects(){
   const teachers = await idbAll(S_TEACHERS);
   const classes = await idbAll(S_CLASSES);
@@ -640,15 +707,19 @@ async function fillSelects(){
   fillSelect('planTeacher', teachers, 'Selecione o professor');
   fillSelect('planClass', classes, 'Selecione a turma');
   fillSelect('planSubject', subjects, 'Selecione a disciplina');
+  fillSelect('filterTeacher', teachers, 'Todos os professores');
+  fillSelect('filterClass', classes, 'Todas as turmas');
+  fillSelect('filterSubject', subjects, 'Todas as disciplinas');
 }
 function fillSelect(id, items, placeholder){
   const sel = document.getElementById(id);
+  if(!sel) return;
   const current = sel.value;
   sel.innerHTML = `<option value="">${placeholder}</option>` + items.map(i=>`<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('');
   if(current) sel.value = current;
 }
 
-/* ---------- ATTACHMENTS (Base64 em anexo, referenciado no plano) ---------- */
+/* ---------- ATTACHMENTS ---------- */
 let pendingAttachments = [];
 document.getElementById('fileDropZone').addEventListener('click', ()=> document.getElementById('fileInput').click());
 document.getElementById('fileInput').addEventListener('change', async (e)=>{
@@ -692,11 +763,20 @@ document.getElementById('btnSavePlan').addEventListener('click', async ()=>{
   const classId = document.getElementById('planClass').value;
   const subjectId = document.getElementById('planSubject').value;
   const title = document.getElementById('planTitle').value.trim();
-  const date = document.getElementById('planDate').value;
+  const startDate = document.getElementById('planStartDate').value;
+  const endDate = document.getElementById('planEndDate').value;
   const content = document.getElementById('planContent').value.trim();
+  const objective = document.getElementById('planObjective').value.trim();
+  const methodology = document.getElementById('planMethodology').value.trim();
+  const resources = document.getElementById('planResources').value.trim();
+  const evaluation = document.getElementById('planEvaluation').value.trim();
+  const supervisionNotes = document.getElementById('planSupervisionNotes').value.trim();
 
-  if(!teacherId || !classId || !subjectId || !title || !date){
-    return toast('⚠️ Preencha todos os campos obrigatórios.','warn');
+  if(!teacherId || !classId || !subjectId || !title || !startDate || !endDate){
+    return toast('⚠️ Preencha professor, turma, disciplina, título e o período (início/fim).','warn');
+  }
+  if(endDate < startDate){
+    return toast('⚠️ A data de fim não pode ser anterior à data de início.','warn');
   }
 
   const attIds = [];
@@ -705,10 +785,14 @@ document.getElementById('btnSavePlan').addEventListener('click', async ()=>{
     attIds.push(att.id);
   }
 
+  const previousAttIds = editingPlanId ? await getPlanAttIds(editingPlanId) : [];
+
   const plan = {
     id: editingPlanId || uid(),
-    teacherId, classId, subjectId, title, date, content,
-    attachmentIds: editingPlanId ? [...(await getPlanAttIds(editingPlanId)), ...attIds] : attIds,
+    teacherId, classId, subjectId, title,
+    startDate, endDate,
+    content, objective, methodology, resources, evaluation, supervisionNotes,
+    attachmentIds: [...previousAttIds, ...attIds],
     updatedAt: new Date().toISOString()
   };
   await idbPut(S_PLANS, plan);
@@ -726,12 +810,19 @@ async function getPlanAttIds(planId){
 
 function resetPlanForm(){
   editingPlanId = null;
+  document.getElementById('formTitle').textContent = 'Novo Planejamento';
   document.getElementById('planTeacher').value='';
   document.getElementById('planClass').value='';
   document.getElementById('planSubject').value='';
   document.getElementById('planTitle').value='';
-  document.getElementById('planDate').value='';
+  document.getElementById('planStartDate').value='';
+  document.getElementById('planEndDate').value='';
   document.getElementById('planContent').value='';
+  document.getElementById('planObjective').value='';
+  document.getElementById('planMethodology').value='';
+  document.getElementById('planResources').value='';
+  document.getElementById('planEvaluation').value='';
+  document.getElementById('planSupervisionNotes').value='';
   pendingAttachments = [];
   renderAttPreview();
   document.getElementById('btnCancelEdit').style.display='none';
@@ -744,16 +835,25 @@ async function editPlan(id){
   const p = plans.find(x=>x.id===id);
   if(!p) return;
   editingPlanId = id;
+  document.getElementById('formTitle').textContent = 'Editar Planejamento';
   document.getElementById('planTeacher').value = p.teacherId;
   document.getElementById('planClass').value = p.classId;
   document.getElementById('planSubject').value = p.subjectId;
   document.getElementById('planTitle').value = p.title;
-  document.getElementById('planDate').value = p.date;
-  document.getElementById('planContent').value = p.content;
+  document.getElementById('planStartDate').value = p.startDate || '';
+  document.getElementById('planEndDate').value = p.endDate || '';
+  document.getElementById('planContent').value = p.content || '';
+  document.getElementById('planObjective').value = p.objective || '';
+  document.getElementById('planMethodology').value = p.methodology || '';
+  document.getElementById('planResources').value = p.resources || '';
+  document.getElementById('planEvaluation').value = p.evaluation || '';
+  document.getElementById('planSupervisionNotes').value = p.supervisionNotes || '';
   pendingAttachments = [];
   renderAttPreview();
   document.getElementById('btnCancelEdit').style.display='inline-block';
   document.getElementById('btnSavePlan').textContent='💾 Atualizar Planejamento';
+  document.getElementById('viewModal').classList.remove('open');
+  goToFormTab();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 
@@ -761,28 +861,91 @@ async function deletePlan(id){
   if(!confirm('Excluir este planejamento?')) return;
   await idbDelete(S_PLANS, id);
   toast('🗑️ Planejamento excluído.','warn');
+  document.getElementById('viewModal').classList.remove('open');
   await renderPlans();
 }
 
-async function renderPlans(filterText=''){
+/* ---------- VIEW MODAL (Consulta) ---------- */
+let viewingPlanId = null;
+async function viewPlan(id){
   const plans = await idbAll(S_PLANS);
   const teachers = await idbAll(S_TEACHERS);
   const classes = await idbAll(S_CLASSES);
   const subjects = await idbAll(S_SUBJECTS);
   const atts = await idbAll(S_ATTS);
 
+  const p = plans.find(x=>x.id===id);
+  if(!p) return;
+  viewingPlanId = id;
+
+  const tName = (teachers.find(t=>t.id===p.teacherId)||{}).name || '-';
+  const cName = (classes.find(c=>c.id===p.classId)||{}).name || '-';
+  const sName = (subjects.find(s=>s.id===p.subjectId)||{}).name || '-';
+
+  document.getElementById('viewTitle').textContent = p.title;
+  document.getElementById('viewMeta').innerHTML = `
+    <span>👩‍🏫 ${escapeHtml(tName)}</span>
+    <span>🏫 ${escapeHtml(cName)}</span>
+    <span>📖 ${escapeHtml(sName)}</span>
+    <span>📅 ${fmtDate(p.startDate)} até ${fmtDate(p.endDate)}</span>
+  `;
+
+  const planAtts = atts.filter(a=> (p.attachmentIds||[]).includes(a.id));
+  const attHtml = planAtts.length
+    ? planAtts.map(a=>`<div class="att-item"><span>📎 ${escapeHtml(a.name)}</span><a href="${a.data}" download="${escapeHtml(a.name)}" class="btn-sm btn-success" style="text-decoration:none">⬇️ Baixar</a></div>`).join('')
+    : '<span class="small">Nenhum anexo.</span>';
+
+  document.getElementById('viewBody').innerHTML = `
+    <div class="view-detail"><h5>Conteúdo</h5><p>${escapeHtml(p.content)||'-'}</p>
+    <h5>Objetivo da Aprendizagem</h5><p>${escapeHtml(p.objective)||'-'}</p>
+    <h5>Descrição do Planejamento / Metodologia</h5><p>${escapeHtml(p.methodology)||'-'}</p>
+    <h5>Recursos Didáticos</h5><p>${escapeHtml(p.resources)||'-'}</p>
+    <h5>Forma de Avaliação</h5><p>${escapeHtml(p.evaluation)||'-'}</p>
+    <h5>Anexos</h5><div class="att-list">${attHtml}</div>
+    <h5>Observações / Anotações da Supervisão</h5><p>${escapeHtml(p.supervisionNotes)||'-'}</p>
+    </div>
+  `;
+  document.getElementById('viewModal').classList.add('open');
+}
+document.getElementById('btnCloseView').addEventListener('click', ()=>{
+  document.getElementById('viewModal').classList.remove('open');
+});
+document.getElementById('btnViewEdit').addEventListener('click', ()=>{
+  if(viewingPlanId) editPlan(viewingPlanId);
+});
+
+function fmtDate(d){
+  if(!d) return '-';
+  return new Date(d+'T00:00:00').toLocaleDateString('pt-BR');
+}
+
+/* ---------- RENDER PLANS TABLE (Consulta) ---------- */
+async function renderPlans(){
+  const filterText = document.getElementById('filterPlans').value.toLowerCase();
+  const fTeacher = document.getElementById('filterTeacher').value;
+  const fClass = document.getElementById('filterClass').value;
+  const fSubject = document.getElementById('filterSubject').value;
+
+  const plans = await idbAll(S_PLANS);
+  const teachers = await idbAll(S_TEACHERS);
+  const classes = await idbAll(S_CLASSES);
+  const subjects = await idbAll(S_SUBJECTS);
+
   const tMap = Object.fromEntries(teachers.map(t=>[t.id,t.name]));
   const cMap = Object.fromEntries(classes.map(c=>[c.id,c.name]));
   const sMap = Object.fromEntries(subjects.map(s=>[s.id,s.name]));
 
-  let filtered = plans.slice().sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+  let filtered = plans.slice().sort((a,b)=> (b.startDate||'').localeCompare(a.startDate||''));
+
+  if(fTeacher) filtered = filtered.filter(p=>p.teacherId===fTeacher);
+  if(fClass) filtered = filtered.filter(p=>p.classId===fClass);
+  if(fSubject) filtered = filtered.filter(p=>p.subjectId===fSubject);
   if(filterText){
-    const f = filterText.toLowerCase();
     filtered = filtered.filter(p=>
-      (p.title||'').toLowerCase().includes(f) ||
-      (tMap[p.teacherId]||'').toLowerCase().includes(f) ||
-      (cMap[p.classId]||'').toLowerCase().includes(f) ||
-      (sMap[p.subjectId]||'').toLowerCase().includes(f)
+      (p.title||'').toLowerCase().includes(filterText) ||
+      (tMap[p.teacherId]||'').toLowerCase().includes(filterText) ||
+      (cMap[p.classId]||'').toLowerCase().includes(filterText) ||
+      (sMap[p.subjectId]||'').toLowerCase().includes(filterText)
     );
   }
 
@@ -792,22 +955,27 @@ async function renderPlans(filterText=''){
 
   filtered.forEach(p=>{
     const attCount = (p.attachmentIds||[]).length;
+    const period = `${fmtDate(p.startDate)} — ${fmtDate(p.endDate)}`;
     const tr = document.createElement('tr');
     tr.innerHTML = `
-      <td>${p.date? new Date(p.date+'T00:00:00').toLocaleDateString('pt-BR') : '-'}</td>
+      <td>${period}</td>
       <td>${escapeHtml(tMap[p.teacherId]||'-')}</td>
       <td>${escapeHtml(cMap[p.classId]||'-')}</td>
       <td>${escapeHtml(sMap[p.subjectId]||'-')}</td>
       <td>${escapeHtml(p.title)}</td>
       <td>${attCount>0? `📎 ${attCount}` : '-'}</td>
       <td class="actions-cell">
+        <button class="btn-sm btn-success" onclick="viewPlan('${p.id}')">👁️</button>
         <button class="btn-sm btn-warn" onclick="editPlan('${p.id}')">✏️</button>
         <button class="btn-sm btn-danger" onclick="deletePlan('${p.id}')">🗑️</button>
       </td>`;
     tbody.appendChild(tr);
   });
 }
-document.getElementById('filterPlans').addEventListener('input', (e)=> renderPlans(e.target.value));
+['filterPlans','filterTeacher','filterClass','filterSubject'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderPlans);
+  document.getElementById(id).addEventListener('change', renderPlans);
+});
 
 /* ---------- GENERIC DELETE ---------- */
 async function deleteItem(store, id){
@@ -829,7 +997,7 @@ async function renderAll(){
   await renderClasses();
   await renderSubjects();
   await fillSelects();
-  await renderPlans(document.getElementById('filterPlans').value);
+  await renderPlans();
 }
 
 window.addEventListener('DOMContentLoaded', async ()=>{
