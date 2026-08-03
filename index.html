@@ -1,859 +1,844 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1" />
-<title>Planejamento Athena — Supervisão Pedagógica</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planejamento Athena</title>
 <style>
-:root{
-  --primary:#1a56a0;--primary-dark:#133f7a;--primary-light:#e8f0fb;
-  --danger:#c0392b;--danger-light:#fdecea;--success:#1a7a45;--success-light:#e6f4ec;
-  --warning:#b07d00;--warning-light:#fff8e1;--muted:#6b7280;--border:#d1d5db;
-  --bg:#f3f6fb;--card:#fff;--text:#1a2236;--radius:10px;--shadow:0 2px 12px rgba(26,86,160,.08);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);font-size:16px}
-header{background:var(--primary);color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px;box-shadow:0 2px 8px rgba(0,0,0,.12);position:sticky;top:0;z-index:100}
-.header-info{flex:1;min-width:150px}
-.header-info h1{font-size:1.05rem;font-weight:700}
-.header-info p{font-size:.75rem;opacity:.78}
-.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.sync-indicator{font-size:.74rem;padding:5px 10px;border-radius:12px;font-weight:600;white-space:nowrap}
-.sync-indicator.synced{background:rgba(255,255,255,.15)}
-.sync-indicator.pending{background:rgba(255,193,7,.25);color:#ffe082;animation:pulse 1.5s infinite}
-.sync-indicator.syncing{background:rgba(255,255,255,.2)}
-.sync-indicator.error{background:rgba(255,82,82,.3);color:#ffcdd2}
-.sync-indicator.offline{background:rgba(255,255,255,.08);opacity:.65}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-.btn-icon{background:rgba(255,255,255,.15);border:none;color:#fff;width:38px;height:38px;border-radius:50%;font-size:1.15rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:.15s;flex-shrink:0}
-.btn-icon:hover{background:rgba(255,255,255,.28);transform:rotate(20deg)}
-main{max-width:1200px;margin:0 auto;padding:16px 12px 60px}
-.tabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:2px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
-.tab-btn{padding:10px 16px;border:none;background:transparent;cursor:pointer;font-size:.9rem;font-weight:600;color:var(--muted);border-bottom:3px solid transparent;margin-bottom:-2px;white-space:nowrap}
-.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
-.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:18px;overflow:hidden}
-.card-header{padding:16px 18px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.card-header h2{font-size:1.02rem;font-weight:700;color:var(--primary)}
-.hint{font-size:.8rem;color:var(--muted);margin-top:2px}
-.card-body{padding:16px 18px}
-.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 16px}
-.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
-.full{grid-column:1/-1}
-.form-group{display:flex;flex-direction:column;gap:5px;margin-bottom:0}
-.form-group label{font-size:.8rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
-input,select,textarea{padding:11px 12px;border:1px solid var(--border);border-radius:7px;font-size:1rem;background:#fafbfc;font-family:inherit;color:var(--text);min-height:44px}
-textarea{min-height:80px;resize:vertical}
-input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);background:#fff}
-.btn{padding:11px 18px;border:none;border-radius:7px;cursor:pointer;font-size:.95rem;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;transition:.15s}
-.btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:var(--primary-dark)}
-.btn-ghost{background:#f1f3f7;color:var(--text);border:1px solid var(--border)}.btn-ghost:hover{background:var(--border)}
-.btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#922b21}
-.btn-success{background:var(--success);color:#fff}.btn-success:hover{background:#145a34}
-.btn-warning{background:#e67e22;color:#fff}.btn-warning:hover{background:#ca6f1e}
-.btn-small{padding:7px 14px;font-size:.85rem;min-height:36px}
-.btn:disabled{opacity:.6;cursor:not-allowed}
-.btn-group{display:flex;gap:10px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
-.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:14px}
-.selection-toolbar{display:none;align-items:center;gap:8px;background:var(--primary);color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:12px;flex-wrap:wrap}
-.selection-toolbar.visible{display:flex}
-.sel-count{font-weight:700;font-size:.9rem;margin-right:4px}
-.table-wrap{overflow-x:auto;border-radius:8px;border:1px solid var(--border)}
-table.list{width:100%;border-collapse:collapse;min-width:760px}
-table.list thead tr{background:var(--primary-light)}
-table.list th{padding:9px 10px;font-size:.76rem;font-weight:800;color:var(--primary);text-transform:uppercase;border-bottom:2px solid var(--border);text-align:left;white-space:nowrap}
-table.list td{padding:8px 10px;font-size:.87rem;border-bottom:1px solid #f0f2f6;vertical-align:middle}
-table.list tbody tr:hover{background:#f7f9fd}
-table.list tbody tr.row-selected{background:var(--primary-light)!important}
-table.list td.empty{text-align:center;color:var(--muted);padding:26px}
-input[type=checkbox]{width:20px;height:20px;cursor:pointer;accent-color:var(--primary)}
-.countbar{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
-.kpi{background:var(--primary-light);color:var(--primary);padding:5px 12px;border-radius:16px;font-size:.8rem;font-weight:700;display:inline-flex;align-items:center;gap:6px}
-.kpi .rm{cursor:pointer;font-weight:800;color:var(--danger);margin-left:2px}
-.split{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
-.admin-box{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
-.admin-box .head{background:var(--primary-light);padding:9px 12px;font-weight:700;color:var(--primary);font-size:.9rem}
-.admin-box .body{padding:12px;display:flex;flex-direction:column;gap:8px}
-.admin-list{display:flex;flex-direction:column;gap:6px;max-height:240px;overflow-y:auto}
-.admin-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:6px;border:1px solid var(--border);background:#fafbfc}
-.admin-item.inactive{opacity:.5}
-.admin-item .name{flex:1;font-size:.88rem}
-.row-inline{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.backup-status{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:14px;font-size:.8rem;font-weight:600}
-.backup-status.ok{background:var(--success-light);color:var(--success)}
-.backup-status.warn{background:var(--warning-light);color:var(--warning)}
-.backup-status.err{background:var(--danger-light);color:var(--danger)}
-.backup-status.idle{background:#f1f3f7;color:var(--muted)}
-.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
-.dot.green{background:var(--success)}.dot.yellow{background:var(--warning)}.dot.red{background:var(--danger)}.dot.gray{background:var(--muted)}
-.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a2236;color:#fff;padding:11px 22px;border-radius:22px;font-size:.9rem;font-weight:600;opacity:0;pointer-events:none;transition:.28s;z-index:9999;max-width:90vw;text-align:center;box-shadow:0 4px 18px rgba(0,0,0,.22)}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.toast.ok{background:var(--success)}.toast.err{background:var(--danger)}.toast.warn{background:var(--warning)}
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:2000;align-items:center;justify-content:center;padding:16px}
-.modal-overlay.open{display:flex}
-.modal{background:#fff;border-radius:var(--radius);width:100%;max-width:480px;max-height:90vh;display:flex;flex-direction:column}
-.modal.modal-lg{max-width:600px}
-.modal-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-header h3{font-size:1rem;color:var(--primary)}
-.modal-body{padding:16px 18px;overflow-y:auto;flex:1}
-.modal-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
-.btn-close-modal{background:none;border:none;font-size:1.4rem;cursor:pointer;color:var(--muted)}
-.section-divider{margin:18px 0 12px;padding-top:14px;border-top:1px solid var(--border)}
-.section-divider h4{font-size:.88rem;color:var(--primary);margin-bottom:6px}
-@media(max-width:768px){
-  .grid-3,.grid-2{grid-template-columns:1fr}
-  .btn{width:100%}
-  .btn-group{flex-direction:column}
-  .btn-group .btn{width:100%}
-  .row-inline .btn{width:auto}
-  header{flex-direction:column;align-items:stretch;text-align:center}
-  .header-right{justify-content:center}
-}
+  :root{
+    --primary:#2563eb; --primary-dark:#1d4ed8; --success:#16a34a;
+    --danger:#dc2626; --warn:#d97706; --bg:#f4f6f9; --card:#ffffff;
+    --border:#e2e8f0; --text:#1e293b; --muted:#64748b;
+  }
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);margin:0}
+  header{background:var(--primary);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+  header h1{font-size:18px;margin:0}
+  header .actions{display:flex;gap:8px;flex-wrap:wrap}
+  button{cursor:pointer;border:none;border-radius:6px;padding:8px 14px;font-size:14px;font-weight:600}
+  .btn-primary{background:#fff;color:var(--primary)}
+  .btn-primary:hover{background:#eef2ff}
+  .btn-ghost{background:rgba(255,255,255,.15);color:#fff}
+  .btn-ghost:hover{background:rgba(255,255,255,.25)}
+  nav{display:flex;gap:4px;background:#fff;border-bottom:1px solid var(--border);padding:0 20px;overflow-x:auto}
+  nav button{background:transparent;color:var(--muted);border-radius:0;padding:12px 16px;border-bottom:3px solid transparent}
+  nav button.active{color:var(--primary);border-bottom-color:var(--primary)}
+  main{padding:20px;max-width:1100px;margin:0 auto}
+  .tab{display:none}
+  .tab.active{display:block}
+  .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
+  .card h2{margin-top:0;font-size:16px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+  .row > *{flex:1;min-width:160px}
+  input,select,textarea{width:100%;padding:9px 10px;border:1px solid var(--border);border-radius:6px;font-size:14px;font-family:inherit}
+  textarea{resize:vertical;min-height:80px}
+  label{display:block;font-weight:600;font-size:13px;margin-bottom:4px;color:var(--muted)}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border)}
+  th{color:var(--muted);font-weight:600;font-size:12px;text-transform:uppercase}
+  tr:hover{background:#f8fafc}
+  .actions-cell{display:flex;gap:6px}
+  .btn-sm{padding:5px 10px;font-size:12px}
+  .btn-danger{background:#fee2e2;color:var(--danger)}
+  .btn-warn{background:#fef3c7;color:var(--warn)}
+  .btn-success{background:#dcfce7;color:var(--success)}
+  .empty{color:var(--muted);font-size:13px;padding:20px;text-align:center}
+  .toast-container{position:fixed;top:16px;right:16px;display:flex;flex-direction:column;gap:8px;z-index:9999}
+  .toast{padding:12px 16px;border-radius:8px;color:#fff;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.15);min-width:240px;animation:slideIn .25s ease}
+  .toast.ok{background:var(--success)}
+  .toast.err{background:var(--danger)}
+  .toast.warn{background:var(--warn)}
+  .toast.info{background:var(--primary)}
+  @keyframes slideIn{from{transform:translateX(30px);opacity:0}to{transform:translateX(0);opacity:1}}
+  .badge{display:inline-block;padding:2px 8px;border-radius:12px;font-size:11px;font-weight:600}
+  .badge-ok{background:#dcfce7;color:var(--success)}
+  .badge-err{background:#fee2e2;color:var(--danger)}
+  .badge-idle{background:#f1f5f9;color:var(--muted)}
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.4);display:none;align-items:center;justify-content:center;z-index:999;padding:20px}
+  .modal-overlay.open{display:flex}
+  .modal{background:#fff;border-radius:10px;padding:20px;max-width:480px;width:100%;max-height:90vh;overflow-y:auto}
+  .modal h3{margin-top:0}
+  .file-input-wrap{border:2px dashed var(--border);border-radius:8px;padding:16px;text-align:center;color:var(--muted);font-size:13px;cursor:pointer}
+  .att-list{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+  .att-item{display:flex;justify-content:space-between;align-items:center;background:#f8fafc;padding:6px 10px;border-radius:6px;font-size:13px}
+  .status-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-top:8px}
+  .small{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
 
+<div class="toast-container" id="toastContainer"></div>
+
 <header>
-  <div class="header-info"><h1>🏫 Supervisão Pedagógica</h1><p>Planejamento de Aulas — Colégio Athena</p></div>
-  <div class="header-right">
-    <div class="sync-indicator offline" id="syncIndicator">☁️ Offline</div>
-    <button class="btn-icon" onclick="openSettingsModal()" title="Configurações">⚙️</button>
+  <h1>📚 Planejamento Athena</h1>
+  <div class="actions">
+    <span id="syncStatusBadge" class="badge badge-idle">🔄 Não sincronizado</span>
+    <button class="btn-primary" id="btnSyncNow">☁️ Sincronizar Agora</button>
+    <button class="btn-ghost" id="btnOpenSettings">⚙️ Configurações</button>
   </div>
 </header>
 
+<nav>
+  <button class="tab-btn active" data-tab="plans">📝 Planejamentos</button>
+  <button class="tab-btn" data-tab="teachers">👩‍🏫 Professores</button>
+  <button class="tab-btn" data-tab="classes">🏫 Turmas</button>
+  <button class="tab-btn" data-tab="subjects">📖 Disciplinas</button>
+</nav>
+
 <main>
-  <div class="tabs">
-    <button class="tab-btn active" id="tab-btn-novo" onclick="setTab('novo')">📝 Novo Planejamento</button>
-    <button class="tab-btn" id="tab-btn-consultas" onclick="setTab('consultas')">🔍 Consultas</button>
-    <button class="tab-btn" id="tab-btn-admin" onclick="setTab('admin')">📋 Cadastros</button>
+
+  <!-- PLANOS -->
+  <div class="tab active" id="tab-plans">
+    <div class="card">
+      <h2>Novo Planejamento</h2>
+      <div class="row">
+        <div>
+          <label>Professor</label>
+          <select id="planTeacher"></select>
+        </div>
+        <div>
+          <label>Turma</label>
+          <select id="planClass"></select>
+        </div>
+        <div>
+          <label>Disciplina</label>
+          <select id="planSubject"></select>
+        </div>
+      </div>
+      <div class="row">
+        <div>
+          <label>Título / Tema da aula</label>
+          <input type="text" id="planTitle" placeholder="Ex: Introdução à Álgebra">
+        </div>
+        <div>
+          <label>Data</label>
+          <input type="date" id="planDate">
+        </div>
+      </div>
+      <div class="row">
+        <div style="flex:1 1 100%">
+          <label>Conteúdo / Objetivos</label>
+          <textarea id="planContent" placeholder="Descreva o conteúdo, objetivos e metodologia..."></textarea>
+        </div>
+      </div>
+      <div class="row">
+        <div style="flex:1 1 100%">
+          <label>Anexos</label>
+          <div class="file-input-wrap" id="fileDropZone">
+            📎 Clique ou arraste arquivos aqui (PDF, imagens, docs)
+            <input type="file" id="fileInput" multiple style="display:none">
+          </div>
+          <div class="att-list" id="attPreviewList"></div>
+        </div>
+      </div>
+      <button class="btn-primary" style="background:var(--primary);color:#fff" id="btnSavePlan">💾 Salvar Planejamento</button>
+      <button class="btn-ghost" style="background:#f1f5f9;color:var(--text);display:none" id="btnCancelEdit">Cancelar edição</button>
+    </div>
+
+    <div class="card">
+      <h2>Planejamentos Cadastrados</h2>
+      <div class="row">
+        <input type="text" id="filterPlans" placeholder="🔍 Buscar por título, professor, turma ou disciplina...">
+      </div>
+      <table id="plansTable">
+        <thead>
+          <tr><th>Data</th><th>Professor</th><th>Turma</th><th>Disciplina</th><th>Título</th><th>Anexos</th><th></th></tr>
+        </thead>
+        <tbody id="plansTbody"></tbody>
+      </table>
+      <div class="empty" id="plansEmpty" style="display:none">Nenhum planejamento cadastrado ainda.</div>
+    </div>
   </div>
 
-  <!-- ABA NOVO -->
-  <section id="novo-view">
+  <!-- PROFESSORES -->
+  <div class="tab" id="tab-teachers">
     <div class="card">
-      <div class="card-header"><div><h2 id="formTitle">Novo Planejamento</h2><div class="hint">Preencha os campos e clique em "Salvar".</div></div></div>
-      <div class="card-body">
-        <form id="planForm">
-          <input type="hidden" id="editingId" />
-          <div class="grid-3">
-            <div class="form-group"><label>Professor(a) *</label><select id="professorSel"></select></div>
-            <div class="form-group"><label>Turma *</label><select id="turmaSel"></select></div>
-            <div class="form-group"><label>Data de lançamento *</label><input type="date" id="dataLancamento" /></div>
-            <div class="form-group"><label>Disciplina *</label><select id="disciplinaSel"></select></div>
-            <div class="form-group"><label>Período início</label><input type="date" id="periodoInicio" /></div>
-            <div class="form-group"><label>Período fim</label><input type="date" id="periodoFim" /></div>
-            <div class="form-group full"><label>Conteúdo</label><input type="text" id="conteudoTxt" /></div>
-            <div class="form-group full"><label>Objetivos de aprendizagem</label><textarea id="objetivos"></textarea></div>
-            <div class="form-group full"><label>Descrição / Metodologia</label><textarea id="descricao"></textarea></div>
-            <div class="form-group"><label>Recursos didáticos</label><input type="text" id="recursos" /></div>
-            <div class="form-group"><label>Forma de avaliação</label><input type="text" id="avaliacao" /></div>
-            <div class="form-group full">
-              <label>Anexos</label>
-              <input type="file" id="anexos" multiple />
-              <div id="anexosResumo" class="row-inline" style="margin-top:6px"></div>
-            </div>
-            <div class="form-group full"><label>Observações da supervisão</label><textarea id="observacoes"></textarea></div>
-          </div>
-          <div class="btn-group">
-            <button type="button" class="btn btn-ghost" onclick="limparForm(true)">Limpar</button>
-            <button type="button" class="btn btn-primary" onclick="salvarPlanejamento()">💾 Salvar planejamento</button>
-          </div>
-        </form>
+      <h2>Novo Professor</h2>
+      <div class="row">
+        <input type="text" id="teacherName" placeholder="Nome completo">
+        <input type="email" id="teacherEmail" placeholder="E-mail (opcional)">
+        <button class="btn-primary" style="background:var(--primary);color:#fff;flex:0 0 auto" id="btnAddTeacher">➕ Adicionar</button>
       </div>
     </div>
-  </section>
+    <div class="card">
+      <h2>Professores Cadastrados</h2>
+      <table>
+        <thead><tr><th>Nome</th><th>E-mail</th><th></th></tr></thead>
+        <tbody id="teachersTbody"></tbody>
+      </table>
+      <div class="empty" id="teachersEmpty" style="display:none">Nenhum professor cadastrado.</div>
+    </div>
+  </div>
 
-  <!-- ABA CONSULTAS -->
-  <section id="consultas-view" style="display:none">
+  <!-- TURMAS -->
+  <div class="tab" id="tab-classes">
     <div class="card">
-      <div class="card-header"><div><h2>Consultas</h2><div class="hint">Selecione um ou mais planejamentos.</div></div><button class="btn btn-small btn-ghost" onclick="limparFiltros()">Limpar filtros</button></div>
-      <div class="card-body">
-        <div class="filters">
-          <div class="form-group"><label>Professor</label><select id="fProfessorSel" onchange="renderLista()"><option value="">Todos</option></select></div>
-          <div class="form-group"><label>Turma</label><select id="fTurmaSel" onchange="renderLista()"><option value="">Todas</option></select></div>
-          <div class="form-group"><label>Disciplina</label><select id="fDisciplinaSel" onchange="renderLista()"><option value="">Todas</option></select></div>
-          <div class="form-group"><label>Ano</label><select id="fAnoSel" onchange="renderLista()"><option value="">Todos</option></select></div>
-        </div>
-        <div class="selection-toolbar" id="selectionToolbar">
-          <span class="sel-count" id="selCount">0 selecionado(s)</span>
-          <button class="btn btn-small" style="background:#fff;color:var(--primary)" onclick="acaoEditar()">✏️ Editar</button>
-          <button class="btn btn-small" style="background:rgba(255,255,255,.2);color:#fff" onclick="acaoCopiar()">📋 Copiar</button>
-          <button class="btn btn-small btn-danger" onclick="acaoExcluir()">🗑️ Excluir</button>
-        </div>
-        <div class="table-wrap">
-          <table class="list">
-            <thead><tr><th style="width:36px"><input type="checkbox" id="checkAll" onchange="toggleSelectAll(this.checked)" /></th><th>Lançamento</th><th>Professor</th><th>Turma</th><th>Disciplina</th><th>Conteúdo</th><th>Período</th></tr></thead>
-            <tbody id="listaBody"><tr><td colspan="7" class="empty">Nenhum planejamento salvo.</td></tr></tbody>
-          </table>
-        </div>
-        <div class="countbar"><div class="kpi" id="kpiTotal">0 total</div><div class="kpi" id="kpiFiltrados">0 exibido(s)</div></div>
+      <h2>Nova Turma</h2>
+      <div class="row">
+        <input type="text" id="className" placeholder="Ex: 6º Ano A">
+        <input type="text" id="classShift" placeholder="Turno (Manhã/Tarde)">
+        <button class="btn-primary" style="background:var(--primary);color:#fff;flex:0 0 auto" id="btnAddClass">➕ Adicionar</button>
       </div>
     </div>
-  </section>
+    <div class="card">
+      <h2>Turmas Cadastradas</h2>
+      <table>
+        <thead><tr><th>Turma</th><th>Turno</th><th></th></tr></thead>
+        <tbody id="classesTbody"></tbody>
+      </table>
+      <div class="empty" id="classesEmpty" style="display:none">Nenhuma turma cadastrada.</div>
+    </div>
+  </div>
 
-  <!-- ABA CADASTROS -->
-  <section id="admin-view" style="display:none">
+  <!-- DISCIPLINAS -->
+  <div class="tab" id="tab-subjects">
     <div class="card">
-      <div class="card-header"><h2>📋 Cadastros Auxiliares</h2></div>
-      <div class="card-body">
-        <div class="split">
-          <div class="admin-box"><div class="head">👨‍🏫 Professores</div><div class="body">
-            <div class="row-inline"><input type="text" id="teacherName" placeholder="Nome" style="flex:1" /><button class="btn btn-small btn-primary" onclick="addTeacher()">+</button></div>
-            <div class="admin-list" id="teachersList"></div></div></div>
-          <div class="admin-box"><div class="head">📚 Turmas</div><div class="body">
-            <div class="row-inline"><input type="text" id="className" placeholder="Ex: 3º B" style="flex:1" /><button class="btn btn-small btn-primary" onclick="addClass()">+</button></div>
-            <div class="admin-list" id="classesList"></div></div></div>
-          <div class="admin-box"><div class="head">📖 Disciplinas</div><div class="body">
-            <div class="row-inline"><input type="text" id="subjectName" placeholder="Ex: Matemática" style="flex:1" /><button class="btn btn-small btn-primary" onclick="addSubject()">+</button></div>
-            <div class="admin-list" id="subjectsList"></div></div></div>
-        </div>
+      <h2>Nova Disciplina</h2>
+      <div class="row">
+        <input type="text" id="subjectName" placeholder="Ex: Matemática">
+        <button class="btn-primary" style="background:var(--primary);color:#fff;flex:0 0 auto" id="btnAddSubject">➕ Adicionar</button>
       </div>
     </div>
-  </section>
+    <div class="card">
+      <h2>Disciplinas Cadastradas</h2>
+      <table>
+        <thead><tr><th>Nome</th><th></th></tr></thead>
+        <tbody id="subjectsTbody"></tbody>
+      </table>
+      <div class="empty" id="subjectsEmpty" style="display:none">Nenhuma disciplina cadastrada.</div>
+    </div>
+  </div>
+
 </main>
 
-<div class="toast" id="toast"></div>
-
-<!-- MODAL CONFIRMAÇÃO -->
-<div class="modal-overlay" id="modalConfirm">
+<!-- MODAL DE CONFIGURAÇÕES -->
+<div class="modal-overlay" id="settingsModal">
   <div class="modal">
-    <div class="modal-header"><h3 id="modalConfirmTitle">Confirmar</h3><button class="btn-close-modal" onclick="closeModal('modalConfirm')">×</button></div>
-    <div class="modal-body"><p id="modalConfirmMsg"></p></div>
-    <div class="modal-footer"><button class="btn btn-ghost" onclick="closeModal('modalConfirm')">Cancelar</button><button class="btn btn-danger" id="modalConfirmBtn">Confirmar</button></div>
-  </div>
-</div>
+    <h3>⚙️ Configurações</h3>
 
-<!-- MODAL CONFIGURAÇÕES (⚙️) -->
-<div class="modal-overlay" id="modalSettings">
-  <div class="modal modal-lg">
-    <div class="modal-header"><h3>⚙️ Configurações — Backup e Sincronização</h3><button class="btn-close-modal" onclick="closeModal('modalSettings')">×</button></div>
-    <div class="modal-body">
-      <div class="row-inline" style="margin-bottom:12px;justify-content:space-between">
-        <div id="ghStatusBadge" class="backup-status idle"><span class="dot gray"></span> Verificando...</div>
+    <div id="ghConfigPanel" style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:12px">
+      <h4 style="margin-top:0">🔗 Conexão com GitHub</h4>
+
+      <label>Owner (usuário/organização)</label>
+      <input id="ghOwner" type="text" placeholder="ex: constantewagner-dot">
+
+      <label style="margin-top:8px">Repositório</label>
+      <input id="ghRepo" type="text" placeholder="ex: Planejamento-Athena">
+
+      <label style="margin-top:8px">Branch</label>
+      <input id="ghBranch" type="text" placeholder="main" value="main">
+
+      <label style="margin-top:8px">Personal Access Token</label>
+      <input id="ghToken" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+
+      <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+        <button style="background:var(--primary);color:#fff" id="btnGhSave">💾 Salvar</button>
+        <button style="background:var(--success);color:#fff" id="btnGhTest">🧪 Testar Conexão</button>
+        <button style="background:var(--danger);color:#fff" id="btnGhClear">🗑️ Limpar</button>
       </div>
-      <div id="ghLastBackup" style="font-size:.85rem;color:var(--muted);margin-bottom:14px"></div>
 
-      <div class="row-inline">
-        <button class="btn btn-success btn-small" onclick="syncNow()">🔄 Sincronizar Agora</button>
-        <button class="btn btn-warning btn-small" onclick="forcePushAll()">☁️ Criar Backup Agora</button>
-      </div>
+      <div id="ghTestResult" style="margin-top:10px;font-size:13px;font-weight:600"></div>
 
-      <div class="section-divider">
-        <h4>💾 Backup local (arquivo)</h4>
-        <div class="hint" style="margin-bottom:10px">Exporte um arquivo de backup completo, ou importe um arquivo previamente exportado para restaurar os dados.</div>
-        <div class="row-inline">
-          <button class="btn btn-ghost btn-small" onclick="exportBackupFile()">⬇️ Exportar backup (.json)</button>
-          <button class="btn btn-ghost btn-small" onclick="document.getElementById('importFileInput').click()">⬆️ Importar backup (.json)</button>
-          <input type="file" id="importFileInput" accept="application/json" style="display:none" onchange="importBackupFile(event)" />
-        </div>
+      <div class="status-row">
+        <span>Última sincronização: <strong id="lastSyncTime">nunca</strong></span>
       </div>
     </div>
-    <div class="modal-footer">
-      <button class="btn btn-primary" onclick="closeModal('modalSettings')">Fechar</button>
+
+    <div class="row">
+      <button style="background:#f1f5f9;color:var(--text)" id="btnExportBackup">⬇️ Exportar Backup (.json)</button>
+      <button style="background:#f1f5f9;color:var(--text)" id="btnImportBackup">⬆️ Importar Backup</button>
+      <input type="file" id="importBackupInput" accept=".json" style="display:none">
     </div>
+
+    <button style="background:var(--text);color:#fff;width:100%;margin-top:10px" id="btnCloseSettings">Fechar</button>
   </div>
 </div>
 
 <script>
-/* ══════════════════ CONFIG GITHUB (INTERNA — NÃO EXIBIR NO FRONTEND) ══════════════════ */
-const GITHUB_CONFIG = {
-  token:  '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',
-  owner:  'constantewagner-dot',
-  repo:   'Planejamento-Athena',
-  branch: 'main'
-};
-/* ══════════════════ CONSTANTES ══════════════════ */
-const DB_NAME='athenaDB', DB_VERSION=12;
-const S_PLANS='plans', S_ATTS='attachments', S_TEACHERS='teachers', S_CLASSES='classes',
-      S_SUBJECTS='subjects', S_SYNC='_syncMeta';
-const GH_STORES=[S_TEACHERS,S_CLASSES,S_SUBJECTS,S_PLANS,S_ATTS];
-const SYNC_POLL_INTERVAL=120000;
+/* ============================================================
+   PLANEJAMENTO ATHENA — App completo
+   IndexedDB local + Sincronização manual com GitHub (config editável)
+   ============================================================ */
 
-let _db=null,_syncLoopId=null;
-let _cache={teachers:[],classes:[],subjects:[],plans:[],attachments:[]};
-let _selectedIds=new Set(), _pendingAttachments=[], _existingAttachments=[], _removedAttachmentIds=new Set();
+/* ---------- TOAST ---------- */
+function toast(msg, type='info', duration=3500){
+  const c = document.getElementById('toastContainer');
+  const el = document.createElement('div');
+  el.className = `toast ${type==='ok'?'ok':type==='err'?'err':type==='warn'?'warn':'info'}`;
+  el.textContent = msg;
+  c.appendChild(el);
+  setTimeout(()=>{ el.style.opacity='0'; el.style.transition='opacity .3s'; setTimeout(()=>el.remove(),300); }, duration);
+}
 
-/* ══════════════════ HELPERS ══════════════════ */
-function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7);}
-function now(){return new Date().toISOString();}
-function fmtDate(iso){if(!iso)return '';const d=new Date(iso+'T00:00:00');return d.toLocaleDateString('pt-BR');}
-function fmtDateTime(iso){if(!iso)return '—';return new Date(iso).toLocaleString('pt-BR');}
-function escapeHtml(s){return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+/* ---------- INDEXEDDB ---------- */
+const DB_NAME='athena_db', DB_VERSION=1;
+const S_PLANS='plans', S_ATTS='attachments', S_TEACHERS='teachers', S_CLASSES='classes', S_SUBJECTS='subjects', S_SYNC='sync_meta';
+let _db=null;
 
-/* ══════════════════ INDEXEDDB ══════════════════ */
 function openDB(){
-  if(_db)return Promise.resolve(_db);
+  if(_db) return Promise.resolve(_db);
   return new Promise((res,rej)=>{
-    const r=indexedDB.open(DB_NAME,DB_VERSION);
-    r.onupgradeneeded=()=>{
-      const d=r.result;
+    const r = indexedDB.open(DB_NAME, DB_VERSION);
+    r.onupgradeneeded = ()=>{
+      const d = r.result;
       [S_PLANS,S_ATTS,S_TEACHERS,S_CLASSES,S_SUBJECTS].forEach(n=>{
         if(!d.objectStoreNames.contains(n)) d.createObjectStore(n,{keyPath:'id'});
       });
       if(!d.objectStoreNames.contains(S_SYNC)) d.createObjectStore(S_SYNC,{keyPath:'key'});
-      if(d.objectStoreNames.contains('users')) d.deleteObjectStore('users');
-      if(d.objectStoreNames.contains('settings')) d.deleteObjectStore('settings');
     };
-    r.onsuccess=()=>{_db=r.result;res(_db);};
-    r.onerror=()=>rej(r.error);
-    r.onblocked=()=>console.warn('Abertura do IndexedDB bloqueada — feche outras abas do app.');
+    r.onsuccess = ()=>{
+      _db = r.result;
+      _db.onversionchange = ()=>{
+        _db.close(); _db=null;
+        toast('⚠️ O app foi atualizado em outra aba. Recarregue a página.','warn',6000);
+      };
+      res(_db);
+    };
+    r.onerror = ()=>rej(r.error);
+    r.onblocked = ()=>{
+      console.warn('IndexedDB bloqueado — feche outras abas do app.');
+      toast('⚠️ Feche outras abas deste app e recarregue a página.','warn',6000);
+    };
   });
 }
-function dbTx(store,mode,fn){return openDB().then(db=>new Promise((res,rej)=>{const tx=db.transaction(store,mode);const req=fn(tx.objectStore(store));req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);}));}
-function dbGetAll(store){return openDB().then(db=>new Promise((res,rej)=>{const r=db.transaction(store,'readonly').objectStore(store).getAll();r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error);}));}
-function dbPut(store,obj){return dbTx(store,'readwrite',s=>s.put(obj));}
-function dbDelete(store,key){return dbTx(store,'readwrite',s=>s.delete(key));}
-function dbGet(store,key){return dbTx(store,'readonly',s=>s.get(key));}
-function dbClear(store){return openDB().then(db=>new Promise((res,rej)=>{const r=db.transaction(store,'readwrite').objectStore(store).clear();r.onsuccess=()=>res();r.onerror=()=>rej(r.error);}));}
 
-/* ══════════════════ GITHUB SYNC ══════════════════ */
-function ghAuthHeaders(){return {Authorization:`Bearer ${GITHUB_CONFIG.token}`,Accept:'application/vnd.github.v3+json'};}
-function ghPath(store){return `data/${store}.json`;}
-function toB64(str){return btoa(unescape(encodeURIComponent(str)));}
-function fromB64(b64){return decodeURIComponent(escape(atob(b64)));}
+function idbAll(storeName){
+  return openDB().then(db=>new Promise((res,rej)=>{
+    const tx = db.transaction(storeName,'readonly');
+    const req = tx.objectStore(storeName).getAll();
+    req.onsuccess = ()=>res(req.result||[]);
+    req.onerror = ()=>rej(req.error);
+  }));
+}
+function idbPut(storeName, obj){
+  return openDB().then(db=>new Promise((res,rej)=>{
+    const tx = db.transaction(storeName,'readwrite');
+    tx.objectStore(storeName).put(obj);
+    tx.oncomplete = ()=>res(obj);
+    tx.onerror = ()=>rej(tx.error);
+  }));
+}
+function idbDelete(storeName, id){
+  return openDB().then(db=>new Promise((res,rej)=>{
+    const tx = db.transaction(storeName,'readwrite');
+    tx.objectStore(storeName).delete(id);
+    tx.oncomplete = ()=>res();
+    tx.onerror = ()=>rej(tx.error);
+  }));
+}
+function idbClearPutAll(storeName, arr){
+  return openDB().then(db=>new Promise((res,rej)=>{
+    const tx = db.transaction(storeName,'readwrite');
+    const store = tx.objectStore(storeName);
+    store.clear();
+    (arr||[]).forEach(it=>store.put(it));
+    tx.oncomplete = ()=>res();
+    tx.onerror = ()=>rej(tx.error);
+  }));
+}
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
 
-async function ghApiGet(path){
-  const url=`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent(path)}?ref=${GITHUB_CONFIG.branch}`;
-  const resp=await fetch(url,{headers:ghAuthHeaders(),cache:'no-store'});
-  if(resp.status===404)return null;
-  if(resp.status===401)throw new Error('Token inválido ou expirado (401)');
-  if(resp.status===403)throw new Error('Sem permissão de acesso ao repositório (403)');
-  if(!resp.ok)throw new Error(`Erro ao ler ${path}: HTTP ${resp.status}`);
-  return resp.json();
-}
-async function ghApiPut(path,content,sha,message){
-  const url=`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}/contents/${encodeURIComponent(path)}`;
-  const body={message:message||`Sync ${path}`,content:toB64(content),branch:GITHUB_CONFIG.branch};
-  if(sha)body.sha=sha;
-  const resp=await fetch(url,{method:'PUT',headers:{...ghAuthHeaders(),'Content-Type':'application/json'},body:JSON.stringify(body)});
-  if(!resp.ok){const e=await resp.json().catch(()=>({}));throw new Error(`PUT ${path}: ${resp.status} ${e.message||''}`);}
-  return resp.json();
-}
-async function ghPullStore(storeName){
-  const file=await ghApiGet(ghPath(storeName));
-  if(!file||!file.content)return false;
-  const items=JSON.parse(fromB64(file.content));
-  await dbClear(storeName);
-  for(const item of items)await dbPut(storeName,item);
-  await dbPut(S_SYNC,{key:`sha_${storeName}`,sha:file.sha,updatedAt:now()});
-  return true;
-}
-function mergeArrays(local,remote){
-  const map=new Map();
-  for(const item of remote)map.set(item.id,item);
-  for(const item of local){
-    const ex=map.get(item.id);
-    if(!ex || (item.updatedAt && (!ex.updatedAt || item.updatedAt>=ex.updatedAt))) map.set(item.id,item);
-  }
-  return Array.from(map.values());
-}
-async function ghPushStore(storeName,retries=3){
-  let items=await dbGetAll(storeName);
-  const meta=await dbGet(S_SYNC,`sha_${storeName}`);
-  let sha=meta?meta.sha:null;
-  for(let attempt=1;attempt<=retries;attempt++){
-    try{
-      const payload=JSON.stringify(items,null,2);
-      const result=await ghApiPut(ghPath(storeName),payload,sha,`Sync ${storeName} — ${new Date().toLocaleString('pt-BR')}`);
-      await dbPut(S_SYNC,{key:`sha_${storeName}`,sha:result.content.sha,updatedAt:now()});
-      return true;
-    }catch(e){
-      if(attempt===retries)throw e;
-      if(e.message.includes('409')){
-        const file=await ghApiGet(ghPath(storeName));
-        if(file&&file.content){const remote=JSON.parse(fromB64(file.content));sha=file.sha;items=mergeArrays(items,remote);}
-        await new Promise(r=>setTimeout(r,400*attempt));
-      } else throw e;
-    }
-  }
-}
-async function ghPullAll(showToastMsg=true){
-  setSyncUI('syncing','Sincronizando...');
+/* ---------- GITHUB CONFIG ---------- */
+const GH_STORAGE_KEY='athena_github_config';
+let GITHUB_CONFIG={ owner:'', repo:'', branch:'main', token:'' };
+
+function ghLoadConfig(){
   try{
-    for(const s of GH_STORES) await ghPullStore(s);
-    await dbPut(S_SYNC,{key:'last_sync',value:now()});
-    setSyncUI('synced','Sincronizado');
-    if(showToastMsg)toast('☁️ Dados sincronizados!','ok');
+    const saved = localStorage.getItem(GH_STORAGE_KEY);
+    if(saved) return JSON.parse(saved);
+  }catch(e){}
+  return { owner:'', repo:'', branch:'main', token:'' };
+}
+function ghSaveConfig(cfg){ localStorage.setItem(GH_STORAGE_KEY, JSON.stringify(cfg)); }
+function ghApplyConfig(cfg){ GITHUB_CONFIG = {...GITHUB_CONFIG, ...cfg}; }
+
+function ghFillForm(){
+  const cfg = ghLoadConfig();
+  document.getElementById('ghOwner').value = cfg.owner||'';
+  document.getElementById('ghRepo').value = cfg.repo||'';
+  document.getElementById('ghBranch').value = cfg.branch||'main';
+  document.getElementById('ghToken').value = cfg.token||'';
+}
+function ghShowResult(msg, ok){
+  const el = document.getElementById('ghTestResult');
+  el.textContent = msg;
+  el.style.color = ok ? '#16a34a' : '#dc2626';
+}
+
+async function ghTestConnection(owner, repo, branch, token){
+  ghShowResult('⏳ Testando conexão...', true);
+  if(!owner||!repo||!token){
+    ghShowResult('❌ Preencha Owner, Repositório e Token antes de testar.', false);
+    return false;
+  }
+  try{
+    const userResp = await fetch('https://api.github.com/user', { headers:{ Authorization:`Bearer ${token}` } });
+    if(userResp.status===401){ ghShowResult('❌ Token inválido ou expirado (401).', false); return false; }
+    if(!userResp.ok){ ghShowResult(`❌ Erro ao validar token: ${userResp.status}`, false); return false; }
+
+    const repoResp = await fetch(`https://api.github.com/repos/${owner}/${repo}`, { headers:{ Authorization:`Bearer ${token}` } });
+    if(repoResp.status===401){ ghShowResult('❌ Sem permissão para acessar o repositório (401). Verifique o scope do token.', false); return false; }
+    if(repoResp.status===404){ ghShowResult('❌ Repositório não encontrado (404). Verifique owner/nome.', false); return false; }
+    if(!repoResp.ok){ ghShowResult(`❌ Erro ao acessar repositório: ${repoResp.status}`, false); return false; }
+    const repoData = await repoResp.json();
+
+    const branchResp = await fetch(`https://api.github.com/repos/${owner}/${repo}/branches/${branch}`, { headers:{ Authorization:`Bearer ${token}` } });
+    if(!branchResp.ok){ ghShowResult(`⚠️ Token e repo OK, mas branch "${branch}" não encontrada.`, false); return false; }
+
+    const canWrite = repoData.permissions && repoData.permissions.push;
+    if(!canWrite){ ghShowResult('⚠️ Conexão OK, mas o token não tem permissão de ESCRITA.', false); return false; }
+
+    ghShowResult(`✅ Conexão bem-sucedida! Repositório "${repoData.full_name}" acessível com permissão de escrita.`, true);
     return true;
-  }catch(e){setSyncUI('error','Erro sync');if(showToastMsg)toast('❌ '+e.message,'err',5000);return false;}
-}
-async function ghPushAll(showToastMsg=true){
-  setSyncUI('syncing','Enviando...');
-  try{
-    for(const s of GH_STORES) await ghPushStore(s);
-    await dbPut(S_SYNC,{key:'last_push',value:now()});
-    setSyncUI('synced','Sincronizado');
-    if(showToastMsg)toast('☁️ Backup criado com sucesso!','ok');
-    updateBackupStatus();
-    return true;
-  }catch(e){setSyncUI('error','Erro');if(showToastMsg)toast('❌ '+e.message,'err',5000);return false;}
-}
-async function syncNow(){const ok=await ghPullAll(true);if(ok){await loadAllCaches();refreshAllUI();}}
-async function forcePushAll(){await ghPushAll(true);}
-
-/** Backup silencioso automático — chamado após qualquer alteração de dados */
-let _autoBackupTimer=null;
-function autoBackup(){
-  if(_autoBackupTimer)clearTimeout(_autoBackupTimer);
-  setSyncUI('pending','Salvando backup...');
-  _autoBackupTimer=setTimeout(async()=>{
-    await ghPushAll(false);
-  },1200);
-}
-
-function startSyncLoop(){
-  if(_syncLoopId)clearInterval(_syncLoopId);
-  _syncLoopId=setInterval(async()=>{
-    try{
-      const dir=await ghApiGet('data');
-      if(!dir||!Array.isArray(dir))return;
-      const remoteShas={};for(const f of dir)remoteShas[f.name.replace('.json','')]=f.sha;
-      let changed=false;
-      for(const s of GH_STORES){const meta=await dbGet(S_SYNC,`sha_${s}`);if(!meta||meta.sha!==remoteShas[s]){changed=true;break;}}
-      if(changed){await ghPullAll(false);await loadAllCaches();refreshAllUI();}
-    }catch{}
-  },SYNC_POLL_INTERVAL);
-}
-function setSyncUI(state,text){
-  const el=document.getElementById('syncIndicator');if(!el)return;
-  el.className='sync-indicator '+state;
-  const icons={synced:'☁️',pending:'⏳',syncing:'🔄',error:'⚠️',offline:'☁️'};
-  el.innerHTML=`${icons[state]||'☁️'} ${text}`;
-}
-async function updateBackupStatus(){
-  const badge=document.getElementById('ghStatusBadge'),lastEl=document.getElementById('ghLastBackup');
-  if(!badge)return;
-  try{
-    const resp=await fetch(`https://api.github.com/repos/${GITHUB_CONFIG.owner}/${GITHUB_CONFIG.repo}`,{headers:ghAuthHeaders()});
-    if(!resp.ok){
-      badge.className='backup-status err';badge.innerHTML='<span class="dot red"></span> Erro de conexão';
-      lastEl.textContent='❌ Não foi possível conectar ao repositório de backup.';
-      return;
-    }
-    const lastSyncM=await dbGet(S_SYNC,'last_sync'), lastPushM=await dbGet(S_SYNC,'last_push');
-    const lastSync=lastSyncM?lastSyncM.value:null, lastPush=lastPushM?lastPushM.value:null;
-    badge.className='backup-status ok';badge.innerHTML='<span class="dot green"></span> Conectado';
-    lastEl.innerHTML=`✅ Última sincronização: <strong>${fmtDateTime(lastSync)}</strong><br>✅ Último backup: <strong>${fmtDateTime(lastPush)}</strong>`;
-  }catch(e){
-    badge.className='backup-status err';badge.innerHTML='<span class="dot red"></span> Erro de conexão';
-    lastEl.textContent='❌ '+e.message;
+  }catch(err){
+    ghShowResult(`❌ Erro de rede: ${err.message}`, false);
+    return false;
   }
 }
 
-/* ══════════════════ BACKUP LOCAL (ARQUIVO) ══════════════════ */
-async function exportBackupFile(){
-  try{
-    const bundle={
-      _meta:{app:'Planejamento Athena',exportedAt:now(),version:DB_VERSION},
-      teachers:await dbGetAll(S_TEACHERS),
-      classes:await dbGetAll(S_CLASSES),
-      subjects:await dbGetAll(S_SUBJECTS),
-      plans:await dbGetAll(S_PLANS),
-      attachments:await dbGetAll(S_ATTS)
-    };
-    const blob=new Blob([JSON.stringify(bundle,null,2)],{type:'application/json'});
-    const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');
-    const stamp=new Date().toISOString().slice(0,19).replace(/[:T]/g,'-');
-    a.href=url;a.download=`athena-backup-${stamp}.json`;
-    document.body.appendChild(a);a.click();document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    toast('⬇️ Backup exportado com sucesso!','ok');
-  }catch(e){toast('❌ Erro ao exportar: '+e.message,'err',5000);}
+/* ---------- GITHUB API helpers (sync) ---------- */
+async function ghGetFile(path){
+  const {owner,repo,branch,token} = GITHUB_CONFIG;
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${branch}`;
+  const resp = await fetch(url, { headers:{ Authorization:`Bearer ${token}` } });
+  if(resp.status===404) return { content:null, sha:null };
+  if(!resp.ok) throw new Error(`GET ${path} falhou: ${resp.status}`);
+  const data = await resp.json();
+  const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+  return { content: JSON.parse(decoded), sha: data.sha };
 }
-async function importBackupFile(event){
-  const file=event.target.files[0];
-  if(!file)return;
-  try{
-    const text=await file.text();
-    const bundle=JSON.parse(text);
-    const required=['teachers','classes','subjects','plans'];
-    for(const k of required){
-      if(!Array.isArray(bundle[k])) throw new Error(`Arquivo inválido: campo "${k}" ausente ou incorreto.`);
-    }
-    confirmDialog(
-      'Importar backup',
-      'Isso substituirá TODOS os dados atuais (locais e no GitHub) pelos dados do arquivo importado. Deseja continuar?',
-      async()=>{
-        try{
-          await dbClear(S_TEACHERS);for(const i of bundle.teachers)await dbPut(S_TEACHERS,i);
-          await dbClear(S_CLASSES);for(const i of bundle.classes)await dbPut(S_CLASSES,i);
-          await dbClear(S_SUBJECTS);for(const i of bundle.subjects)await dbPut(S_SUBJECTS,i);
-          await dbClear(S_PLANS);for(const i of bundle.plans)await dbPut(S_PLANS,i);
-          if(Array.isArray(bundle.attachments)){await dbClear(S_ATTS);for(const i of bundle.attachments)await dbPut(S_ATTS,i);}
-          await loadAllCaches();
-          refreshAllUI();
-          toast('✅ Backup importado! Enviando para o GitHub...','ok',4000);
-          await ghPushAll(false);
-          toast('☁️ Importação concluída e sincronizada!','ok');
-        }catch(e){toast('❌ Erro ao restaurar: '+e.message,'err',5000);}
-      }
-    );
-  }catch(e){
-    toast('❌ Arquivo inválido: '+e.message,'err',5000);
-  }finally{
-    event.target.value='';
-  }
-}
-
-/* ══════════════════ MODAIS ══════════════════ */
-function openModal(id){document.getElementById(id).classList.add('open');}
-function closeModal(id){document.getElementById(id).classList.remove('open');}
-function confirmDialog(title,msg,onConfirm){
-  document.getElementById('modalConfirmTitle').textContent=title;
-  document.getElementById('modalConfirmMsg').textContent=msg;
-  document.getElementById('modalConfirmBtn').onclick=()=>{closeModal('modalConfirm');onConfirm();};
-  openModal('modalConfirm');
-}
-function openSettingsModal(){
-  updateBackupStatus();
-  openModal('modalSettings');
-}
-
-/* ══════════════════ UI HELPERS ══════════════════ */
-let _toastTimer=null;
-function toast(m,t='ok',d=3000){const el=document.getElementById('toast');el.textContent=m;el.className=`toast show ${t}`;clearTimeout(_toastTimer);_toastTimer=setTimeout(()=>el.className='toast',d);}
-
-function setTab(tab){
-  ['novo','consultas','admin'].forEach(t=>{
-    document.getElementById(`${t}-view`).style.display=t===tab?'block':'none';
-    document.getElementById(`tab-btn-${t}`).classList.toggle('active',t===tab);
+async function ghPutFile(path, jsonData, sha){
+  const {owner,repo,branch,token} = GITHUB_CONFIG;
+  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(jsonData, null, 2))));
+  const body = { message:`Atualização automática — ${new Date().toISOString()}`, content, branch };
+  if(sha) body.sha = sha;
+  const resp = await fetch(url, {
+    method:'PUT',
+    headers:{ Authorization:`Bearer ${token}`, 'Content-Type':'application/json' },
+    body: JSON.stringify(body)
   });
-  if(tab==='consultas') renderLista();
-  if(tab==='admin'){renderTeachers();renderClasses();renderSubjects();}
+  if(!resp.ok){
+    const errData = await resp.json().catch(()=>({}));
+    throw new Error(`PUT ${path} falhou: ${resp.status} ${errData.message||''}`);
+  }
+  return resp.json();
 }
 
-/* ══════════════════ CACHE / DADOS ══════════════════ */
-async function loadAllCaches(){
-  _cache.teachers=await dbGetAll(S_TEACHERS);
-  _cache.classes=await dbGetAll(S_CLASSES);
-  _cache.subjects=await dbGetAll(S_SUBJECTS);
-  _cache.plans=await dbGetAll(S_PLANS);
-  _cache.attachments=await dbGetAll(S_ATTS);
+const SYNC_FILES = {
+  [S_TEACHERS]: 'data/teachers.json',
+  [S_CLASSES]:  'data/classes.json',
+  [S_SUBJECTS]: 'data/subjects.json',
+  [S_PLANS]:    'data/plans.json',
+  [S_ATTS]:     'data/attachments.json',
+};
+
+async function syncPull(){
+  for(const store of Object.keys(SYNC_FILES)){
+    const path = SYNC_FILES[store];
+    const { content } = await ghGetFile(path);
+    if(content) await idbClearPutAll(store, content);
+  }
 }
-function refreshAllUI(){
-  populateSelects();
-  const consultasVisible=document.getElementById('consultas-view').style.display!=='none';
-  if(consultasVisible) renderLista();
-  const adminVisible=document.getElementById('admin-view').style.display!=='none';
-  if(adminVisible){renderTeachers();renderClasses();renderSubjects();}
+async function syncPush(){
+  for(const store of Object.keys(SYNC_FILES)){
+    const path = SYNC_FILES[store];
+    const localData = await idbAll(store);
+    const { sha } = await ghGetFile(path);
+    await ghPutFile(path, localData, sha);
+  }
 }
-function populateSelects(){
-  const activeTeachers=_cache.teachers.filter(t=>t.active);
-  const activeClasses=_cache.classes.filter(c=>c.active);
-  const activeSubjects=_cache.subjects.filter(s=>s.active);
-  const fill=(id,items,placeholder,keepValue)=>{
-    const el=document.getElementById(id);
-    const current=keepValue!==undefined?keepValue:el.value;
-    el.innerHTML = (placeholder?`<option value="">${placeholder}</option>`:'') + items.map(i=>`<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('');
-    if(current) el.value=current;
+function setSyncBadge(status, text){
+  const el = document.getElementById('syncStatusBadge');
+  el.className = `badge ${status==='ok'?'badge-ok':status==='err'?'badge-err':'badge-idle'}`;
+  el.textContent = text;
+}
+async function syncNow(){
+  if(!GITHUB_CONFIG.owner || !GITHUB_CONFIG.repo || !GITHUB_CONFIG.token){
+    toast('⚠️ Configure a conexão com o GitHub antes de sincronizar.','warn');
+    setSyncBadge('err','⚠️ Não configurado');
+    return;
+  }
+  setSyncBadge('idle','⏳ Sincronizando...');
+  try{
+    await syncPull();
+    await syncPush();
+    localStorage.setItem('athena_last_sync', new Date().toISOString());
+    document.getElementById('lastSyncTime').textContent = new Date().toLocaleString('pt-BR');
+    setSyncBadge('ok','✅ Sincronizado');
+    toast('✅ Sincronização concluída com sucesso!','ok');
+    await renderAll();
+  }catch(err){
+    console.error(err);
+    setSyncBadge('err','❌ Erro na sync');
+    toast(`❌ Erro ao sincronizar: ${err.message}`,'err',6000);
+  }
+}
+
+/* ---------- NAV / TABS ---------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-'+btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------- SETTINGS MODAL ---------- */
+document.getElementById('btnOpenSettings').addEventListener('click', ()=>{
+  ghFillForm();
+  const lastSync = localStorage.getItem('athena_last_sync');
+  document.getElementById('lastSyncTime').textContent = lastSync ? new Date(lastSync).toLocaleString('pt-BR') : 'nunca';
+  document.getElementById('settingsModal').classList.add('open');
+});
+document.getElementById('btnCloseSettings').addEventListener('click', ()=>{
+  document.getElementById('settingsModal').classList.remove('open');
+});
+
+document.getElementById('btnGhSave').addEventListener('click', ()=>{
+  const cfg = {
+    owner: document.getElementById('ghOwner').value.trim(),
+    repo: document.getElementById('ghRepo').value.trim(),
+    branch: document.getElementById('ghBranch').value.trim() || 'main',
+    token: document.getElementById('ghToken').value.trim()
   };
-  fill('professorSel',activeTeachers,null);
-  fill('turmaSel',activeClasses,null);
-  fill('disciplinaSel',activeSubjects,null);
-  fill('fProfessorSel',activeTeachers,'Todos');
-  fill('fTurmaSel',activeClasses,'Todas');
-  fill('fDisciplinaSel',activeSubjects,'Todas');
-  const anos=new Set(_cache.plans.map(p=>(p.dataLancamento||'').slice(0,4)).filter(Boolean));
-  const fAno=document.getElementById('fAnoSel');
-  const curAno=fAno.value;
-  fAno.innerHTML='<option value="">Todos</option>'+Array.from(anos).sort().reverse().map(a=>`<option value="${a}">${a}</option>`).join('');
-  if(curAno)fAno.value=curAno;
-}
+  ghSaveConfig(cfg);
+  ghApplyConfig(cfg);
+  ghShowResult('💾 Configuração salva com sucesso.', true);
+  toast('💾 Configuração do GitHub salva.','ok');
+});
+document.getElementById('btnGhTest').addEventListener('click', ()=>{
+  const owner = document.getElementById('ghOwner').value.trim();
+  const repo = document.getElementById('ghRepo').value.trim();
+  const branch = document.getElementById('ghBranch').value.trim() || 'main';
+  const token = document.getElementById('ghToken').value.trim();
+  ghTestConnection(owner, repo, branch, token);
+});
+document.getElementById('btnGhClear').addEventListener('click', ()=>{
+  localStorage.removeItem(GH_STORAGE_KEY);
+  ghApplyConfig({owner:'',repo:'',branch:'main',token:''});
+  document.getElementById('ghOwner').value='';
+  document.getElementById('ghRepo').value='';
+  document.getElementById('ghBranch').value='main';
+  document.getElementById('ghToken').value='';
+  ghShowResult('🗑️ Configuração removida.', true);
+  toast('🗑️ Configuração do GitHub removida.','warn');
+});
 
-/* ══════════════════ PLANEJAMENTOS (CRUD) ══════════════════ */
-function limparForm(showToast){
-  document.getElementById('editingId').value='';
-  document.getElementById('professorSel').value='';
-  document.getElementById('turmaSel').value='';
-  document.getElementById('disciplinaSel').value='';
-  ['dataLancamento','periodoInicio','periodoFim','conteudoTxt','objetivos','descricao','recursos','avaliacao','observacoes'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('anexos').value='';
-  document.getElementById('anexosResumo').innerHTML='';
-  _pendingAttachments=[];
-  _existingAttachments=[];
-  _removedAttachmentIds=new Set();
-  document.getElementById('formTitle').textContent='Novo Planejamento';
-  if(showToast) toast('Formulário limpo.','ok',1500);
-}
+document.getElementById('btnSyncNow').addEventListener('click', syncNow);
 
-function renderAnexosResumo(){
-  const resumo=document.getElementById('anexosResumo');
-  resumo.innerHTML='';
-  _existingAttachments.filter(a=>!_removedAttachmentIds.has(a.id)).forEach(att=>{
-    const span=document.createElement('span');
-    span.className='kpi';
-    span.innerHTML=`📎 ${escapeHtml(att.fileName)} <span class="rm" onclick="removeExistingAttachment('${att.id}')" title="Remover">×</span>`;
-    resumo.appendChild(span);
-  });
-  _pendingAttachments.forEach(att=>{
-    const span=document.createElement('span');
-    span.className='kpi';
-    span.innerHTML=`📎 ${escapeHtml(att.fileName)} <span class="rm" onclick="removePendingAttachment('${att.id}')" title="Remover">×</span>`;
-    resumo.appendChild(span);
-  });
-}
-function removeExistingAttachment(id){ _removedAttachmentIds.add(id); renderAnexosResumo(); }
-function removePendingAttachment(id){ _pendingAttachments=_pendingAttachments.filter(a=>a.id!==id); renderAnexosResumo(); }
-
-document.addEventListener('DOMContentLoaded',()=>{
-  const anexosInput=document.getElementById('anexos');
-  if(anexosInput){
-    anexosInput.addEventListener('change',async(e)=>{
-      const files=Array.from(e.target.files||[]);
-      for(const f of files){
-        if(f.size>5*1024*1024){toast(`⚠️ "${f.name}" excede 5MB e será ignorado.`,'warn',4000);continue;}
-        const b64=await fileToBase64(f);
-        _pendingAttachments.push({id:uid(),fileName:f.name,fileSize:f.size,mimeType:f.type,data:b64,createdAt:now()});
-      }
-      renderAnexosResumo();
-      e.target.value='';
-    });
+/* ---------- BACKUP EXPORT / IMPORT ---------- */
+document.getElementById('btnExportBackup').addEventListener('click', async ()=>{
+  const backup = {};
+  for(const store of [S_TEACHERS,S_CLASSES,S_SUBJECTS,S_PLANS,S_ATTS]){
+    backup[store] = await idbAll(store);
   }
+  const blob = new Blob([JSON.stringify(backup,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `athena_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('⬇️ Backup exportado com sucesso.','ok');
+});
+document.getElementById('btnImportBackup').addEventListener('click', ()=>{
+  document.getElementById('importBackupInput').click();
+});
+document.getElementById('importBackupInput').addEventListener('change', async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  try{
+    const text = await file.text();
+    const data = JSON.parse(text);
+    for(const store of [S_TEACHERS,S_CLASSES,S_SUBJECTS,S_PLANS,S_ATTS]){
+      if(data[store]) await idbClearPutAll(store, data[store]);
+    }
+    toast('⬆️ Backup importado com sucesso.','ok');
+    await renderAll();
+  }catch(err){
+    toast(`❌ Erro ao importar backup: ${err.message}`,'err');
+  }
+  e.target.value = '';
+});
+
+/* ---------- TEACHERS ---------- */
+document.getElementById('btnAddTeacher').addEventListener('click', async ()=>{
+  const name = document.getElementById('teacherName').value.trim();
+  const email = document.getElementById('teacherEmail').value.trim();
+  if(!name) return toast('⚠️ Informe o nome do professor.','warn');
+  await idbPut(S_TEACHERS, { id:uid(), name, email });
+  document.getElementById('teacherName').value='';
+  document.getElementById('teacherEmail').value='';
+  toast('✅ Professor adicionado.','ok');
+  await renderTeachers(); await fillSelects();
+});
+async function renderTeachers(){
+  const list = await idbAll(S_TEACHERS);
+  const tbody = document.getElementById('teachersTbody');
+  tbody.innerHTML='';
+  document.getElementById('teachersEmpty').style.display = list.length? 'none':'block';
+  list.forEach(t=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escapeHtml(t.name)}</td><td>${escapeHtml(t.email||'-')}</td>
+      <td class="actions-cell"><button class="btn-sm btn-danger" onclick="deleteItem('${S_TEACHERS}','${t.id}')">🗑️</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ---------- CLASSES ---------- */
+document.getElementById('btnAddClass').addEventListener('click', async ()=>{
+  const name = document.getElementById('className').value.trim();
+  const shift = document.getElementById('classShift').value.trim();
+  if(!name) return toast('⚠️ Informe o nome da turma.','warn');
+  await idbPut(S_CLASSES, { id:uid(), name, shift });
+  document.getElementById('className').value='';
+  document.getElementById('classShift').value='';
+  toast('✅ Turma adicionada.','ok');
+  await renderClasses(); await fillSelects();
+});
+async function renderClasses(){
+  const list = await idbAll(S_CLASSES);
+  const tbody = document.getElementById('classesTbody');
+  tbody.innerHTML='';
+  document.getElementById('classesEmpty').style.display = list.length? 'none':'block';
+  list.forEach(c=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escapeHtml(c.name)}</td><td>${escapeHtml(c.shift||'-')}</td>
+      <td class="actions-cell"><button class="btn-sm btn-danger" onclick="deleteItem('${S_CLASSES}','${c.id}')">🗑️</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ---------- SUBJECTS ---------- */
+document.getElementById('btnAddSubject').addEventListener('click', async ()=>{
+  const name = document.getElementById('subjectName').value.trim();
+  if(!name) return toast('⚠️ Informe o nome da disciplina.','warn');
+  await idbPut(S_SUBJECTS, { id:uid(), name });
+  document.getElementById('subjectName').value='';
+  toast('✅ Disciplina adicionada.','ok');
+  await renderSubjects(); await fillSelects();
+});
+async function renderSubjects(){
+  const list = await idbAll(S_SUBJECTS);
+  const tbody = document.getElementById('subjectsTbody');
+  tbody.innerHTML='';
+  document.getElementById('subjectsEmpty').style.display = list.length? 'none':'block';
+  list.forEach(s=>{
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${escapeHtml(s.name)}</td>
+      <td class="actions-cell"><button class="btn-sm btn-danger" onclick="deleteItem('${S_SUBJECTS}','${s.id}')">🗑️</button></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+/* ---------- SELECTS (Plans form) ---------- */
+async function fillSelects(){
+  const teachers = await idbAll(S_TEACHERS);
+  const classes = await idbAll(S_CLASSES);
+  const subjects = await idbAll(S_SUBJECTS);
+  fillSelect('planTeacher', teachers, 'Selecione o professor');
+  fillSelect('planClass', classes, 'Selecione a turma');
+  fillSelect('planSubject', subjects, 'Selecione a disciplina');
+}
+function fillSelect(id, items, placeholder){
+  const sel = document.getElementById(id);
+  const current = sel.value;
+  sel.innerHTML = `<option value="">${placeholder}</option>` + items.map(i=>`<option value="${i.id}">${escapeHtml(i.name)}</option>`).join('');
+  if(current) sel.value = current;
+}
+
+/* ---------- ATTACHMENTS (Base64 em anexo, referenciado no plano) ---------- */
+let pendingAttachments = [];
+document.getElementById('fileDropZone').addEventListener('click', ()=> document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change', async (e)=>{
+  for(const file of e.target.files){
+    if(file.size > 4*1024*1024){ toast(`⚠️ "${file.name}" excede 4MB e não foi adicionado.`,'warn'); continue; }
+    const base64 = await fileToBase64(file);
+    pendingAttachments.push({ id:uid(), name:file.name, type:file.type, size:file.size, data:base64 });
+  }
+  renderAttPreview();
+  e.target.value='';
 });
 function fileToBase64(file){
   return new Promise((res,rej)=>{
-    const reader=new FileReader();
-    reader.onload=()=>res(reader.result.split(',')[1]);
-    reader.onerror=rej;
+    const reader = new FileReader();
+    reader.onload = ()=>res(reader.result);
+    reader.onerror = rej;
     reader.readAsDataURL(file);
   });
 }
-
-async function salvarPlanejamento(){
-  const professorId=document.getElementById('professorSel').value;
-  const turmaId=document.getElementById('turmaSel').value;
-  const disciplinaId=document.getElementById('disciplinaSel').value;
-  const dataLancamento=document.getElementById('dataLancamento').value;
-  if(!professorId||!turmaId||!disciplinaId||!dataLancamento){
-    toast('⚠️ Preencha Professor, Turma, Disciplina e Data de Lançamento.','warn',4000);return;
-  }
-  const editingId=document.getElementById('editingId').value;
-  const nowIso=now();
-  const existing = editingId ? _cache.plans.find(p=>p.id===editingId) : null;
-
-  // anexos: mantém os existentes que não foram removidos + novos
-  const keptIds = _existingAttachments.filter(a=>!_removedAttachmentIds.has(a.id)).map(a=>a.id);
-
-  const plan={
-    id:editingId||uid(),
-    teacherId:professorId, classId:turmaId, subjectId:disciplinaId,
-    dataLancamento,
-    periodoInicio:document.getElementById('periodoInicio').value,
-    periodoFim:document.getElementById('periodoFim').value,
-    conteudo:document.getElementById('conteudoTxt').value.trim(),
-    objetivos:document.getElementById('objetivos').value.trim(),
-    descricao:document.getElementById('descricao').value.trim(),
-    recursos:document.getElementById('recursos').value.trim(),
-    avaliacao:document.getElementById('avaliacao').value.trim(),
-    observacoes:document.getElementById('observacoes').value.trim(),
-    anexosIds: keptIds,
-    createdAt: existing ? (existing.createdAt||nowIso) : nowIso,
-    updatedAt: nowIso
-  };
-
-  // remove anexos marcados para exclusão do banco
-  for(const id of _removedAttachmentIds){ await dbDelete(S_ATTS,id); }
-
-  // grava novos anexos
-  for(const att of _pendingAttachments){
-    att.planId=plan.id;
-    await dbPut(S_ATTS,att);
-    plan.anexosIds.push(att.id);
-  }
-
-  await dbPut(S_PLANS,plan);
-  await loadAllCaches();
-  limparForm(false);
-  toast('💾 Planejamento salvo!','ok');
-  setTab('consultas');
-  autoBackup();
-}
-
-/* ══════════════════ CONSULTAS ══════════════════ */
-function limparFiltros(){
-  ['fProfessorSel','fTurmaSel','fDisciplinaSel','fAnoSel'].forEach(id=>document.getElementById(id).value='');
-  renderLista();
-}
-function getFilteredPlans(){
-  const fp=document.getElementById('fProfessorSel').value;
-  const ft=document.getElementById('fTurmaSel').value;
-  const fd=document.getElementById('fDisciplinaSel').value;
-  const fa=document.getElementById('fAnoSel').value;
-  return _cache.plans.filter(p=>{
-    if(fp&&p.teacherId!==fp)return false;
-    if(ft&&p.classId!==ft)return false;
-    if(fd&&p.subjectId!==fd)return false;
-    if(fa&&!(p.dataLancamento||'').startsWith(fa))return false;
-    return true;
-  }).sort((a,b)=>(b.dataLancamento||'').localeCompare(a.dataLancamento||''));
-}
-function nameOf(store,id){const item=_cache[store].find(i=>i.id===id);return item?item.name:'—';}
-function renderLista(){
-  const list=getFilteredPlans();
-  const body=document.getElementById('listaBody');
-  if(!list.length){
-    body.innerHTML='<tr><td colspan="7" class="empty">Nenhum planejamento encontrado.</td></tr>';
-  } else {
-    body.innerHTML=list.map(p=>`
-      <tr class="${_selectedIds.has(p.id)?'row-selected':''}">
-        <td><input type="checkbox" data-id="${p.id}" ${_selectedIds.has(p.id)?'checked':''} onchange="toggleSelect('${p.id}',this.checked)" /></td>
-        <td>${fmtDate(p.dataLancamento)}</td>
-        <td>${escapeHtml(nameOf('teachers',p.teacherId))}</td>
-        <td>${escapeHtml(nameOf('classes',p.classId))}</td>
-        <td>${escapeHtml(nameOf('subjects',p.subjectId))}</td>
-        <td>${escapeHtml(p.conteudo||'')}</td>
-        <td>${fmtDate(p.periodoInicio)} — ${fmtDate(p.periodoFim)}</td>
-      </tr>`).join('');
-  }
-  document.getElementById('kpiTotal').textContent=`${_cache.plans.length} total`;
-  document.getElementById('kpiFiltrados').textContent=`${list.length} exibido(s)`;
-  updateSelectionToolbar();
-}
-function toggleSelect(id,checked){
-  if(checked)_selectedIds.add(id);else _selectedIds.delete(id);
-  updateSelectionToolbar();
-  renderLista();
-}
-function toggleSelectAll(checked){
-  const list=getFilteredPlans();
-  if(checked) list.forEach(p=>_selectedIds.add(p.id));
-  else _selectedIds.clear();
-  renderLista();
-}
-function updateSelectionToolbar(){
-  const bar=document.getElementById('selectionToolbar');
-  const count=_selectedIds.size;
-  document.getElementById('selCount').textContent=`${count} selecionado(s)`;
-  bar.classList.toggle('visible',count>0);
-}
-
-/**
- * acaoEditar — CORRIGIDO
- * Antes: preenchia os campos e DEPOIS chamava setTab('novo'), que
- * sempre executa limparForm() e apaga tudo que acabou de ser preenchido.
- * Agora: primeiro troca de aba (sem limpar), depois preenche os campos,
- * incluindo os anexos já existentes do planejamento.
- */
-async function acaoEditar(){
-  if(_selectedIds.size!==1){toast('Selecione exatamente 1 planejamento para editar.','warn');return;}
-  const id=Array.from(_selectedIds)[0];
-  const p=_cache.plans.find(x=>x.id===id);
-  if(!p){toast('Planejamento não encontrado.','err');return;}
-
-  // 1) Troca de aba primeiro (exibe o formulário) — SEM limpar os campos ainda
-  document.getElementById('novo-view').style.display='block';
-  document.getElementById('consultas-view').style.display='none';
-  document.getElementById('admin-view').style.display='none';
-  document.getElementById('tab-btn-novo').classList.add('active');
-  document.getElementById('tab-btn-consultas').classList.remove('active');
-  document.getElementById('tab-btn-admin').classList.remove('active');
-
-  // 2) Garante que os selects estejam com as opções atuais
-  populateSelects();
-
-  // 3) Reseta estado de anexos e preenche com os dados do planejamento
-  _pendingAttachments=[];
-  _removedAttachmentIds=new Set();
-  _existingAttachments = (p.anexosIds||[]).map(aid=>_cache.attachments.find(a=>a.id===aid)).filter(Boolean);
-
-  // 4) Preenche todos os campos do formulário
-  document.getElementById('editingId').value=p.id;
-  document.getElementById('professorSel').value=p.teacherId||'';
-  document.getElementById('turmaSel').value=p.classId||'';
-  document.getElementById('disciplinaSel').value=p.subjectId||'';
-  document.getElementById('dataLancamento').value=p.dataLancamento||'';
-  document.getElementById('periodoInicio').value=p.periodoInicio||'';
-  document.getElementById('periodoFim').value=p.periodoFim||'';
-  document.getElementById('conteudoTxt').value=p.conteudo||'';
-  document.getElementById('objetivos').value=p.objetivos||'';
-  document.getElementById('descricao').value=p.descricao||'';
-  document.getElementById('recursos').value=p.recursos||'';
-  document.getElementById('avaliacao').value=p.avaliacao||'';
-  document.getElementById('observacoes').value=p.observacoes||'';
-  document.getElementById('anexos').value='';
-  renderAnexosResumo();
-
-  document.getElementById('formTitle').textContent='Editando Planejamento';
-  toast('✏️ Planejamento carregado para edição.','ok',2000);
-}
-
-async function acaoCopiar(){
-  if(_selectedIds.size===0){toast('Selecione ao menos 1 planejamento.','warn');return;}
-  for(const id of _selectedIds){
-    const p=_cache.plans.find(x=>x.id===id);
-    if(!p)continue;
-    const copy={...p,id:uid(),createdAt:now(),updatedAt:now()};
-    await dbPut(S_PLANS,copy);
-  }
-  await loadAllCaches();
-  _selectedIds.clear();
-  renderLista();
-  toast('📋 Cópia(s) criada(s)!','ok');
-  autoBackup();
-}
-function acaoExcluir(){
-  if(_selectedIds.size===0){toast('Selecione ao menos 1 planejamento.','warn');return;}
-  confirmDialog('Excluir planejamentos',`Excluir ${_selectedIds.size} planejamento(s)? Esta ação não pode ser desfeita.`,async()=>{
-    for(const id of _selectedIds) await dbDelete(S_PLANS,id);
-    await loadAllCaches();
-    _selectedIds.clear();
-    renderLista();
-    toast('🗑️ Excluído(s) com sucesso.','ok');
-    autoBackup();
+function renderAttPreview(){
+  const wrap = document.getElementById('attPreviewList');
+  wrap.innerHTML='';
+  pendingAttachments.forEach(att=>{
+    const div = document.createElement('div');
+    div.className='att-item';
+    div.innerHTML = `<span>📎 ${escapeHtml(att.name)} <span class="small">(${(att.size/1024).toFixed(1)} KB)</span></span>
+      <button class="btn-sm btn-danger" onclick="removePendingAtt('${att.id}')">✕</button>`;
+    wrap.appendChild(div);
   });
 }
-
-/* ══════════════════ CADASTROS AUXILIARES ══════════════════ */
-function renderTeachers(){renderAdminList('teachers',S_TEACHERS,'teachersList');}
-function renderClasses(){renderAdminList('classes',S_CLASSES,'classesList');}
-function renderSubjects(){renderAdminList('subjects',S_SUBJECTS,'subjectsList');}
-function renderAdminList(cacheKey,store,elId){
-  const items=_cache[cacheKey];
-  const el=document.getElementById(elId);
-  el.innerHTML=items.map(i=>`
-    <div class="admin-item ${!i.active?'inactive':''}">
-      <span class="name">${escapeHtml(i.name)}</span>
-      <button class="btn btn-small btn-ghost" onclick="toggleActive('${cacheKey}','${store}','${i.id}')">${i.active?'Desativar':'Ativar'}</button>
-    </div>`).join('') || '<div style="font-size:.8rem;color:var(--muted);font-style:italic">Nenhum item cadastrado.</div>';
-}
-async function toggleActive(cacheKey,store,id){
-  const item=_cache[cacheKey].find(x=>x.id===id);if(!item)return;
-  item.active=!item.active;item.updatedAt=now();
-  await dbPut(store,item);
-  await loadAllCaches();
-  renderTeachers();renderClasses();renderSubjects();populateSelects();
-  autoBackup();
-}
-async function addTeacher(){await addAuxItem('teacherName',S_TEACHERS,'teachers',renderTeachers);}
-async function addClass(){await addAuxItem('className',S_CLASSES,'classes',renderClasses);}
-async function addSubject(){await addAuxItem('subjectName',S_SUBJECTS,'subjects',renderSubjects);}
-async function addAuxItem(inputId,store,cacheKey,renderFn){
-  const input=document.getElementById(inputId);
-  const name=input.value.trim();
-  if(!name){toast('Digite um nome.','warn');return;}
-  if(_cache[cacheKey].some(i=>i.name.toLowerCase()===name.toLowerCase()&&i.active)){toast('Já existe um item ativo com esse nome.','warn');return;}
-  const item={id:uid(),name,active:true,createdAt:now(),updatedAt:now()};
-  await dbPut(store,item);
-  await loadAllCaches();
-  input.value='';
-  renderFn();
-  populateSelects();
-  toast('✅ Adicionado!','ok',1500);
-  autoBackup();
+function removePendingAtt(id){
+  pendingAttachments = pendingAttachments.filter(a=>a.id!==id);
+  renderAttPreview();
 }
 
-/* ══════════════════ INICIALIZAÇÃO ══════════════════ */
-window.addEventListener('load',async()=>{
-  await openDB();
-  await loadAllCaches();
-  populateSelects();
-  setTab('novo');
+/* ---------- PLANS CRUD ---------- */
+let editingPlanId = null;
 
-  setSyncUI('syncing','Conectando...');
-  const ok=await ghPullAll(false);
-  if(ok){await loadAllCaches();refreshAllUI();}
-  startSyncLoop();
+document.getElementById('btnSavePlan').addEventListener('click', async ()=>{
+  const teacherId = document.getElementById('planTeacher').value;
+  const classId = document.getElementById('planClass').value;
+  const subjectId = document.getElementById('planSubject').value;
+  const title = document.getElementById('planTitle').value.trim();
+  const date = document.getElementById('planDate').value;
+  const content = document.getElementById('planContent').value.trim();
+
+  if(!teacherId || !classId || !subjectId || !title || !date){
+    return toast('⚠️ Preencha todos os campos obrigatórios.','warn');
+  }
+
+  const attIds = [];
+  for(const att of pendingAttachments){
+    await idbPut(S_ATTS, att);
+    attIds.push(att.id);
+  }
+
+  const plan = {
+    id: editingPlanId || uid(),
+    teacherId, classId, subjectId, title, date, content,
+    attachmentIds: editingPlanId ? [...(await getPlanAttIds(editingPlanId)), ...attIds] : attIds,
+    updatedAt: new Date().toISOString()
+  };
+  await idbPut(S_PLANS, plan);
+
+  toast(editingPlanId? '✅ Planejamento atualizado.' : '✅ Planejamento salvo.','ok');
+  resetPlanForm();
+  await renderPlans();
+});
+
+async function getPlanAttIds(planId){
+  const plans = await idbAll(S_PLANS);
+  const p = plans.find(x=>x.id===planId);
+  return p ? (p.attachmentIds||[]) : [];
+}
+
+function resetPlanForm(){
+  editingPlanId = null;
+  document.getElementById('planTeacher').value='';
+  document.getElementById('planClass').value='';
+  document.getElementById('planSubject').value='';
+  document.getElementById('planTitle').value='';
+  document.getElementById('planDate').value='';
+  document.getElementById('planContent').value='';
+  pendingAttachments = [];
+  renderAttPreview();
+  document.getElementById('btnCancelEdit').style.display='none';
+  document.getElementById('btnSavePlan').textContent='💾 Salvar Planejamento';
+}
+document.getElementById('btnCancelEdit').addEventListener('click', resetPlanForm);
+
+async function editPlan(id){
+  const plans = await idbAll(S_PLANS);
+  const p = plans.find(x=>x.id===id);
+  if(!p) return;
+  editingPlanId = id;
+  document.getElementById('planTeacher').value = p.teacherId;
+  document.getElementById('planClass').value = p.classId;
+  document.getElementById('planSubject').value = p.subjectId;
+  document.getElementById('planTitle').value = p.title;
+  document.getElementById('planDate').value = p.date;
+  document.getElementById('planContent').value = p.content;
+  pendingAttachments = [];
+  renderAttPreview();
+  document.getElementById('btnCancelEdit').style.display='inline-block';
+  document.getElementById('btnSavePlan').textContent='💾 Atualizar Planejamento';
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+async function deletePlan(id){
+  if(!confirm('Excluir este planejamento?')) return;
+  await idbDelete(S_PLANS, id);
+  toast('🗑️ Planejamento excluído.','warn');
+  await renderPlans();
+}
+
+async function renderPlans(filterText=''){
+  const plans = await idbAll(S_PLANS);
+  const teachers = await idbAll(S_TEACHERS);
+  const classes = await idbAll(S_CLASSES);
+  const subjects = await idbAll(S_SUBJECTS);
+  const atts = await idbAll(S_ATTS);
+
+  const tMap = Object.fromEntries(teachers.map(t=>[t.id,t.name]));
+  const cMap = Object.fromEntries(classes.map(c=>[c.id,c.name]));
+  const sMap = Object.fromEntries(subjects.map(s=>[s.id,s.name]));
+
+  let filtered = plans.slice().sort((a,b)=> (b.date||'').localeCompare(a.date||''));
+  if(filterText){
+    const f = filterText.toLowerCase();
+    filtered = filtered.filter(p=>
+      (p.title||'').toLowerCase().includes(f) ||
+      (tMap[p.teacherId]||'').toLowerCase().includes(f) ||
+      (cMap[p.classId]||'').toLowerCase().includes(f) ||
+      (sMap[p.subjectId]||'').toLowerCase().includes(f)
+    );
+  }
+
+  const tbody = document.getElementById('plansTbody');
+  tbody.innerHTML='';
+  document.getElementById('plansEmpty').style.display = filtered.length? 'none':'block';
+
+  filtered.forEach(p=>{
+    const attCount = (p.attachmentIds||[]).length;
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${p.date? new Date(p.date+'T00:00:00').toLocaleDateString('pt-BR') : '-'}</td>
+      <td>${escapeHtml(tMap[p.teacherId]||'-')}</td>
+      <td>${escapeHtml(cMap[p.classId]||'-')}</td>
+      <td>${escapeHtml(sMap[p.subjectId]||'-')}</td>
+      <td>${escapeHtml(p.title)}</td>
+      <td>${attCount>0? `📎 ${attCount}` : '-'}</td>
+      <td class="actions-cell">
+        <button class="btn-sm btn-warn" onclick="editPlan('${p.id}')">✏️</button>
+        <button class="btn-sm btn-danger" onclick="deletePlan('${p.id}')">🗑️</button>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+}
+document.getElementById('filterPlans').addEventListener('input', (e)=> renderPlans(e.target.value));
+
+/* ---------- GENERIC DELETE ---------- */
+async function deleteItem(store, id){
+  if(!confirm('Excluir este item?')) return;
+  await idbDelete(store, id);
+  toast('🗑️ Item excluído.','warn');
+  await renderAll();
+}
+
+/* ---------- HELPERS ---------- */
+function escapeHtml(str){
+  if(str==null) return '';
+  return String(str).replace(/[&<>"']/g, m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ---------- INIT ---------- */
+async function renderAll(){
+  await renderTeachers();
+  await renderClasses();
+  await renderSubjects();
+  await fillSelects();
+  await renderPlans(document.getElementById('filterPlans').value);
+}
+
+window.addEventListener('DOMContentLoaded', async ()=>{
+  ghApplyConfig(ghLoadConfig());
+  const lastSync = localStorage.getItem('athena_last_sync');
+  if(lastSync) setSyncBadge('ok', `✅ Última sync: ${new Date(lastSync).toLocaleTimeString('pt-BR')}`);
+  await renderAll();
 });
 </script>
+
 </body>
 </html>
