@@ -1,16 +1,38 @@
 [
-  {
-    "id": "mru06eopfaeqt",
-    "name": "Matemática",
-    "active": true,
-    "createdAt": "2026-07-21T01:56:57.433Z",
-    "updatedAt": "2026-07-21T01:56:57.433Z"
-  },
-  {
-    "id": "mryazd45p0zed",
-    "name": "Português",
-    "active": true,
-    "createdAt": "2026-07-24T02:10:29.285Z",
-    "updatedAt": "2026-07-24T02:10:29.285Z"
-  }
-]
+    {
+      "id": "msdvuva7u6b2mv",
+      "name": "Português"
+    },
+    {
+      "id": "msdy0zln99crix",
+      "name": "Matemática"
+    },
+    {
+      "id": "msdy131apum56s",
+      "name": "Geografia"
+    },
+    {
+      "id": "msdy16mcpc0xeg",
+      "name": "História"
+    },
+    {
+      "id": "msdy1a4xn0qcpr",
+      "name": "Ciências"
+    },
+    {
+      "id": "msdy1f45nbgs9z",
+      "name": "Arte"
+    },
+    {
+      "id": "msdy1jypjzvekf",
+      "name": "Ed. Física"
+    },
+    {
+      "id": "msdy1mq206ygvx",
+      "name": "Inglês"
+    },
+    {
+      "id": "msdy1xj2wzn95f",
+      "name": "Ensino Religioso"
+    }
+  ]
