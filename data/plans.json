@@ -1,26 +1,5 @@
 [
   {
-    "id": "mryb0qkwq4nw8",
-    "userId": "mrtx869nw1q18",
-    "teacherId": "mryaz0h3k9f5b",
-    "teacherName": "Bruna",
-    "classId": "mryaz7dssuhx5",
-    "className": "1º ano",
-    "subjectId": "mru06eopfaeqt",
-    "subjectName": "Matemática",
-    "dataLancamento": "2026-07-23",
-    "periodoInicio": "2026-07-27",
-    "periodoFim": "2026-07-31",
-    "contentName": "teste",
-    "objetivos": "teste",
-    "descricao": "teste",
-    "recursos": "teste",
-    "avaliacao": "teste",
-    "observacoes": "",
-    "createdAt": "2026-07-24T02:11:33.392Z",
-    "updatedAt": "2026-07-24T02:11:33.392Z"
-  },
-  {
     "id": "mrydg29llftca",
     "userId": "mrtx869nw1q18",
     "teacherId": "mryaz0h3k9f5b",
@@ -60,6 +39,6 @@
       "msdzoat7ya0su3"
     ],
     "createdAt": "2026-08-04T01:38:18.546Z",
-    "updatedAt": "2026-08-04T01:43:21.997Z"
+    "updatedAt": "2026-08-04T01:40:17.310Z"
   }
 ]
