@@ -72,7 +72,6 @@
   .view-detail p{margin:0 0 12px;font-size:14px;white-space:pre-wrap}
   .plan-meta{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-bottom:10px}
 
-  /* Cadastros em colunas */
   .registers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
   @media (max-width:900px){ .registers-grid{grid-template-columns:1fr} }
   .registers-grid .card{margin-bottom:0}
@@ -329,7 +328,7 @@
 /* ============================================================
    PLANEJAMENTO ATHENA — App completo
    3 abas: Planejamento (form) / Consulta / Cadastros (colunas)
-   IndexedDB local + Sincronização manual com GitHub
+   IndexedDB local + Sincronização automática com GitHub
    ============================================================ */
 
 /* ---------- TOAST ---------- */
@@ -547,6 +546,34 @@ async function syncNow(){
   }
 }
 
+/* ---------- AUTO SYNC (silenciosa, em segundo plano, disparada por CRUD) ---------- */
+let autoSyncTimers = {};
+
+function autoSyncStore(storeName){
+  // Só sincroniza se o GitHub estiver configurado
+  if(!GITHUB_CONFIG.owner || !GITHUB_CONFIG.repo || !GITHUB_CONFIG.token) return;
+
+  // Debounce por store: evita disparos excessivos em sequência
+  clearTimeout(autoSyncTimers[storeName]);
+  autoSyncTimers[storeName] = setTimeout(async ()=>{
+    try{
+      setSyncBadge('idle','⏳ Sincronizando...');
+      const path = SYNC_FILES[storeName];
+      const localData = await idbAll(storeName);
+      const { sha } = await ghGetFile(path);
+      await ghPutFile(path, localData, sha);
+      localStorage.setItem('athena_last_sync', new Date().toISOString());
+      const lastSyncEl = document.getElementById('lastSyncTime');
+      if(lastSyncEl) lastSyncEl.textContent = new Date().toLocaleString('pt-BR');
+      setSyncBadge('ok','✅ Sincronizado');
+    }catch(err){
+      console.error('Erro na sincronização automática:', err);
+      setSyncBadge('err','❌ Erro na sync');
+      toast(`❌ Falha ao sincronizar automaticamente: ${err.message}`,'err',5000);
+    }
+  }, 600);
+}
+
 /* ---------- NAV / TABS ---------- */
 document.querySelectorAll('.tab-btn').forEach(btn=>{
   btn.addEventListener('click', ()=>{
@@ -634,6 +661,8 @@ document.getElementById('importBackupInput').addEventListener('change', async (e
     }
     toast('⬆️ Backup importado com sucesso.','ok');
     await renderAll();
+    // Após importar backup, sincroniza tudo com o GitHub automaticamente
+    [S_TEACHERS,S_CLASSES,S_SUBJECTS,S_PLANS,S_ATTS].forEach(s=>autoSyncStore(s));
   }catch(err){
     toast(`❌ Erro ao importar backup: ${err.message}`,'err');
   }
@@ -650,6 +679,7 @@ document.getElementById('btnAddTeacher').addEventListener('click', async ()=>{
   document.getElementById('teacherEmail').value='';
   toast('✅ Professor adicionado.','ok');
   await renderTeachers(); await fillSelects();
+  autoSyncStore(S_TEACHERS);
 });
 async function renderTeachers(){
   const list = await idbAll(S_TEACHERS);
@@ -674,6 +704,7 @@ document.getElementById('btnAddClass').addEventListener('click', async ()=>{
   document.getElementById('classShift').value='';
   toast('✅ Turma adicionada.','ok');
   await renderClasses(); await fillSelects();
+  autoSyncStore(S_CLASSES);
 });
 async function renderClasses(){
   const list = await idbAll(S_CLASSES);
@@ -696,6 +727,7 @@ document.getElementById('btnAddSubject').addEventListener('click', async ()=>{
   document.getElementById('subjectName').value='';
   toast('✅ Disciplina adicionada.','ok');
   await renderSubjects(); await fillSelects();
+  autoSyncStore(S_SUBJECTS);
 });
 async function renderSubjects(){
   const list = await idbAll(S_SUBJECTS);
@@ -792,9 +824,11 @@ document.getElementById('btnSavePlan').addEventListener('click', async ()=>{
   }
 
   const attIds = [];
+  let attsChanged = false;
   for(const att of pendingAttachments){
     await idbPut(S_ATTS, att);
     attIds.push(att.id);
+    attsChanged = true;
   }
 
   const previousAttIds = editingPlanId ? await getPlanAttIds(editingPlanId) : [];
@@ -812,6 +846,8 @@ document.getElementById('btnSavePlan').addEventListener('click', async ()=>{
   await idbPut(S_PLANS, plan);
 
   toast(editingPlanId? '✅ Planejamento atualizado.' : '✅ Planejamento salvo.','ok');
+  autoSyncStore(S_PLANS);
+  if(attsChanged) autoSyncStore(S_ATTS);
   resetPlanForm();
   await renderPlans();
 });
@@ -884,6 +920,7 @@ async function deletePlan(id){
   toast('🗑️ Planejamento excluído.','warn');
   document.getElementById('viewModal').classList.remove('open');
   await renderPlans();
+  autoSyncStore(S_PLANS);
 }
 
 /* ---------- VIEW MODAL (Consulta) ---------- */
@@ -1005,12 +1042,13 @@ async function renderPlans(){
   document.getElementById(id).addEventListener('change', renderPlans);
 });
 
-/* ---------- GENERIC DELETE ---------- */
+/* ---------- GENERIC DELETE (cobre professor, turma e disciplina) ---------- */
 async function deleteItem(store, id){
   if(!confirm('Excluir este item?')) return;
   await idbDelete(store, id);
   toast('🗑️ Item excluído.','warn');
   await renderAll();
+  autoSyncStore(store);
 }
 
 /* ---------- HELPERS ---------- */
