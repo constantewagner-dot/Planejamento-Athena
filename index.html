@@ -329,6 +329,7 @@
    PLANEJAMENTO ATHENA — App completo
    3 abas: Planejamento (form) / Consulta / Cadastros (colunas)
    IndexedDB local + Sincronização automática com GitHub
+   Correção: tratamento de erro 409 (SHA desatualizado) com retry
    ============================================================ */
 
 /* ---------- TOAST ---------- */
@@ -467,9 +468,7 @@ async function ghTestConnection(owner, repo, branch, token){
   }
 }
 
-/* ---------- GITHUB API helpers (sync) ----------
-   CORREÇÃO: ghGetFile agora trata arquivos vazios ou com JSON inválido
-   sem lançar exceção (evita "Unexpected end of JSON input") ---------- */
+/* ---------- GITHUB API helpers (sync) ---------- */
 async function ghGetFile(path){
   const {owner,repo,branch,token} = GITHUB_CONFIG;
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${branch}`;
@@ -480,7 +479,6 @@ async function ghGetFile(path){
 
   const data = await resp.json();
 
-  // Arquivo existe mas está vazio (sem conteúdo em base64)
   if(!data.content){
     return { content:null, sha: data.sha||null };
   }
@@ -495,7 +493,6 @@ async function ghGetFile(path){
 
   const trimmed = decoded.trim();
   if(trimmed === ''){
-    // Arquivo vazio — trata como "sem conteúdo" em vez de erro
     return { content:null, sha: data.sha||null };
   }
 
@@ -509,6 +506,7 @@ async function ghGetFile(path){
 
   return { content: parsed, sha: data.sha };
 }
+
 async function ghPutFile(path, jsonData, sha){
   const {owner,repo,branch,token} = GITHUB_CONFIG;
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
@@ -522,9 +520,34 @@ async function ghPutFile(path, jsonData, sha){
   });
   if(!resp.ok){
     const errData = await resp.json().catch(()=>({}));
-    throw new Error(`PUT ${path} falhou: ${resp.status} ${errData.message||''}`);
+    const err = new Error(`PUT ${path} falhou: ${resp.status} ${errData.message||''}`);
+    err.status = resp.status;
+    throw err;
   }
   return resp.json();
+}
+
+/* CORREÇÃO: PUT com retry automático em caso de 409 (SHA desatualizado).
+   Busca o SHA mais recente e tenta novamente até maxRetries vezes. */
+async function ghPutFileWithRetry(path, jsonData, maxRetries = 3){
+  let attempt = 0;
+  let lastErr = null;
+  while(attempt <= maxRetries){
+    try{
+      const { sha } = await ghGetFile(path);
+      return await ghPutFile(path, jsonData, sha);
+    }catch(err){
+      lastErr = err;
+      if(err.status === 409){
+        attempt++;
+        console.warn(`Conflito 409 ao gravar ${path}. Tentativa ${attempt}/${maxRetries}...`);
+        await new Promise(r=>setTimeout(r, 300 * attempt)); // pequeno backoff
+        continue;
+      }
+      throw err; // outros erros não são retentados
+    }
+  }
+  throw lastErr || new Error(`Falha ao gravar ${path} após ${maxRetries} tentativas (409 persistente).`);
 }
 
 const SYNC_FILES = {
@@ -551,8 +574,7 @@ async function syncPush(){
   for(const store of Object.keys(SYNC_FILES)){
     const path = SYNC_FILES[store];
     const localData = await idbAll(store);
-    const { sha } = await ghGetFile(path);
-    await ghPutFile(path, localData, sha);
+    await ghPutFileWithRetry(path, localData);
   }
 }
 function setSyncBadge(status, text){
@@ -584,27 +606,31 @@ async function syncNow(){
 
 /* ---------- AUTO SYNC (silenciosa, em segundo plano, disparada por CRUD) ---------- */
 let autoSyncTimers = {};
+let autoSyncQueue = {}; // evita duas sincronizações simultâneas do mesmo store
 
 function autoSyncStore(storeName){
   if(!GITHUB_CONFIG.owner || !GITHUB_CONFIG.repo || !GITHUB_CONFIG.token) return;
 
   clearTimeout(autoSyncTimers[storeName]);
-  autoSyncTimers[storeName] = setTimeout(async ()=>{
-    try{
-      setSyncBadge('idle','⏳ Sincronizando...');
-      const path = SYNC_FILES[storeName];
-      const localData = await idbAll(storeName);
-      const { sha } = await ghGetFile(path);
-      await ghPutFile(path, localData, sha);
-      localStorage.setItem('athena_last_sync', new Date().toISOString());
-      const lastSyncEl = document.getElementById('lastSyncTime');
-      if(lastSyncEl) lastSyncEl.textContent = new Date().toLocaleString('pt-BR');
-      setSyncBadge('ok','✅ Sincronizado');
-    }catch(err){
-      console.error('Erro na sincronização automática:', err);
-      setSyncBadge('err','❌ Erro na sync');
-      toast(`❌ Falha ao sincronizar automaticamente: ${err.message}`,'err',5000);
-    }
+  autoSyncTimers[storeName] = setTimeout(()=>{
+    // Encadeia a execução para evitar chamadas concorrentes no mesmo store
+    const prev = autoSyncQueue[storeName] || Promise.resolve();
+    autoSyncQueue[storeName] = prev.then(async ()=>{
+      try{
+        setSyncBadge('idle','⏳ Sincronizando...');
+        const path = SYNC_FILES[storeName];
+        const localData = await idbAll(storeName);
+        await ghPutFileWithRetry(path, localData);
+        localStorage.setItem('athena_last_sync', new Date().toISOString());
+        const lastSyncEl = document.getElementById('lastSyncTime');
+        if(lastSyncEl) lastSyncEl.textContent = new Date().toLocaleString('pt-BR');
+        setSyncBadge('ok','✅ Sincronizado');
+      }catch(err){
+        console.error('Erro na sincronização automática:', err);
+        setSyncBadge('err','❌ Erro na sync');
+        toast(`❌ Falha ao sincronizar automaticamente: ${err.message}`,'err',5000);
+      }
+    });
   }, 600);
 }
 
