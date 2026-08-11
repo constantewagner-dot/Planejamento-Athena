@@ -467,16 +467,47 @@ async function ghTestConnection(owner, repo, branch, token){
   }
 }
 
-/* ---------- GITHUB API helpers (sync) ---------- */
+/* ---------- GITHUB API helpers (sync) ----------
+   CORREÇÃO: ghGetFile agora trata arquivos vazios ou com JSON inválido
+   sem lançar exceção (evita "Unexpected end of JSON input") ---------- */
 async function ghGetFile(path){
   const {owner,repo,branch,token} = GITHUB_CONFIG;
   const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}?ref=${branch}`;
   const resp = await fetch(url, { headers:{ Authorization:`Bearer ${token}` } });
+
   if(resp.status===404) return { content:null, sha:null };
   if(!resp.ok) throw new Error(`GET ${path} falhou: ${resp.status}`);
+
   const data = await resp.json();
-  const decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
-  return { content: JSON.parse(decoded), sha: data.sha };
+
+  // Arquivo existe mas está vazio (sem conteúdo em base64)
+  if(!data.content){
+    return { content:null, sha: data.sha||null };
+  }
+
+  let decoded = '';
+  try{
+    decoded = decodeURIComponent(escape(atob(data.content.replace(/\n/g,''))));
+  }catch(e){
+    console.warn(`Falha ao decodificar base64 de ${path}, tratando como vazio.`, e);
+    return { content:null, sha: data.sha||null };
+  }
+
+  const trimmed = decoded.trim();
+  if(trimmed === ''){
+    // Arquivo vazio — trata como "sem conteúdo" em vez de erro
+    return { content:null, sha: data.sha||null };
+  }
+
+  let parsed;
+  try{
+    parsed = JSON.parse(trimmed);
+  }catch(e){
+    console.warn(`Conteúdo de ${path} não é um JSON válido, ignorando e mantendo dados locais.`, e);
+    return { content:null, sha: data.sha||null };
+  }
+
+  return { content: parsed, sha: data.sha };
 }
 async function ghPutFile(path, jsonData, sha){
   const {owner,repo,branch,token} = GITHUB_CONFIG;
@@ -507,8 +538,13 @@ const SYNC_FILES = {
 async function syncPull(){
   for(const store of Object.keys(SYNC_FILES)){
     const path = SYNC_FILES[store];
-    const { content } = await ghGetFile(path);
-    if(content) await idbClearPutAll(store, content);
+    try{
+      const { content } = await ghGetFile(path);
+      if(content) await idbClearPutAll(store, content);
+    }catch(err){
+      console.error(`Erro ao puxar ${path}:`, err);
+      toast(`⚠️ Não foi possível ler "${path}" do GitHub. Mantendo dados locais.`,'warn',4500);
+    }
   }
 }
 async function syncPush(){
@@ -550,10 +586,8 @@ async function syncNow(){
 let autoSyncTimers = {};
 
 function autoSyncStore(storeName){
-  // Só sincroniza se o GitHub estiver configurado
   if(!GITHUB_CONFIG.owner || !GITHUB_CONFIG.repo || !GITHUB_CONFIG.token) return;
 
-  // Debounce por store: evita disparos excessivos em sequência
   clearTimeout(autoSyncTimers[storeName]);
   autoSyncTimers[storeName] = setTimeout(async ()=>{
     try{
@@ -661,7 +695,6 @@ document.getElementById('importBackupInput').addEventListener('change', async (e
     }
     toast('⬆️ Backup importado com sucesso.','ok');
     await renderAll();
-    // Após importar backup, sincroniza tudo com o GitHub automaticamente
     [S_TEACHERS,S_CLASSES,S_SUBJECTS,S_PLANS,S_ATTS].forEach(s=>autoSyncStore(s));
   }catch(err){
     toast(`❌ Erro ao importar backup: ${err.message}`,'err');
@@ -998,7 +1031,6 @@ async function renderPlans(){
   const cMap = Object.fromEntries(classes.map(c=>[c.id,c.name]));
   const sMap = Object.fromEntries(subjects.map(s=>[s.id,s.name]));
 
-  // Ordenado pela data de criação, do menor (mais antigo) para o maior (mais recente)
   let filtered = plans.slice().sort((a,b)=> (a.createdAt||'').localeCompare(b.createdAt||''));
 
   if(fTeacher) filtered = filtered.filter(p=>p.teacherId===fTeacher);
