@@ -281,6 +281,28 @@
   </div>
 </div>
 
+<!-- MODAL DE EDIÇÃO DE CADASTRO (Professor / Turma / Disciplina) -->
+<div class="modal-overlay" id="editRegisterModal">
+  <div class="modal">
+    <h3 id="editRegisterTitle">Editar</h3>
+
+    <div id="editRegisterFieldName">
+      <label id="editRegisterLabelName">Nome</label>
+      <input type="text" id="editRegisterName" style="margin-bottom:10px">
+    </div>
+
+    <div id="editRegisterFieldSecondary" style="display:none">
+      <label id="editRegisterLabelSecondary">Campo</label>
+      <input type="text" id="editRegisterSecondary" style="margin-bottom:10px">
+    </div>
+
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button style="background:var(--primary);color:#fff" id="btnSaveRegisterEdit">💾 Salvar</button>
+      <button style="background:#f1f5f9;color:var(--text)" id="btnCloseRegisterEdit">Cancelar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL DE CONFIGURAÇÕES -->
 <div class="modal-overlay" id="settingsModal">
   <div class="modal">
@@ -328,8 +350,8 @@
 /* ============================================================
    PLANEJAMENTO ATHENA — App completo
    3 abas: Planejamento (form) / Consulta / Cadastros (colunas)
-   IndexedDB local + Sincronização automática com GitHub
-   Correção: tratamento de erro 409 (SHA desatualizado) com retry
+   IndexedDB local + Sincronização automática com GitHub (com retry 409)
+   Edição de cadastros (Professor / Turma / Disciplina) via modal
    ============================================================ */
 
 /* ---------- TOAST ---------- */
@@ -406,6 +428,14 @@ function idbClearPutAll(storeName, arr){
     (arr||[]).forEach(it=>store.put(it));
     tx.oncomplete = ()=>res();
     tx.onerror = ()=>rej(tx.error);
+  }));
+}
+function idbGet(storeName, id){
+  return openDB().then(db=>new Promise((res,rej)=>{
+    const tx = db.transaction(storeName,'readonly');
+    const req = tx.objectStore(storeName).get(id);
+    req.onsuccess = ()=>res(req.result||null);
+    req.onerror = ()=>rej(req.error);
   }));
 }
 function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
@@ -527,8 +557,7 @@ async function ghPutFile(path, jsonData, sha){
   return resp.json();
 }
 
-/* CORREÇÃO: PUT com retry automático em caso de 409 (SHA desatualizado).
-   Busca o SHA mais recente e tenta novamente até maxRetries vezes. */
+/* PUT com retry automático em caso de 409 (SHA desatualizado) */
 async function ghPutFileWithRetry(path, jsonData, maxRetries = 3){
   let attempt = 0;
   let lastErr = null;
@@ -541,10 +570,10 @@ async function ghPutFileWithRetry(path, jsonData, maxRetries = 3){
       if(err.status === 409){
         attempt++;
         console.warn(`Conflito 409 ao gravar ${path}. Tentativa ${attempt}/${maxRetries}...`);
-        await new Promise(r=>setTimeout(r, 300 * attempt)); // pequeno backoff
+        await new Promise(r=>setTimeout(r, 300 * attempt));
         continue;
       }
-      throw err; // outros erros não são retentados
+      throw err;
     }
   }
   throw lastErr || new Error(`Falha ao gravar ${path} após ${maxRetries} tentativas (409 persistente).`);
@@ -606,14 +635,13 @@ async function syncNow(){
 
 /* ---------- AUTO SYNC (silenciosa, em segundo plano, disparada por CRUD) ---------- */
 let autoSyncTimers = {};
-let autoSyncQueue = {}; // evita duas sincronizações simultâneas do mesmo store
+let autoSyncQueue = {};
 
 function autoSyncStore(storeName){
   if(!GITHUB_CONFIG.owner || !GITHUB_CONFIG.repo || !GITHUB_CONFIG.token) return;
 
   clearTimeout(autoSyncTimers[storeName]);
   autoSyncTimers[storeName] = setTimeout(()=>{
-    // Encadeia a execução para evitar chamadas concorrentes no mesmo store
     const prev = autoSyncQueue[storeName] || Promise.resolve();
     autoSyncQueue[storeName] = prev.then(async ()=>{
       try{
@@ -748,7 +776,10 @@ async function renderTeachers(){
   list.forEach(t=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${escapeHtml(t.name)}${t.email? `<br><span class="small">${escapeHtml(t.email)}</span>`:''}</td>
-      <td class="actions-cell"><button class="btn-sm btn-danger" onclick="deleteItem('${S_TEACHERS}','${t.id}')">🗑️</button></td>`;
+      <td class="actions-cell">
+        <button class="btn-sm btn-warn" onclick="openEditRegister('${S_TEACHERS}','${t.id}')">✏️</button>
+        <button class="btn-sm btn-danger" onclick="deleteItem('${S_TEACHERS}','${t.id}')">🗑️</button>
+      </td>`;
     tbody.appendChild(tr);
   });
 }
@@ -773,7 +804,10 @@ async function renderClasses(){
   list.forEach(c=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${escapeHtml(c.name)}${c.shift? `<br><span class="small">${escapeHtml(c.shift)}</span>`:''}</td>
-      <td class="actions-cell"><button class="btn-sm btn-danger" onclick="deleteItem('${S_CLASSES}','${c.id}')">🗑️</button></td>`;
+      <td class="actions-cell">
+        <button class="btn-sm btn-warn" onclick="openEditRegister('${S_CLASSES}','${c.id}')">✏️</button>
+        <button class="btn-sm btn-danger" onclick="deleteItem('${S_CLASSES}','${c.id}')">🗑️</button>
+      </td>`;
     tbody.appendChild(tr);
   });
 }
@@ -796,10 +830,92 @@ async function renderSubjects(){
   list.forEach(s=>{
     const tr = document.createElement('tr');
     tr.innerHTML = `<td>${escapeHtml(s.name)}</td>
-      <td class="actions-cell"><button class="btn-sm btn-danger" onclick="deleteItem('${S_SUBJECTS}','${s.id}')">🗑️</button></td>`;
+      <td class="actions-cell">
+        <button class="btn-sm btn-warn" onclick="openEditRegister('${S_SUBJECTS}','${s.id}')">✏️</button>
+        <button class="btn-sm btn-danger" onclick="deleteItem('${S_SUBJECTS}','${s.id}')">🗑️</button>
+      </td>`;
     tbody.appendChild(tr);
   });
 }
+
+/* ---------- EDIÇÃO DE CADASTROS (Professor / Turma / Disciplina) ---------- */
+let editRegisterStore = null;
+let editRegisterId = null;
+
+async function openEditRegister(store, id){
+  const item = await idbGet(store, id);
+  if(!item) return;
+  editRegisterStore = store;
+  editRegisterId = id;
+
+  const title = document.getElementById('editRegisterTitle');
+  const labelName = document.getElementById('editRegisterLabelName');
+  const inputName = document.getElementById('editRegisterName');
+  const fieldSecondary = document.getElementById('editRegisterFieldSecondary');
+  const labelSecondary = document.getElementById('editRegisterLabelSecondary');
+  const inputSecondary = document.getElementById('editRegisterSecondary');
+
+  if(store === S_TEACHERS){
+    title.textContent = '✏️ Editar Professor';
+    labelName.textContent = 'Nome completo';
+    inputName.value = item.name || '';
+    fieldSecondary.style.display = 'block';
+    labelSecondary.textContent = 'E-mail (opcional)';
+    inputSecondary.type = 'email';
+    inputSecondary.value = item.email || '';
+  } else if(store === S_CLASSES){
+    title.textContent = '✏️ Editar Turma';
+    labelName.textContent = 'Nome da turma';
+    inputName.value = item.name || '';
+    fieldSecondary.style.display = 'block';
+    labelSecondary.textContent = 'Turno';
+    inputSecondary.type = 'text';
+    inputSecondary.value = item.shift || '';
+  } else if(store === S_SUBJECTS){
+    title.textContent = '✏️ Editar Disciplina';
+    labelName.textContent = 'Nome da disciplina';
+    inputName.value = item.name || '';
+    fieldSecondary.style.display = 'none';
+    inputSecondary.value = '';
+  }
+
+  document.getElementById('editRegisterModal').classList.add('open');
+}
+
+document.getElementById('btnCloseRegisterEdit').addEventListener('click', ()=>{
+  document.getElementById('editRegisterModal').classList.remove('open');
+  editRegisterStore = null;
+  editRegisterId = null;
+});
+
+document.getElementById('btnSaveRegisterEdit').addEventListener('click', async ()=>{
+  if(!editRegisterStore || !editRegisterId) return;
+
+  const name = document.getElementById('editRegisterName').value.trim();
+  const secondary = document.getElementById('editRegisterSecondary').value.trim();
+
+  if(!name){
+    return toast('⚠️ Informe o nome.','warn');
+  }
+
+  const existing = await idbGet(editRegisterStore, editRegisterId);
+  if(!existing) return;
+
+  let updated = { ...existing, name };
+  if(editRegisterStore === S_TEACHERS) updated.email = secondary;
+  if(editRegisterStore === S_CLASSES) updated.shift = secondary;
+
+  await idbPut(editRegisterStore, updated);
+  toast('✅ Cadastro atualizado.','ok');
+
+  document.getElementById('editRegisterModal').classList.remove('open');
+  const storeToSync = editRegisterStore;
+  editRegisterStore = null;
+  editRegisterId = null;
+
+  await renderAll();
+  autoSyncStore(storeToSync);
+});
 
 /* ---------- SELECTS ---------- */
 async function fillSelects(){
