@@ -19,26 +19,5 @@
     "observacoes": "errado o planejamento da semana, vamos revisar",
     "createdAt": "2026-07-24T03:19:27.609Z",
     "updatedAt": "2026-07-24T03:20:22.877Z"
-  },
-  {
-    "id": "msp11sw9orugrg",
-    "teacherId": "msdxycjq8pglkn",
-    "classId": "msdvumvkcd8nol",
-    "subjectId": "msougf0d1hbqka",
-    "title": "plano seemanal",
-    "creationDate": "2026-08-10",
-    "startDate": "2026-08-10",
-    "endDate": "2026-08-14",
-    "content": "Leitura e compreensão de texto; alfabetização e escrita, sequência numérica e operações matemáticas. OBJETIVO: Desenvolver a leitura, a escrita, a oralidade e o raciocínio lógico - matemático, ampliando a compreensão dos conteúdos.",
-    "objective": "Desenvolver a habilidade da leitura, escrita, raciocínio expressão oral, ampliando os conhecimentos dos alunos por meio das atividades propostas e favorecendo a participação, a autonomia e a interação no ambiente escolar.",
-    "methodology": "As aulas serão desenvolvidas  por meio de explicações dialogadas, leitura, atividades, individuais e coletivas, utilização da apostila e recursos pedagógicos, serão realizadas atividades de leitura e escrita, matemática e demais componentes curriculares, buscando promover participação, a interação e a aprendizagem dos alunos de forma lúdica e significativa.",
-    "resources": "quadro, apostila, cartolinas imagens matérias pedagógicos",
-    "evaluation": "Por meio de observação da participação, do envolvimento, da realização das atividades, da compreensão dos conteúdos trabalhados e do desenvolvimento individual dos alunos.",
-    "supervisionNotes": "",
-    "attachmentIds": [
-      "msp10gd80upjsg"
-    ],
-    "createdAt": "2026-08-11T19:02:13.641Z",
-    "updatedAt": "2026-08-11T19:02:13.641Z"
   }
 ]
