@@ -21,27 +21,6 @@
     "updatedAt": "2026-07-24T03:20:22.877Z"
   },
   {
-    "id": "msdzocoig4ict6",
-    "teacherId": "msdvuegr1jwlzy",
-    "classId": "msdxzw6uxlxf09",
-    "subjectId": "msdy0zln99crix",
-    "title": "teste",
-    "creationDate": "2026-08-03",
-    "startDate": "2026-08-03",
-    "endDate": "2026-08-07",
-    "content": "teste",
-    "objective": "teste",
-    "methodology": "teste",
-    "resources": "teste",
-    "evaluation": "teste",
-    "supervisionNotes": "",
-    "attachmentIds": [
-      "msdzoat7ya0su3"
-    ],
-    "createdAt": "2026-08-04T01:38:18.546Z",
-    "updatedAt": "2026-08-04T01:40:17.310Z"
-  },
-  {
     "id": "msp11sw9orugrg",
     "teacherId": "msdxycjq8pglkn",
     "classId": "msdvumvkcd8nol",
