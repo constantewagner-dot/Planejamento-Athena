@@ -1,31 +1,10 @@
 [
   {
-    "id": "mrydg29llftca",
-    "userId": "mrtx869nw1q18",
-    "teacherId": "mryaz0h3k9f5b",
-    "teacherName": "Bruna",
-    "classId": "mryaz7dssuhx5",
-    "className": "1º ano",
-    "subjectId": "mryazd45p0zed",
-    "subjectName": "Português",
-    "dataLancamento": "2026-07-24",
-    "periodoInicio": "2026-07-27",
-    "periodoFim": "2026-07-31",
-    "contentName": "teste",
-    "objetivos": "testeteste",
-    "descricao": "teste",
-    "recursos": "projetor",
-    "avaliacao": "prova escrita",
-    "observacoes": "errado o planejamento da semana, vamos revisar",
-    "createdAt": "2026-07-24T03:19:27.609Z",
-    "updatedAt": "2026-07-24T03:20:22.877Z"
-  },
-  {
     "id": "msp11sw9orugrg",
     "teacherId": "msdxycjq8pglkn",
     "classId": "msdvumvkcd8nol",
     "subjectId": "msp2k9jhaap6xl",
-    "title": "Plano Semanal",
+    "title": "plano semanal",
     "creationDate": "2026-08-10",
     "startDate": "2026-08-10",
     "endDate": "2026-08-14",
@@ -39,6 +18,6 @@
       "msp10gd80upjsg"
     ],
     "createdAt": "2026-08-11T19:02:13.641Z",
-    "updatedAt": "2026-08-11T22:46:13.691Z"
+    "updatedAt": "2026-08-11T19:57:36.217Z"
   }
 ]
