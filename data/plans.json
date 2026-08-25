@@ -181,5 +181,26 @@
     ],
     "createdAt": "2026-08-25T16:06:42.823Z",
     "updatedAt": "2026-08-25T16:06:42.823Z"
+  },
+  {
+    "id": "mt8uzyd24npvca",
+    "teacherId": "msdxyiqtvkuud7",
+    "classId": "msdy08ksis8e4l",
+    "subjectId": "msdy1jypjzvekf",
+    "title": "mensal",
+    "creationDate": "2026-08-24",
+    "startDate": "2026-08-24",
+    "endDate": "2026-08-24",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mt8uzxje2j36uz"
+    ],
+    "createdAt": "2026-08-25T16:08:13.238Z",
+    "updatedAt": "2026-08-25T16:08:13.238Z"
   }
 ]
