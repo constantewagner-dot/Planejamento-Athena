@@ -139,5 +139,47 @@
     ],
     "createdAt": "2026-08-25T16:05:24.048Z",
     "updatedAt": "2026-08-25T16:05:24.049Z"
+  },
+  {
+    "id": "mt8ux4zqauduk5",
+    "teacherId": "msdxyiqtvkuud7",
+    "classId": "msdxzw6uxlxf09",
+    "subjectId": "msdy1jypjzvekf",
+    "title": "mensal",
+    "creationDate": "2026-08-24",
+    "startDate": "2026-08-24",
+    "endDate": "2026-09-24",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mt8ux3rxr07jw9"
+    ],
+    "createdAt": "2026-08-25T16:06:01.862Z",
+    "updatedAt": "2026-08-25T16:06:01.862Z"
+  },
+  {
+    "id": "mt8uy0ljlrx6jh",
+    "teacherId": "msdxyiqtvkuud7",
+    "classId": "msdy04vxbeo0hf",
+    "subjectId": "msdy1jypjzvekf",
+    "title": "mensal",
+    "creationDate": "2026-08-24",
+    "startDate": "2026-08-24",
+    "endDate": "2026-09-24",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mt8uxsxhibfju4"
+    ],
+    "createdAt": "2026-08-25T16:06:42.823Z",
+    "updatedAt": "2026-08-25T16:06:42.823Z"
   }
 ]
