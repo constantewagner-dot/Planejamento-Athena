@@ -265,5 +265,27 @@
     ],
     "createdAt": "2026-09-01T16:59:07.187Z",
     "updatedAt": "2026-09-01T16:59:07.188Z"
+  },
+  {
+    "id": "mtj1gx5fyf2sjo",
+    "teacherId": "msdxycjq8pglkn",
+    "classId": "msdvumvkcd8nol",
+    "subjectId": "msp2k9jhaap6xl",
+    "title": "Planejamento semanal",
+    "creationDate": "2026-08-31",
+    "startDate": "2026-08-31",
+    "endDate": "2026-09-04",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mtj1gerbj4mujn",
+      "mtj1gt96qr508w"
+    ],
+    "createdAt": "2026-09-01T19:07:04.275Z",
+    "updatedAt": "2026-09-01T19:07:04.275Z"
   }
 ]
