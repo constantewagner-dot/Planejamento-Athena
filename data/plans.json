@@ -332,5 +332,27 @@
     ],
     "createdAt": "2026-09-08T14:42:17.975Z",
     "updatedAt": "2026-09-08T14:42:17.975Z"
+  },
+  {
+    "id": "mtt11gopft4gvs",
+    "teacherId": "msdxycjq8pglkn",
+    "classId": "msdvumvkcd8nol",
+    "subjectId": "msp2k9jhaap6xl",
+    "title": "planejamento",
+    "creationDate": "2026-09-07",
+    "startDate": "2026-09-07",
+    "endDate": "2026-09-11",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mtt10ip7n0mzaf",
+      "mtt10s0hv2ep5b"
+    ],
+    "createdAt": "2026-09-08T18:52:44.857Z",
+    "updatedAt": "2026-09-08T18:52:44.857Z"
   }
 ]
