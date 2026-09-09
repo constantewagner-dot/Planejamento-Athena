@@ -354,5 +354,26 @@
     ],
     "createdAt": "2026-09-08T18:52:44.857Z",
     "updatedAt": "2026-09-08T18:52:44.857Z"
+  },
+  {
+    "id": "mtufxq40zjd6sm",
+    "teacherId": "msdy0ep4ez6vx1",
+    "classId": "msdy0qbygxzhqf",
+    "subjectId": "msp2k9jhaap6xl",
+    "title": "Planejamento Taynara",
+    "creationDate": "2026-09-09",
+    "startDate": "2026-08-31",
+    "endDate": "2026-09-04",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mtufxota32pfyx"
+    ],
+    "createdAt": "2026-09-09T18:37:30.864Z",
+    "updatedAt": "2026-09-09T18:37:30.864Z"
   }
 ]
