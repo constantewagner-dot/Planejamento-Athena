@@ -456,5 +456,26 @@
     "attachmentIds": [],
     "createdAt": "2026-09-17T17:47:30.758Z",
     "updatedAt": "2026-09-17T17:47:30.758Z"
+  },
+  {
+    "id": "mu5uyirs94ve2p",
+    "teacherId": "msdy0bb07gbwje",
+    "classId": "msdy0lhyrtpo3z",
+    "subjectId": "msp2k9jhaap6xl",
+    "title": "animais",
+    "creationDate": "2026-09-14",
+    "startDate": "2026-09-14",
+    "endDate": "2026-09-18",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mu5uxx42siza36"
+    ],
+    "createdAt": "2026-09-17T18:23:30.184Z",
+    "updatedAt": "2026-09-17T18:23:30.184Z"
   }
 ]
