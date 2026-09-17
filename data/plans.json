@@ -418,5 +418,24 @@
     ],
     "createdAt": "2026-09-15T15:54:52.568Z",
     "updatedAt": "2026-09-15T15:54:52.568Z"
+  },
+  {
+    "id": "mu5sxfc50h5u71",
+    "teacherId": "msdxz92pnz6hnr",
+    "classId": "msdvumvkcd8nol",
+    "subjectId": "msdy1f45nbgs9z",
+    "title": "mesal",
+    "creationDate": "2026-09-01",
+    "startDate": "2026-09-03",
+    "endDate": "2026-10-02",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [],
+    "createdAt": "2026-09-17T17:26:39.844Z",
+    "updatedAt": "2026-09-17T17:26:39.845Z"
   }
 ]
