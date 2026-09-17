@@ -437,5 +437,24 @@
     "attachmentIds": [],
     "createdAt": "2026-09-17T17:26:39.844Z",
     "updatedAt": "2026-09-17T17:26:39.845Z"
+  },
+  {
+    "id": "mu5to8jqaq67to",
+    "teacherId": "mtlx7599yzaugb",
+    "classId": "msdvumvkcd8nol",
+    "subjectId": "msdy1mq206ygvx",
+    "title": "Learning Vocabs",
+    "creationDate": "2026-09-03",
+    "startDate": "2026-09-03",
+    "endDate": "2026-10-01",
+    "content": "Serão trabalhados: vocabulários com alimentos, gramática, figuras e desenhos. junto com alguns materiais impressos e musicas. O principal objetivo é agregar o educando o conhecimento na língua inglesa trazendo consigo o autoconhecimento sobre o que já veem aprendendo desde o inicio do ano letivo. Todas as atividades são continuas e cumulativas.",
+    "objective": "Reconhecer e pronunciar palavras e expressões em inglês, ampliar o vocabulário, compreender comandos e participar de musicas, brincadeiras e jogos.",
+    "methodology": "Apostila, Tv, telefone e caixa de som",
+    "resources": "",
+    "evaluation": "Desenvolvimento com pronuncia, escrita e pratica.",
+    "supervisionNotes": "",
+    "attachmentIds": [],
+    "createdAt": "2026-09-17T17:47:30.758Z",
+    "updatedAt": "2026-09-17T17:47:30.758Z"
   }
 ]
