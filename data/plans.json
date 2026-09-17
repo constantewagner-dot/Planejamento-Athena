@@ -477,5 +477,26 @@
     ],
     "createdAt": "2026-09-17T18:23:30.184Z",
     "updatedAt": "2026-09-17T18:23:30.184Z"
+  },
+  {
+    "id": "mu5v1ipwvcghqj",
+    "teacherId": "msdy0bb07gbwje",
+    "classId": "msdy0lhyrtpo3z",
+    "subjectId": "msp2k9jhaap6xl",
+    "title": "Cores",
+    "creationDate": "",
+    "startDate": "2026-09-07",
+    "endDate": "2026-09-11",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mu5v17fruruu3s"
+    ],
+    "createdAt": "2026-09-17T18:25:50.084Z",
+    "updatedAt": "2026-09-17T18:25:50.084Z"
   }
 ]
