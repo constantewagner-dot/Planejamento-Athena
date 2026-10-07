@@ -764,5 +764,69 @@
     ],
     "createdAt": "2026-10-07T17:24:12.573Z",
     "updatedAt": "2026-10-07T17:24:12.573Z"
+  },
+  {
+    "id": "muydouazm10486",
+    "teacherId": "msdy0ep4ez6vx1",
+    "classId": "msdy0qbygxzhqf",
+    "subjectId": "msp2k9jhaap6xl",
+    "title": "Planejamento Taynara",
+    "creationDate": "2026-10-07",
+    "startDate": "2026-09-28",
+    "endDate": "2026-10-02",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "muydosqeg7teuv"
+    ],
+    "createdAt": "2026-10-07T17:25:24.203Z",
+    "updatedAt": "2026-10-07T17:25:24.203Z"
+  },
+  {
+    "id": "muydqqn9k8w36z",
+    "teacherId": "msdy0ep4ez6vx1",
+    "classId": "msdy0qbygxzhqf",
+    "subjectId": "msp2k9jhaap6xl",
+    "title": "Planejamento Taynara",
+    "creationDate": "2026-10-07",
+    "startDate": "2026-10-05",
+    "endDate": "2026-10-09",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "muydqpgxj3zh30"
+    ],
+    "createdAt": "2026-10-07T17:26:52.773Z",
+    "updatedAt": "2026-10-07T17:26:52.773Z"
+  },
+  {
+    "id": "muyhmjvuoc5sbz",
+    "teacherId": "msdxycjq8pglkn",
+    "classId": "msdvumvkcd8nol",
+    "subjectId": "msp2k9jhaap6xl",
+    "title": "Planejamento",
+    "creationDate": "2026-10-05",
+    "startDate": "2026-10-05",
+    "endDate": "2026-10-09",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "muyhlipxkhx037",
+      "muyhm13xhmj6lp"
+    ],
+    "createdAt": "2026-10-07T19:15:35.850Z",
+    "updatedAt": "2026-10-07T19:15:35.850Z"
   }
 ]
