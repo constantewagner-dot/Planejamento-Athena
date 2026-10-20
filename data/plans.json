@@ -895,5 +895,26 @@
     ],
     "createdAt": "2026-10-20T18:47:24.716Z",
     "updatedAt": "2026-10-20T18:47:24.716Z"
+  },
+  {
+    "id": "mvh1fcan2hbsgd",
+    "teacherId": "msdxycjq8pglkn",
+    "classId": "msdvumvkcd8nol",
+    "subjectId": "msp2k9jhaap6xl",
+    "title": "Planejamento Jenyne",
+    "creationDate": "2026-10-19",
+    "startDate": "2026-10-19",
+    "endDate": "2026-10-23",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mvh1fb03zbj4ae"
+    ],
+    "createdAt": "2026-10-20T18:49:42.911Z",
+    "updatedAt": "2026-10-20T18:49:42.911Z"
   }
 ]
