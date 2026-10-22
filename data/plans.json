@@ -1084,5 +1084,26 @@
     ],
     "createdAt": "2026-10-22T17:22:53.378Z",
     "updatedAt": "2026-10-22T17:22:53.378Z"
+  },
+  {
+    "id": "mvjui6zmoklh0d",
+    "teacherId": "msdxzp7c828dx2",
+    "classId": "msdy04vxbeo0hf",
+    "subjectId": "mtiwuonm3a0mqf",
+    "title": "Planejamento Jennyfer",
+    "creationDate": "2026-10-19",
+    "startDate": "2026-10-19",
+    "endDate": "2026-10-30",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mvjui2io6jvt1x"
+    ],
+    "createdAt": "2026-10-22T17:59:17.218Z",
+    "updatedAt": "2026-10-22T17:59:17.218Z"
   }
 ]
