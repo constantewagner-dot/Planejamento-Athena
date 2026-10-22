@@ -1000,5 +1000,26 @@
     ],
     "createdAt": "2026-10-22T17:07:03.169Z",
     "updatedAt": "2026-10-22T17:07:03.169Z"
+  },
+  {
+    "id": "mvjsolntxkqk8o",
+    "teacherId": "msdxz92pnz6hnr",
+    "classId": "msdy0ub28cjzw6",
+    "subjectId": "msdy1f45nbgs9z",
+    "title": "Planejamento Mensal",
+    "creationDate": "2026-10-22",
+    "startDate": "2026-10-01",
+    "endDate": "2026-11-06",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mvjsoiw7yg0x6j"
+    ],
+    "createdAt": "2026-10-22T17:08:16.937Z",
+    "updatedAt": "2026-10-22T17:08:16.937Z"
   }
 ]
