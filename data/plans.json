@@ -1194,5 +1194,47 @@
     ],
     "createdAt": "2026-11-03T19:24:25.844Z",
     "updatedAt": "2026-11-03T19:24:25.853Z"
+  },
+  {
+    "id": "mw9jvjxy46sjlg",
+    "teacherId": "mvsffz2bmzll42",
+    "classId": "msdvumvkcd8nol",
+    "subjectId": "msdy1jypjzvekf",
+    "title": "plano seemanal",
+    "creationDate": "2026-11-09",
+    "startDate": "2026-11-03",
+    "endDate": "2026-11-03",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mw9juy89vo3uir"
+    ],
+    "createdAt": "2026-11-09T17:43:45.334Z",
+    "updatedAt": "2026-11-09T17:43:45.334Z"
+  },
+  {
+    "id": "mw9k14fx1k38xw",
+    "teacherId": "mvsffz2bmzll42",
+    "classId": "mw9jzce6a4fda8",
+    "subjectId": "msdy1jypjzvekf",
+    "title": "plano seemanal",
+    "creationDate": "2026-11-09",
+    "startDate": "2026-11-03",
+    "endDate": "2026-11-03",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mw9k11elrxp8w5"
+    ],
+    "createdAt": "2026-11-09T17:48:05.181Z",
+    "updatedAt": "2026-11-09T17:48:05.181Z"
   }
 ]
