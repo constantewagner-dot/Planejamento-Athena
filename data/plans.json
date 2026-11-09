@@ -1341,5 +1341,26 @@
     ],
     "createdAt": "2026-11-09T18:03:10.605Z",
     "updatedAt": "2026-11-09T18:03:10.605Z"
+  },
+  {
+    "id": "mw9kqq431jw8nf",
+    "teacherId": "mvsffz2bmzll42",
+    "classId": "mw9khgb2u4ojag",
+    "subjectId": "msdy1jypjzvekf",
+    "title": "plano seemanal",
+    "creationDate": "2026-11-09",
+    "startDate": "2026-10-27",
+    "endDate": "2026-10-27",
+    "content": "",
+    "objective": "",
+    "methodology": "",
+    "resources": "",
+    "evaluation": "",
+    "supervisionNotes": "",
+    "attachmentIds": [
+      "mw9kpfgp17w985"
+    ],
+    "createdAt": "2026-11-09T18:07:59.667Z",
+    "updatedAt": "2026-11-09T18:07:59.667Z"
   }
 ]
